@@ -1,0 +1,2473 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chemistry Escape Room – Science 10</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* ========== RESET & BASE ========== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #07090f;
+      --surface: #0d1117;
+      --card: #111827;
+      --card2: #1a2235;
+      --border: #1e3a5f;
+      --accent: #00c9ff;
+      --accent2: #7c3aed;
+      --green: #10b981;
+      --red: #ef4444;
+      --yellow: #fbbf24;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --glow: 0 0 20px rgba(0, 201, 255, 0.3);
+      --glow2: 0 0 30px rgba(124, 58, 237, 0.4);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ========== PARTICLES ========== */
+    #particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: float linear infinite;
+      opacity: 0.15;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.15;
+      }
+
+      90% {
+        opacity: 0.15;
+      }
+
+      100% {
+        transform: translateY(-100px) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    /* ========== SCREENS ========== */
+    .screen {
+      display: none;
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ========== INTRO SCREEN ========== */
+    #intro {
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .lab-icon {
+      font-size: 5rem;
+      margin-bottom: 16px;
+      animation: pulse-icon 2s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(0, 201, 255, 0.8));
+    }
+
+    @keyframes pulse-icon {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.08);
+      }
+    }
+
+    .intro-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.8rem, 5vw, 3.2rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #00c9ff, #7c3aed, #00c9ff);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+      margin-bottom: 8px;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      100% {
+        background-position: 200% 50%;
+      }
+    }
+
+    .intro-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+      letter-spacing: 0.05em;
+    }
+
+    .story-box {
+      background: linear-gradient(135deg, rgba(0, 201, 255, 0.08), rgba(124, 58, 237, 0.08));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 32px;
+      max-width: 680px;
+      margin: 0 auto 36px;
+      text-align: left;
+      line-height: 1.8;
+      font-size: 0.98rem;
+    }
+
+    .story-box h3 {
+      color: var(--accent);
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 12px;
+    }
+
+    .rooms-preview {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 36px;
+      max-width: 700px;
+    }
+
+    .room-chip {
+      background: rgba(30, 58, 95, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .room-chip span {
+      font-size: 1.1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 48px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-family: 'Orbitron', monospace;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      transition: all 0.3s;
+      box-shadow: 0 0 30px rgba(0, 201, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 50px rgba(0, 201, 255, 0.5);
+    }
+
+    /* ========== GAME SCREEN ========== */
+    #game {
+      padding: 0;
+    }
+
+    .top-bar {
+      background: rgba(13, 17, 23, 0.95);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .top-bar-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+
+    .progress-pills {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pill {
+      width: 32px;
+      height: 8px;
+      border-radius: 4px;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      transition: all 0.4s;
+    }
+
+    .pill.done {
+      background: var(--green);
+      border-color: var(--green);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+    }
+
+    .pill.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 8px rgba(0, 201, 255, 0.5);
+      animation: pill-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pill-pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.6
+      }
+    }
+
+    .room-number {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ========== ROOM LAYOUT ========== */
+    .room-container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+
+    .room-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .room-emoji {
+      font-size: 3.5rem;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 12px rgba(0, 201, 255, 0.6));
+    }
+
+    .room-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.3rem, 3.5vw, 2rem);
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .room-desc {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ========== LOCK ========== */
+    .lock-display {
+      background: linear-gradient(135deg, var(--card), var(--card2));
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      margin-bottom: 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lock-display::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 201, 255, 0.03), rgba(124, 58, 237, 0.03));
+    }
+
+    .lock-icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+    }
+
+    .lock-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .code-display {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(0, 201, 255, 0.5);
+      min-height: 50px;
+    }
+
+    /* ========== QUESTIONS ========== */
+    .questions-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .question-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .question-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+
+    .question-card.answered::before {
+      background: var(--green);
+    }
+
+    .question-card.wrong::before {
+      background: var(--red);
+    }
+
+    .q-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .q-badge {
+      background: rgba(0, 201, 255, 0.15);
+      border: 1px solid rgba(0, 201, 255, 0.3);
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .question-text {
+      font-size: 0.98rem;
+      line-height: 1.65;
+      flex: 1;
+    }
+
+    /* Multiple choice */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 500px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-btn {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      text-align: left;
+      color: var(--text);
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.25s;
+      line-height: 1.5;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(0, 201, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .option-btn.correct {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .option-btn.incorrect {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    /* Text input */
+    .answer-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .answer-input {
+      flex: 1;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: 'Orbitron', monospace;
+      letter-spacing: 0.05em;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .answer-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0, 201, 255, 0.1);
+    }
+
+    .answer-input.correct {
+      border-color: var(--green);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .answer-input.incorrect {
+      border-color: var(--red);
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 10px;
+      padding: 12px 22px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--glow);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    /* Feedback */
+    .feedback {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      display: none;
+      line-height: 1.5;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.correct {
+      background: rgba(16, 185, 129, 0.12);
+      color: #6ee7b7;
+      border-left: 3px solid var(--green);
+    }
+
+    .feedback.incorrect {
+      background: rgba(239, 68, 68, 0.1);
+      color: #fca5a5;
+      border-left: 3px solid var(--red);
+    }
+
+    /* Code digit reveal */
+    .digit-reveal {
+      display: inline-block;
+      background: rgba(0, 201, 255, 0.15);
+      border: 1px solid rgba(0, 201, 255, 0.4);
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-family: 'Orbitron', monospace;
+      font-size: 1.1rem;
+      color: var(--accent);
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* Next button */
+    .next-room-btn {
+      display: none;
+      margin: 36px auto 0;
+      background: linear-gradient(135deg, var(--green), #059669);
+      border: none;
+      border-radius: 14px;
+      padding: 16px 48px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: 'Orbitron', monospace;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      transition: all 0.3s;
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+    }
+
+    .next-room-btn.visible {
+      display: block;
+      animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes pop-in {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .next-room-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 0 50px rgba(16, 185, 129, 0.5);
+    }
+
+    /* ========== WIN SCREEN ========== */
+    #win {
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .win-stars {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      animation: spin-stars 3s linear infinite;
+    }
+
+    @keyframes spin-stars {
+
+      0%,
+      100% {
+        filter: hue-rotate(0deg) drop-shadow(0 0 20px gold);
+      }
+
+      50% {
+        filter: hue-rotate(180deg) drop-shadow(0 0 40px gold);
+      }
+    }
+
+    .win-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b, #fbbf24);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 2s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    .win-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .win-stats {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+
+    .stat-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 28px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .confetti-emoji {
+      position: fixed;
+      pointer-events: none;
+      font-size: 2rem;
+      animation: confetti-fall 3s ease-in forwards;
+      z-index: 200;
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-50px) rotate(0deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    /* ========== SWAP ANIMATION ========== */
+    @keyframes fadeOut {
+      0% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-12px);
+      }
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-swapping {
+      animation: fadeOut 0.4s ease forwards;
+    }
+
+    .card-swapped-in {
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    /* ========== RIDDLE PANEL ========== */
+    .riddle-panel {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(0, 201, 255, 0.08));
+      border: 1px solid rgba(124, 58, 237, 0.4);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-top: 32px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .riddle-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1rem;
+      color: var(--accent2);
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+    }
+
+    .riddle-intro {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+
+    .riddle-clues {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 20px;
+    }
+
+    .riddle-clues li {
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--accent2);
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .digits-collected {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .digit-chip {
+      background: rgba(0, 201, 255, 0.15);
+      border: 1px solid rgba(0, 201, 255, 0.4);
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-family: 'Orbitron', monospace;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* 4-box code entry */
+    .code-boxes-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .code-box {
+      width: 64px;
+      height: 72px;
+      background: var(--card2);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      color: var(--accent);
+      font-size: 2rem;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      cursor: text;
+    }
+
+    .code-box:focus:not(:disabled) {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0, 201, 255, 0.15);
+    }
+
+    .code-box.cbox-correct {
+      border-color: var(--green);
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--green);
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.3);
+      cursor: default;
+    }
+
+    .code-box.cbox-wrong {
+      border-color: var(--red);
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--red);
+      animation: shake 0.4s ease;
+    }
+
+
+    .riddle-feedback {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      display: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      line-height: 1.5;
+    }
+
+    .riddle-feedback.show {
+      display: block;
+    }
+
+    .riddle-feedback.correct {
+      background: rgba(16, 185, 129, 0.12);
+      color: #6ee7b7;
+      border-left: 3px solid var(--green);
+    }
+
+    .riddle-feedback.incorrect {
+      background: rgba(239, 68, 68, 0.1);
+      color: #fca5a5;
+      border-left: 3px solid var(--red);
+    }
+
+    /* ========== ANIMATIONS ========== */
+    .shake {
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20% {
+        transform: translateX(-8px);
+      }
+
+      40% {
+        transform: translateX(8px);
+      }
+
+      60% {
+        transform: translateX(-5px);
+      }
+
+      80% {
+        transform: translateX(5px);
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    /* ========== FLOATING TIMER ========== */
+    #floatingTimer {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 999;
+      background: rgba(10, 10, 20, 0.85);
+      border: 1px solid rgba(0, 201, 255, 0.35);
+      backdrop-filter: blur(12px);
+      border-radius: 12px;
+      padding: 8px 18px;
+      font-family: 'Orbitron', monospace;
+      font-size: 1.1rem;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      display: none;
+      box-shadow: 0 0 20px rgba(0, 201, 255, 0.15);
+      transition: color 0.4s;
+    }
+
+    #floatingTimer.danger {
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.5);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+    }
+
+    /* ========== LEADERBOARD ========== */
+    .leaderboard-section {
+      margin-top: 28px;
+      text-align: left;
+    }
+
+    .lb-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.95rem;
+      color: var(--accent2);
+      letter-spacing: 0.1em;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .lb-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .lb-table th {
+      color: var(--muted);
+      font-weight: 600;
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .lb-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .lb-table tr:first-child td {
+      color: #fbbf24;
+      font-weight: 700;
+    }
+
+    .lb-table tr:nth-child(2) td {
+      color: #94a3b8;
+    }
+
+    .lb-table tr:nth-child(3) td {
+      color: #cd7f32;
+    }
+
+    .lb-initials-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .lb-initials-input {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 16px;
+      color: var(--fg);
+      font-size: 1.1rem;
+      font-family: 'Orbitron', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      text-align: center;
+      width: 90px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .lb-initials-input:focus {
+      border-color: var(--accent);
+    }
+
+    .lb-submit-btn {
+      background: linear-gradient(135deg, var(--accent2), #5b21b6);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      font-family: 'Orbitron', monospace;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .lb-submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 16px rgba(124, 58, 237, 0.4);
+    }
+
+    .lb-msg {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 8px;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    .lb-not-configured {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 12px;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Floating timer —always visible during gameplay -->
+  <div id="floatingTimer">⏱️ 00:00</div>
+
+  <!-- Floating particles -->
+  <div id="particles"></div>
+
+  <!-- ============================================================
+     INTRO SCREEN
+============================================================ -->
+  <div id="intro" class="screen active">
+    <div class="lab-icon">⚗️</div>
+    <h1 class="intro-title">CHEMISTRY ESCAPE ROOM</h1>
+    <p class="intro-sub">Science 10 · Atoms, Elements, Compounds &amp; More</p>
+
+    <div class="story-box">
+      <h3>🔴 MISSION BRIEFING</h3>
+      <p>
+        A rogue scientist has locked down the chemistry lab and triggered a
+        <strong style="color:var(--accent)">countdown sequence</strong>. The only way to
+        unlock each security door is to crack the codes hidden in science — using
+        your knowledge of atoms, the periodic table, ions, bonding, and more.
+        <br><br>
+        Solve every puzzle in each room to reveal its <strong>4-digit unlock code</strong>.
+        Enter the final code to shut down the countdown and <strong>escape the lab</strong>.
+      </p>
+    </div>
+
+    <div class="rooms-preview">
+      <div class="room-chip"><span>☣️</span> Room 1: Lab Safety &amp; Matter</div>
+      <div class="room-chip"><span>⚛️</span> Room 2: Atomic Models</div>
+      <div class="room-chip"><span>🔢</span> Room 3: Periodic Table &amp; Isotopes</div>
+      <div class="room-chip"><span>🔵</span> Room 4: Bohr &amp; Lewis Diagrams</div>
+      <div class="room-chip"><span>⚡</span> Room 5: Ions &amp; Ionic Bonding</div>
+      <div class="room-chip"><span>🧪</span> Room 6: Naming Compounds &amp; Acids</div>
+      <div class="room-chip"><span>🔬</span> Room 7: Lab Skills &amp; Equipment</div>
+      <div class="room-chip"><span>⚗️</span> Room 8: Types of Reactions</div>
+      <div class="room-chip"><span>💧</span> Room 9: Solutions &amp; Concentration</div>
+    </div>
+
+    <button class="btn-primary" onclick="startGame()">🔓 BEGIN ESCAPE</button>
+  </div>
+
+  <!-- ============================================================
+     GAME SCREEN
+============================================================ -->
+  <div id="game" class="screen">
+    <div class="top-bar">
+      <div class="top-bar-title">⚗️ CHEM LAB ESCAPE</div>
+      <div class="progress-pills" id="progressPills"></div>
+      <div class="room-number" id="roomNumber">ROOM 1 / 6</div>
+    </div>
+    <div class="room-container" id="roomContainer"></div>
+  </div>
+
+  <!-- ============================================================
+     WIN SCREEN
+============================================================ -->
+  <div id="win" class="screen">
+    <div class="win-stars">🏆⭐🎉</div>
+    <h1 class="win-title">YOU ESCAPED!</h1>
+    <p class="win-sub">The lab is secured. You're a chemistry champion! 🧪</p>
+    <div class="win-stats">
+      <div class="stat-box">
+        <div class="stat-num" id="finalScore">-</div>
+        <div class="stat-label">ROOMS CLEARED</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="finalTime">-</div>
+        <div class="stat-label">TIME</div>
+      </div>
+    </div>
+
+    <div class="leaderboard-section" id="leaderboardSection">
+      <div class="lb-title">🏅 HALL OF FAME</div>
+      <div id="lbTableWrap">
+        <p class="lb-not-configured" id="lbStatus">Loading leaderboard…</p>
+      </div>
+      <div class="lb-initials-row" id="lbInputRow" style="display:none;">
+        <input class="lb-initials-input" id="lbInitials" maxlength="3" placeholder="AAA"
+          oninput="this.value=this.value.toUpperCase().replace(/[^A-Z]/g,'')" />
+        <button class="lb-submit-btn" onclick="submitScore()">🏆 SUBMIT</button>
+      </div>
+      <div class="lb-msg" id="lbMsg"></div>
+    </div>
+
+    <button class="btn-primary" onclick="restartGame()">🔄 PLAY AGAIN</button>
+  </div>
+
+  <script>
+    /* ==============================================================
+       ROOM DATA
+       Each room has: title, emoji, description, questions[], code
+       Each question: type (mc | text), text, options[], answer, feedback
+       Code is built from answer digits revealed per question
+       BACKUP_QUESTIONS: replacement questions served after a wrong answer
+    ============================================================== */
+
+    // Backup pools — 3 questions per slot, cycling on each wrong answer
+    const BACKUP_POOLS = [
+      // ── Room 1: Lab Safety & Matter ──
+      [
+        // Slot 0 (reveals "2")
+        [
+          { type: "mc", text: "Which WHMIS symbol represents a CORROSIVE substance?", options: ["Skull and crossbones", "Flame over a circle", "Exclamation mark in a circle", "Hand being eaten by liquid"], answer: 3, revealDigit: "2", feedback: "✅ The corrosive symbol shows a hand/surface being eaten away. Digit <span class='digit-reveal'>2</span> revealed!" },
+          { type: "mc", text: "Which WHMIS symbol would appear on a bottle of bleach?", options: ["Explosive", "Flammable", "Corrosive", "Health Hazard"], answer: 2, revealDigit: "2", feedback: "✅ Bleach is corrosive — it damages skin and surfaces. Digit <span class='digit-reveal'>2</span> revealed!" },
+          { type: "mc", text: "A chemical eats through a metal container. Which WHMIS symbol applies?", options: ["Biohazardous", "Compressed Gas", "Oxidizing", "Corrosive"], answer: 3, revealDigit: "2", feedback: "✅ A substance destroying materials carries the corrosive WHMIS symbol. Digit <span class='digit-reveal'>2</span> revealed!" }
+        ],
+        // Slot 1 (reveals "7")
+        [
+          { type: "mc", text: "Which of the following is a PHYSICAL change?", options: ["Iron rusting", "Wood burning", "Water boiling", "Bread baking"], answer: 2, revealDigit: "7", feedback: "✅ Boiling is physical — water is still water, just a different state. Digit <span class='digit-reveal'>7</span> revealed!" },
+          { type: "mc", text: "Copper turns green over time when exposed to air. This is:", options: ["A physical change", "A physical property", "A chemical change", "A chemical property"], answer: 2, revealDigit: "7", feedback: "✅ Copper turning green (patina) is a chemical change — a new substance is formed. Digit <span class='digit-reveal'>7</span> revealed!" },
+          { type: "mc", text: "Which is the BEST sign a chemical change has occurred?", options: ["A change in size", "A change in shape", "A new substance with different properties is formed", "A change in state"], answer: 2, revealDigit: "7", feedback: "✅ The formation of a new substance is the defining sign of chemical change. Digit <span class='digit-reveal'>7</span> revealed!" }
+        ],
+        // Slot 2 (reveals "4")
+        [
+          { type: "mc", text: "Air is an example of a:", options: ["Pure element", "Compound", "Homogeneous mixture", "Heterogeneous mixture"], answer: 2, revealDigit: "4", feedback: "✅ Air is a uniform mixture of gases — a homogeneous mixture. Digit <span class='digit-reveal'>4</span> revealed!" },
+          { type: "mc", text: "Which of the following is a HETEROGENEOUS mixture?", options: ["Tap water", "Vinegar", "Saltwater", "Italian salad dressing"], answer: 3, revealDigit: "4", feedback: "✅ Salad dressing separates into layers — you can see two distinct parts. Digit <span class='digit-reveal'>4</span> revealed!" },
+          { type: "mc", text: "A substance made of only ONE type of atom is called a:", options: ["Compound", "Mixture", "Pure element", "Solution"], answer: 2, revealDigit: "4", feedback: "✅ A pure element contains only one type of atom (e.g. pure gold). Digit <span class='digit-reveal'>4</span> revealed!" }
+        ],
+        // Slot 3 (reveals "1")
+        [
+          { type: "mc", text: "Which of the following is a CHEMICAL property?", options: ["Density", "Colour", "Flammability", "Boiling point"], answer: 2, revealDigit: "1", feedback: "✅ Flammability describes how a substance reacts with oxygen — a chemical property. Digit <span class='digit-reveal'>1</span> revealed!" },
+          { type: "mc", text: "Which of the following is a PHYSICAL property?", options: ["Reactivity with water", "Ability to combust", "Boiling point", "Corrosiveness"], answer: 2, revealDigit: "1", feedback: "✅ Boiling point can be measured without changing WHAT the substance is. Digit <span class='digit-reveal'>1</span> revealed!" },
+          { type: "mc", text: "Iron rusting is an example of a:", options: ["Physical property", "Physical change", "Chemical property", "Chemical change"], answer: 3, revealDigit: "1", feedback: "✅ Rusting creates iron oxide — a brand new substance. That's a chemical change. Digit <span class='digit-reveal'>1</span> revealed!" }
+        ]
+      ],
+      // ── Room 2: Atomic Models ──
+      [
+        // Slot 0 (reveals "3")
+        [
+          { type: "mc", text: "Dalton's model of the atom compared it to:", options: ["A plum pudding", "A tiny solid billiard ball", "A mini solar system", "An electron cloud"], answer: 1, revealDigit: "3", feedback: "✅ Dalton imagined atoms as tiny, indivisible solid spheres. Digit <span class='digit-reveal'>3</span> revealed!" },
+          { type: "mc", text: "Which scientist's model looked like a 'plum pudding' with electrons embedded inside?", options: ["Dalton", "Thomson", "Rutherford", "Bohr"], answer: 1, revealDigit: "3", feedback: "✅ Thomson's plum pudding model had electrons (the 'raisins') in a positive sphere. Digit <span class='digit-reveal'>3</span> revealed!" },
+          { type: "mc", text: "Thomson's model showed electrons:", options: ["Orbiting in fixed rings", "Embedded in a positive sphere", "Collapsed into the nucleus", "Arranged in probability clouds"], answer: 1, revealDigit: "3", feedback: "✅ Thomson's electrons sat inside a uniform positive sphere — like fruit in a pudding. Digit <span class='digit-reveal'>3</span> revealed!" }
+        ],
+        // Slot 1 (reveals "1")
+        [
+          { type: "mc", text: "In Rutherford's gold foil experiment, MOST alpha particles:", options: ["Were absorbed by the foil", "Reflected sharply backwards", "Passed straight through", "Caused the foil to glow"], answer: 2, revealDigit: "1", feedback: "✅ Most particles passed straight through — proving atoms are mostly empty space. Digit <span class='digit-reveal'>1</span> revealed!" },
+          { type: "mc", text: "What did Rutherford's results DISPROVE about Thomson's model?", options: ["That electrons exist", "That the atom has mass", "That atoms are mostly solid positive material", "That electrons are negative"], answer: 2, revealDigit: "1", feedback: "✅ Rutherford proved atoms are NOT solid — they have a tiny dense nucleus in empty space. Digit <span class='digit-reveal'>1</span> revealed!" },
+          { type: "mc", text: "Rutherford's model showed the atom as mostly:", options: ["Dense solid matter", "A liquid core with an electron shell", "Empty space with a tiny dense positive nucleus", "A uniform cloud of particles"], answer: 2, revealDigit: "1", feedback: "✅ Rutherford's nuclear model = tiny positive nucleus surrounded by mostly empty space. Digit <span class='digit-reveal'>1</span> revealed!" }
+        ],
+        // Slot 2 (reveals "5")
+        [
+          { type: "mc", text: "Bohr's model improved on Rutherford's by proposing that electrons:", options: ["Are too heavy to move", "Travel in fixed energy levels and stay stable", "Attract and repel protons equally", "Travel faster than light"], answer: 1, revealDigit: "5", feedback: "✅ Bohr proposed fixed energy levels — electrons stay stable in their 'shells.' Digit <span class='digit-reveal'>5</span> revealed!" },
+          { type: "mc", text: "In the Bohr model, the 'rings' around the nucleus are called:", options: ["Orbitals", "Energy levels (shells)", "Electron clouds", "Neutron layers"], answer: 1, revealDigit: "5", feedback: "✅ The rings in a Bohr diagram are called energy levels or shells. Digit <span class='digit-reveal'>5</span> revealed!" },
+          { type: "mc", text: "Bohr developed his model based on observations of:", options: ["Radioactive decay", "Infrared radiation", "Specific colours of light from excited atoms", "X-ray diffraction"], answer: 2, revealDigit: "5", feedback: "✅ Bohr noticed excited atoms emit specific light colours — electrons jumping between energy levels. Digit <span class='digit-reveal'>5</span> revealed!" }
+        ],
+        // Slot 3 (reveals "8")
+        [
+          { type: "mc", text: "Which particle did J.J. Thomson discover using cathode ray tubes?", options: ["Proton", "Neutron", "Nucleus", "Electron"], answer: 3, revealDigit: "8", feedback: "✅ Thomson discovered the electron — a negatively charged particle. Digit <span class='digit-reveal'>8</span> revealed!" },
+          { type: "mc", text: "Which THREE subatomic particles make up an atom?", options: ["Protons, neutrons, electrons", "Protons, electrons, photons", "Neutrons, positrons, electrons", "Quarks, leptons, bosons"], answer: 0, revealDigit: "8", feedback: "✅ The three main subatomic particles are protons (+), neutrons (0), and electrons (−). Digit <span class='digit-reveal'>8</span> revealed!" },
+          { type: "mc", text: "Dalton said atoms cannot be divided. Which discovery proved him WRONG?", options: ["Discovery of molecules", "Discovery of protons, neutrons & electrons inside atoms", "Discovery of isotopes", "Discovery of noble gases"], answer: 1, revealDigit: "8", feedback: "✅ Discovering subatomic particles proved atoms CAN be divided further. Digit <span class='digit-reveal'>8</span> revealed!" }
+        ]
+      ],
+      // ── Room 3: Periodic Table & Isotopes ──
+      [
+        // Slot 0 (reveals "6")
+        [
+          { type: "mc", text: "Oxygen-18 has 8 protons. How many neutrons does it have?", options: ["8", "10", "18", "26"], answer: 1, revealDigit: "6", feedback: "✅ Neutrons = 18 − 8 = 10. Digit <span class='digit-reveal'>6</span> revealed!" },
+          { type: "mc", text: "Sodium-23 has 11 protons. How many neutrons are in its nucleus?", options: ["10", "11", "12", "23"], answer: 2, revealDigit: "6", feedback: "✅ Neutrons = 23 − 11 = 12. Digit <span class='digit-reveal'>6</span> revealed!" },
+          { type: "mc", text: "Phosphorus-31 has atomic number 15. How many neutrons does it have?", options: ["13", "15", "16", "31"], answer: 2, revealDigit: "6", feedback: "✅ Neutrons = 31 − 15 = 16. Digit <span class='digit-reveal'>6</span> revealed!" }
+        ],
+        // Slot 1 (reveals "9")
+        [
+          { type: "mc", text: "Two atoms with the same protons but different neutrons are called:", options: ["Allotropes", "Isotopes", "Isomers", "Ions"], answer: 1, revealDigit: "9", feedback: "✅ Same protons (same element) + different neutrons = isotopes. Digit <span class='digit-reveal'>9</span> revealed!" },
+          { type: "mc", text: "Hydrogen-2 (deuterium) and Hydrogen-3 (tritium) are examples of:", options: ["Allotropes", "Isotopes", "Isomers", "Ions of the same element"], answer: 1, revealDigit: "9", feedback: "✅ Deuterium and Tritium are isotopes — both have 1 proton but different neutron counts. Digit <span class='digit-reveal'>9</span> revealed!" },
+          { type: "mc", text: "What is the ONLY thing that changes between two isotopes of the same element?", options: ["Number of protons", "Number of electrons", "Number of neutrons", "The atomic number"], answer: 2, revealDigit: "9", feedback: "✅ Isotopes differ ONLY in neutron count — same protons, same element identity. Digit <span class='digit-reveal'>9</span> revealed!" }
+        ],
+        // Slot 2 (reveals "2")
+        [
+          { type: "mc", text: "Elements in Group 1 (alkali metals) are best described as:", options: ["Very unreactive", "Highly reactive, especially with water", "Non-metals", "Always liquid at room temperature"], answer: 1, revealDigit: "2", feedback: "✅ Alkali metals react vigorously — they fizz or explode in water! Digit <span class='digit-reveal'>2</span> revealed!" },
+          { type: "mc", text: "Noble gases (Group 18) are non-reactive because they:", options: ["Have no electrons", "Have a completely full outer energy level", "Are all gases", "Have too many neutrons"], answer: 1, revealDigit: "2", feedback: "✅ Noble gases have a full outer shell — no need to gain or lose electrons. Digit <span class='digit-reveal'>2</span> revealed!" },
+          { type: "mc", text: "Which group on the periodic table contains the halogens?", options: ["Group 1", "Group 2", "Group 17", "Group 18"], answer: 2, revealDigit: "2", feedback: "✅ Halogens are in Group 17 — highly reactive non-metals that love reacting with metals. Digit <span class='digit-reveal'>2</span> revealed!" }
+        ],
+        // Slot 3 (reveals "4")
+        [
+          { type: "mc", text: "What is the atomic number of an element?", options: ["Number of neutrons", "Protons + neutrons", "Number of protons", "Electrons in the outer shell"], answer: 2, revealDigit: "4", feedback: "✅ Atomic number = number of protons. It uniquely identifies each element. Digit <span class='digit-reveal'>4</span> revealed!" },
+          { type: "mc", text: "An element has atomic number 17 and mass number 35. How many neutrons?", options: ["17", "18", "35", "52"], answer: 1, revealDigit: "4", feedback: "✅ Neutrons = 35 − 17 = 18. Digit <span class='digit-reveal'>4</span> revealed!" },
+          { type: "mc", text: "Two different elements MUST have different:", options: ["Mass numbers", "Numbers of neutrons", "Atomic numbers (proton count)", "Numbers of electrons"], answer: 2, revealDigit: "4", feedback: "✅ The atomic number (proton count) defines an element — no two share the same one. Digit <span class='digit-reveal'>4</span> revealed!" }
+        ]
+      ],
+      // ── Room 4: Bohr & Lewis Diagrams ──
+      [
+        // Slot 0 (reveals "5")
+        [
+          { type: "mc", text: "How many electrons can the SECOND energy level hold?", options: ["2", "4", "8", "18"], answer: 2, revealDigit: "5", feedback: "✅ The second energy level holds a maximum of 8 electrons. Digit <span class='digit-reveal'>5</span> revealed!" },
+          { type: "mc", text: "How many electrons can the FIRST (innermost) energy level hold?", options: ["1", "2", "4", "8"], answer: 1, revealDigit: "5", feedback: "✅ The first energy level holds only 2 electrons maximum. Digit <span class='digit-reveal'>5</span> revealed!" },
+          { type: "mc", text: "When drawing a Bohr diagram, which energy level fills FIRST?", options: ["The outermost level", "The one with the most room", "The first (innermost) level", "The middle level"], answer: 2, revealDigit: "5", feedback: "✅ Electrons always fill from the innermost energy level outward. Digit <span class='digit-reveal'>5</span> revealed!" }
+        ],
+        // Slot 1 (reveals "3")
+        [
+          { type: "mc", text: "Elements in the same PERIOD (row) all have the same:", options: ["Number of valence electrons", "Number of energy levels (rings)", "Chemical properties", "Number of neutrons"], answer: 1, revealDigit: "3", feedback: "✅ A period = same number of energy levels. Groups = same valence electrons. Digit <span class='digit-reveal'>3</span> revealed!" },
+          { type: "mc", text: "Going across a PERIOD left to right, valence electron count:", options: ["Decreases by 1 each time", "Stays the same", "Increases by 1 each time", "Doubles each time"], answer: 2, revealDigit: "3", feedback: "✅ Moving right across a period adds one electron to the outer shell each time. Digit <span class='digit-reveal'>3</span> revealed!" },
+          { type: "mc", text: "Na and Cl are both in Period 3. What do their Bohr diagrams share?", options: ["Same number of valence electrons", "Same number of energy level rings", "Same total electrons", "Same number of protons"], answer: 1, revealDigit: "3", feedback: "✅ Period 3 elements all have 3 energy level rings in their Bohr diagrams. Digit <span class='digit-reveal'>3</span> revealed!" }
+        ],
+        // Slot 2 (reveals "7")
+        [
+          { type: "mc", text: "Oxygen (O) has 6 valence electrons. How many LONE PAIRS in its Lewis diagram?", options: ["0", "1", "2", "3"], answer: 2, revealDigit: "7", feedback: "✅ 6 valence electrons: fill 4 sides (one each), pair 2 → 2 lone pairs + 2 unpaired. Digit <span class='digit-reveal'>7</span> revealed!" },
+          { type: "mc", text: "Sulfur (S) has 6 valence electrons. How many lone PAIRS in its Lewis diagram?", options: ["1 lone pair", "2 lone pairs", "3 lone pairs", "4 lone pairs"], answer: 1, revealDigit: "7", feedback: "✅ 6 electrons → 2 lone pairs + 2 unpaired electrons on S. Digit <span class='digit-reveal'>7</span> revealed!" },
+          { type: "mc", text: "Nitrogen (N) has 5 valence electrons. How many lone PAIRS in its Lewis diagram?", options: ["0 lone pairs", "1 lone pair", "2 lone pairs", "3 lone pairs"], answer: 1, revealDigit: "7", feedback: "✅ 5 electrons: pair one side → 1 lone pair + 3 unpaired electrons. Digit <span class='digit-reveal'>7</span> revealed!" }
+        ],
+        // Slot 3 (reveals "6")
+        [
+          { type: "mc", text: "An element with a FULL outer energy level will:", options: ["React violently with water", "Not react at all", "Always form a cation", "Always form an anion"], answer: 1, revealDigit: "6", feedback: "✅ A full outer shell = already stable, no need to react. Digit <span class='digit-reveal'>6</span> revealed!" },
+          { type: "mc", text: "Argon (Ar, atomic number 18, Group 18) has how many valence electrons?", options: ["2", "4", "6", "8"], answer: 3, revealDigit: "6", feedback: "✅ Argon has 8 valence electrons — a complete outer shell, making it non-reactive. Digit <span class='digit-reveal'>6</span> revealed!" },
+          { type: "mc", text: "Why would sodium (Na) bond with chlorine (Cl)?", options: ["Both already have full outer shells", "Both want to reach 8 valence electrons (octet rule)", "They are in the same period", "They have the same neutron count"], answer: 1, revealDigit: "6", feedback: "✅ Na and Cl react because both achieve a full outer shell by transferring one electron. Digit <span class='digit-reveal'>6</span> revealed!" }
+        ]
+      ],
+      // ── Room 5: Ions & Ionic Bonding ──
+      [
+        // Slot 0 (reveals "2")
+        [
+          { type: "mc", text: "Chlorine has 7 valence electrons. When forming an ion, it will:", options: ["Lose 7 electrons → Cl⁷⁺", "Gain 1 electron → Cl⁻", "Lose 1 electron → Cl⁺", "Stay neutral"], answer: 1, revealDigit: "2", feedback: "✅ Non-metals gain electrons. Cl gains 1 → Cl⁻. Digit <span class='digit-reveal'>2</span> revealed!" },
+          { type: "mc", text: "Potassium (K) is in Group 1. What ion does it form?", options: ["K²⁺", "K⁻", "K⁺", "K²⁻"], answer: 2, revealDigit: "2", feedback: "✅ Group 1 metals lose 1 electron → K⁺. Digit <span class='digit-reveal'>2</span> revealed!" },
+          { type: "mc", text: "Which of the following is a correctly written ION?", options: ["Na (no charge)", "Cl (no charge)", "Mg²⁺", "O (no charge)"], answer: 2, revealDigit: "2", feedback: "✅ Mg²⁺ is correctly written — it lost 2 electrons to become a 2+ cation. Digit <span class='digit-reveal'>2</span> revealed!" }
+        ],
+        // Slot 1 (reveals "8")
+        [
+          { type: "mc", text: "What is a CATION?", options: ["A neutral atom", "A negatively charged ion", "A positively charged ion", "An isotope"], answer: 2, revealDigit: "8", feedback: "✅ Cations are positive ions — formed when atoms LOSE electrons. Digit <span class='digit-reveal'>8</span> revealed!" },
+          { type: "mc", text: "When an atom GAINS electrons, it becomes:", options: ["A cation (positive ion)", "A neutral atom", "An anion (negative ion)", "An isotope"], answer: 2, revealDigit: "8", feedback: "✅ Gaining electrons = more negative = anion. Digit <span class='digit-reveal'>8</span> revealed!" },
+          { type: "mc", text: "Which of the following would form an ANION (negative ion)?", options: ["Sodium (Na, Group 1)", "Magnesium (Mg, Group 2)", "Sulfur (S, Group 16)", "Aluminum (Al, Group 13)"], answer: 2, revealDigit: "8", feedback: "✅ Non-metals like sulfur gain electrons to form anions (S²⁻). Digit <span class='digit-reveal'>8</span> revealed!" }
+        ],
+        // Slot 2 (reveals "3")
+        [
+          { type: "mc", text: "What is the correct formula for Al³⁺ and O²⁻?", options: ["AlO", "Al₂O₃", "Al₃O₂", "AlO₃"], answer: 1, revealDigit: "3", feedback: "✅ Balance charges: 2×(3+) = 6+, 3×(2−) = 6−. Formula = Al₂O₃. Digit <span class='digit-reveal'>3</span> revealed!" },
+          { type: "mc", text: "What is the correct formula for sodium (Na⁺) and sulfur (S²⁻)?", options: ["NaS", "Na₂S", "NaS₂", "Na₂S₂"], answer: 1, revealDigit: "3", feedback: "✅ Need 2 Na⁺ to balance 1 S²⁻. Formula = Na₂S. Digit <span class='digit-reveal'>3</span> revealed!" },
+          { type: "mc", text: "What is the correct formula for potassium (K⁺) and oxygen (O²⁻)?", options: ["KO", "K₂O", "KO₂", "K₂O₂"], answer: 1, revealDigit: "3", feedback: "✅ Need 2 K⁺ to balance 1 O²⁻. Formula = K₂O. Digit <span class='digit-reveal'>3</span> revealed!" }
+        ],
+        // Slot 3 (reveals "4")
+        [
+          { type: "mc", text: "Why do ionic compounds have high melting points?", options: ["Contain only non-metals", "Their molecules are very light", "Strong electrostatic forces hold the crystal lattice together", "They dissolve easily in water"], answer: 2, revealDigit: "4", feedback: "✅ Strong + and − ion attractions in a lattice require lots of energy to break. Digit <span class='digit-reveal'>4</span> revealed!" },
+          { type: "mc", text: "Which property belongs to ionic compounds but NOT molecular ones?", options: ["They are made of atoms", "They can dissolve in water", "They conduct electricity when dissolved or melted", "They contain covalent bonds"], answer: 2, revealDigit: "4", feedback: "✅ Dissolved ionic compounds release free ions that carry electrical current. Digit <span class='digit-reveal'>4</span> revealed!" },
+          { type: "mc", text: "Table salt (NaCl) dissolves in water. Which observation confirms it is ionic?", options: ["It dissolves in oil", "It burns when heated", "It conducts electricity when dissolved in water", "It turns litmus paper red"], answer: 2, revealDigit: "4", feedback: "✅ Dissolved NaCl releases Na⁺ and Cl⁻ ions that conduct electricity — a key ionic property. Digit <span class='digit-reveal'>4</span> revealed!" }
+        ]
+      ],
+      // ── Room 6: Naming Compounds & Acids ──
+      [
+        // Slot 0 (reveals "7")
+        [
+          { type: "mc", text: "What is the correct name for MgO?", options: ["Magnesium dioxide", "Monomagnesium oxide", "Magnesium oxide", "Magnesium (II) oxide"], answer: 2, revealDigit: "7", feedback: "✅ Mg is a metal with one charge; MgO = Magnesium oxide. Digit <span class='digit-reveal'>7</span> revealed!" },
+          { type: "mc", text: "What is the correct name for CaO?", options: ["Calcium oxygen", "Calcium oxide", "Calcium monoxide", "Dicalcium oxide"], answer: 1, revealDigit: "7", feedback: "✅ CaO: Ca is the metal, O is the non-metal → Calcium oxide. Digit <span class='digit-reveal'>7</span> revealed!" },
+          { type: "mc", text: "Which is a correctly named ionic compound?", options: ["Monosodium chloride (NaCl)", "Copper(II) chloride (CuCl₂)", "Dipotassium oxide (K₂O)", "Iron monoxide (Fe₂O₃)"], answer: 1, revealDigit: "7", feedback: "✅ Copper(II) chloride is correct — Roman numerals show Cu's variable charge. Digit <span class='digit-reveal'>7</span> revealed!" }
+        ],
+        // Slot 1 (reveals "5")
+        [
+          { type: "mc", text: "What is the correct IUPAC name for CO₂?", options: ["Carbon dioxide", "Monocarbon dioxide", "Carbon (IV) oxide", "Carbonium oxide"], answer: 0, revealDigit: "5", feedback: "✅ CO₂: molecular compound → use prefixes. One C (no prefix if first & only one) + two O = Carbon dioxide. Digit <span class='digit-reveal'>5</span> revealed!" },
+          { type: "mc", text: "What is the correct IUPAC name for PCl₃?", options: ["Phosphorus chloride", "Phosphorus trichloride", "Triphosphorus chloride", "Phosphorus (III) chloride"], answer: 1, revealDigit: "5", feedback: "✅ PCl₃: molecular → prefixes. One P (no prefix) + tri (3) Cl = Phosphorus trichloride. Digit <span class='digit-reveal'>5</span> revealed!" },
+          { type: "mc", text: "What is the correct name for N₂O?", options: ["Nitrogen oxide", "Nitrogen monoxide", "Dinitrogen monoxide", "Nitrogen (I) oxide"], answer: 2, revealDigit: "5", feedback: "✅ N₂O: di (2) nitrogen + mono (1) oxide = Dinitrogen monoxide. Digit <span class='digit-reveal'>5</span> revealed!" }
+        ],
+        // Slot 2 (reveals "1")
+        [
+          { type: "mc", text: "What is the formula for hydrosulfuric acid?", options: ["H₂SO₄", "HSO₃", "H₂S", "H₂SO₃"], answer: 2, revealDigit: "1", feedback: "✅ Hydrosulfuric acid → H₂S(aq). Hydro___ic = anion ends in 'ide' (sulfide). Digit <span class='digit-reveal'>1</span> revealed!" },
+          { type: "mc", text: "An acid whose ionic name ends in '-ate' has the acid name ending in:", options: ["-ic acid with hydro- prefix", "-ous acid", "-ic acid (no hydro- prefix)", "-ate acid"], answer: 2, revealDigit: "1", feedback: "✅ '-ate' anion → '-ic acid' (no hydro-). E.g. sulfate → sulfuric acid. Digit <span class='digit-reveal'>1</span> revealed!" },
+          { type: "mc", text: "What is the name of HNO₃(aq)?", options: ["Hydronitric acid", "Nitrous acid", "Nitric acid", "Hydrogen nitrate"], answer: 2, revealDigit: "1", feedback: "✅ HNO₃ = nitric acid. Nitrate ends in '-ate' → '-ic acid' (no hydro-). Digit <span class='digit-reveal'>1</span> revealed!" }
+        ],
+        // Slot 3 (reveals "6")
+        [
+          { type: "mc", text: "A solution turns BLUE litmus paper RED and has a sour taste. What is it?", options: ["A base", "A neutral solution", "An acid", "A salt"], answer: 2, revealDigit: "6", feedback: "✅ Blue → Red = acid. Sour taste is a classic acid property. Digit <span class='digit-reveal'>6</span> revealed!" },
+          { type: "mc", text: "Which of the following has a pH LESS than 7?", options: ["Baking soda solution", "Pure water", "Lemon juice", "Bleach"], answer: 2, revealDigit: "6", feedback: "✅ Lemon juice is acidic (pH ≈ 2). Acids have pH < 7. Digit <span class='digit-reveal'>6</span> revealed!" },
+          { type: "mc", text: "Which of the following is an ACID?", options: ["NaOH solution", "Vinegar (acetic acid)", "Ammonia solution", "Baking soda"], answer: 1, revealDigit: "6", feedback: "✅ Vinegar contains acetic acid — it releases H⁺ ions and has pH < 7. Digit <span class='digit-reveal'>6</span> revealed!" }
+        ]
+      ],
+      // ── Room 7: Lab Skills & Equipment ──
+      [
+        // Slot 0 (reveals "5")
+        [
+          { type: "mc", text: "Where should you read the volume in a graduated cylinder?", options: ["At the very top of the liquid", "At the bottom of the meniscus", "At the middle of the liquid", "At the highest point of the curve"], answer: 1, revealDigit: "5", feedback: "✅ Always read from the BOTTOM of the curved meniscus for accuracy. Digit <span class='digit-reveal'>5</span> revealed!" },
+          { type: "mc", text: "Which instrument is used to measure the mass of a substance in a lab?", options: ["Graduated cylinder", "Thermometer", "Electronic balance", "Burette"], answer: 2, revealDigit: "5", feedback: "✅ An electronic balance measures mass in grams. Digit <span class='digit-reveal'>5</span> revealed!" },
+          { type: "mc", text: "Why is a beaker NOT ideal for measuring precise liquid volumes?", options: ["It's too heavy", "Its volume markings are only approximate", "It can't hold acids", "It only measures in litres"], answer: 1, revealDigit: "5", feedback: "✅ Beaker markings are rough estimates — use a graduated cylinder for precision. Digit <span class='digit-reveal'>5</span> revealed!" }
+        ],
+        // Slot 1 (reveals "3")
+        [
+          { type: "mc", text: "Which glassware is used to prepare a solution of EXACT volume?", options: ["Beaker", "Erlenmeyer flask", "Graduated cylinder", "Volumetric flask"], answer: 3, revealDigit: "3", feedback: "✅ A volumetric flask is calibrated to hold one specific exact volume. Digit <span class='digit-reveal'>3</span> revealed!" },
+          { type: "mc", text: "A pipette is used to transfer:", options: ["Large volumes only", "A very precise, fixed volume of liquid", "Solid chemicals only", "Gases between containers"], answer: 1, revealDigit: "3", feedback: "✅ Pipettes transfer exact, fixed volumes — essential for precision work. Digit <span class='digit-reveal'>3</span> revealed!" },
+          { type: "mc", text: "What does a volumetric flask ensure?", options: ["The liquid is heated evenly", "An exact total volume of solution", "The solute is dissolved faster", "The solution is sterile"], answer: 1, revealDigit: "3", feedback: "✅ Volumetric flasks are calibrated to hold one exact volume — used for making standard solutions. Digit <span class='digit-reveal'>3</span> revealed!" }
+        ],
+        // Slot 2 (reveals "2")
+        [
+          { type: "mc", text: "What piece of equipment is used to measure temperature in a lab experiment?", options: ["Barometer", "Thermometer", "Hydrometer", "Graduated cylinder"], answer: 1, revealDigit: "2", feedback: "✅ A thermometer measures temperature — important for controlling reaction conditions. Digit <span class='digit-reveal'>2</span> revealed!" },
+          { type: "mc", text: "You need to measure 5 mL of a chemical. The MOST accurate tool is:", options: ["A 100 mL beaker", "A 500 mL Erlenmeyer flask", "A 10 mL graduated cylinder", "A large measuring cup"], answer: 2, revealDigit: "2", feedback: "✅ Use the smallest graduated cylinder that fits your volume for best accuracy. Digit <span class='digit-reveal'>2</span> revealed!" },
+          { type: "mc", text: "Which action should you NEVER do in a lab?", options: ["Wear closed-toe shoes", "Smell a chemical by lightly wafting it", "Mouth-pipette a chemical to measure it", "Tie back long hair"], answer: 2, revealDigit: "2", feedback: "✅ Never mouth-pipette — chemicals are toxic! Always use a bulb or mechanical pipettor. Digit <span class='digit-reveal'>2</span> revealed!" }
+        ],
+        // Slot 3 (reveals "9")
+        [
+          { type: "mc", text: "What does the eyewash station in a lab remove?", options: ["Dust only", "Chemicals splashed in the eyes", "Smoke from reactions", "Microorganisms"], answer: 1, revealDigit: "9", feedback: "✅ Eyewash stations flush chemicals from the eyes — rinse for at least 15 minutes. Digit <span class='digit-reveal'>9</span> revealed!" },
+          { type: "mc", text: "Protective goggles in a chemistry lab must be worn:", options: ["Only when handling acids", "Only if instructed by the teacher", "Whenever chemicals or glassware are in use", "Only during heating experiments"], answer: 2, revealDigit: "9", feedback: "✅ Goggles protect against splashes, broken glass, and fumes — always wear them! Digit <span class='digit-reveal'>9</span> revealed!" },
+          { type: "mc", text: "Why should you NEVER work alone in a chemistry lab?", options: ["It's against the rules only", "In an emergency, no one can assist you", "Lab equipment requires two people", "Reactions work better with partners"], answer: 1, revealDigit: "9", feedback: "✅ Safety requires a partner — if you're hurt, you need someone to get help. Digit <span class='digit-reveal'>9</span> revealed!" }
+        ]
+      ],
+      // ── Room 8: Types of Reactions ──
+      [
+        // Slot 0 (reveals "4")
+        [
+          { type: "mc", text: "Which equation represents a DECOMPOSITION reaction?", options: ["A + B → AB", "AB → A + B", "A + BC → AC + B", "AB + CD → AD + CB"], answer: 1, revealDigit: "4", feedback: "✅ AB → A + B shows one compound breaking into simpler substances. Digit <span class='digit-reveal'>4</span> revealed!" },
+          { type: "mc", text: "Iron + sulfur → iron(II) sulfide. This is an example of:", options: ["Decomposition", "Single displacement", "Synthesis", "Double displacement"], answer: 2, revealDigit: "4", feedback: "✅ Two elements combining into a compound = synthesis. Digit <span class='digit-reveal'>4</span> revealed!" },
+          { type: "mc", text: "During photosynthesis, CO₂ + H₂O → C₆H₁₂O₆ + O₂. The REACTION TYPE is:", options: ["Decomposition", "Double displacement", "Synthesis", "Combustion"], answer: 2, revealDigit: "4", feedback: "✅ Simple substances combining to make a complex product = synthesis. Digit <span class='digit-reveal'>4</span> revealed!" }
+        ],
+        // Slot 1 (reveals "7")
+        [
+          { type: "mc", text: "In a single displacement reaction, a MORE reactive element:", options: ["Joins with another element", "Replaces a LESS reactive element in a compound", "Breaks a compound apart", "Forms a precipitate with water"], answer: 1, revealDigit: "7", feedback: "✅ More reactive elements displace less reactive ones from their compounds. Digit <span class='digit-reveal'>7</span> revealed!" },
+          { type: "mc", text: "AgNO₃ + NaCl → AgCl↓ + NaNO₃ is an example of:", options: ["Synthesis", "Decomposition", "Single displacement", "Double displacement"], answer: 3, revealDigit: "7", feedback: "✅ Two compounds swap partners = double displacement (note: ↓ = precipitate forms). Digit <span class='digit-reveal'>7</span> revealed!" },
+          { type: "mc", text: "What is a precipitate?", options: ["A gas produced in a reaction", "A solid that forms from two solutions reacting", "An acid that forms in water", "A dissolved product"], answer: 1, revealDigit: "7", feedback: "✅ A precipitate is an insoluble solid that forms when two solutions are mixed. Digit <span class='digit-reveal'>7</span> revealed!" }
+        ],
+        // Slot 2 (reveals "1")
+        [
+          { type: "mc", text: "INCOMPLETE combustion occurs when there is:", options: ["Too much oxygen", "Too much fuel and not enough oxygen", "A mixture of gases", "A catalyst present"], answer: 1, revealDigit: "1", feedback: "✅ Incomplete combustion = too little O₂ → produces CO (carbon monoxide) and soot. Digit <span class='digit-reveal'>1</span> revealed!" },
+          { type: "mc", text: "What product of incomplete combustion is MOST dangerous to humans?", options: ["CO₂", "H₂O", "CO (carbon monoxide)", "N₂"], answer: 2, revealDigit: "1", feedback: "✅ CO is colorless, odorless, and deadly — it binds to hemoglobin instead of oxygen. Digit <span class='digit-reveal'>1</span> revealed!" },
+          { type: "mc", text: "Propane (C₃H₈) + O₂ → CO₂ + H₂O (balanced). This reaction is:", options: ["Synthesis", "Decomposition", "Complete combustion", "Single displacement"], answer: 2, revealDigit: "1", feedback: "✅ A hydrocarbon reacting with surplus oxygen to give only CO₂ + H₂O is complete combustion. Digit <span class='digit-reveal'>1</span> revealed!" }
+        ],
+        // Slot 3 (reveals "8")
+        [
+          { type: "mc", text: "Which of the following is evidence a chemical reaction has occurred?", options: ["A change in shape", "A temperature change or gas produced", "Dissolving in water", "A change in state"], answer: 1, revealDigit: "8", feedback: "✅ Temperature changes, gas, light, or colour changes signal a NEW substance has formed. Digit <span class='digit-reveal'>8</span> revealed!" },
+          { type: "mc", text: "Conservation of mass means that in a chemical reaction:", options: ["Atoms are created from energy", "The total mass of reactants equals total mass of products", "Electrons are lost", "New elements form"], answer: 1, revealDigit: "8", feedback: "✅ Mass cannot be created or destroyed — atoms are rearranged, not lost. Digit <span class='digit-reveal'>8</span> revealed!" },
+          { type: "mc", text: "What is a catalyst?", options: ["A substance consumed in a reaction", "A substance that speeds up a reaction without being used up", "A product of combustion", "A reactant that releases energy"], answer: 1, revealDigit: "8", feedback: "✅ Catalysts lower activation energy and speed reactions — but are unchanged at the end. Digit <span class='digit-reveal'>8</span> revealed!" }
+        ]
+      ],
+      // ── Room 9: Solutions & Concentration ──
+      [
+        // Slot 0 (reveals "6")
+        [
+          { type: "mc", text: "In a solution, the solute is:", options: ["The liquid that does the dissolving", "The substance that is dissolved", "The result of mixing two liquids", "The insoluble part"], answer: 1, revealDigit: "6", feedback: "✅ Solute = what's dissolved. Solvent = what does the dissolving. Digit <span class='digit-reveal'>6</span> revealed!" },
+          { type: "mc", text: "A saturated solution is one that:", options: ["Has dissolved all the solute it can at that temperature", "Has been heated until it boils", "Contains only one type of ion", "Has a pH of exactly 7"], answer: 0, revealDigit: "6", feedback: "✅ Saturated = maximum dissolved solute at that temperature. No more will dissolve. Digit <span class='digit-reveal'>6</span> revealed!" },
+          { type: "mc", text: "Which factor MOST increases the solubility of a solid in water?", options: ["Decreasing temperature", "Increasing pressure", "Increasing temperature", "Stirring faster"], answer: 2, revealDigit: "6", feedback: "✅ Higher temperature gives molecules more energy to break apart ionic bonds — more dissolves. Digit <span class='digit-reveal'>6</span> revealed!" }
+        ],
+        // Slot 1 (reveals "3")
+        [
+          { type: "mc", text: "Concentration (g/mL) is calculated as:", options: ["Volume ÷ Mass", "Mass × Volume", "Mass ÷ Volume", "Volume × Density"], answer: 2, revealDigit: "3", feedback: "✅ Concentration = mass of solute ÷ volume of solution. Digit <span class='digit-reveal'>3</span> revealed!" },
+          { type: "mc", text: "A solution has 12 g of NaCl in 400 mL of water. Its concentration is:", options: ["0.03 g/mL", "0.3 g/mL", "3 g/mL", "30 g/mL"], answer: 0, revealDigit: "3", feedback: "✅ 12 ÷ 400 = 0.03 g/mL. Digit <span class='digit-reveal'>3</span> revealed!" },
+          { type: "mc", text: "Which has a HIGHER concentration?", options: ["10 g in 1000 mL", "10 g in 100 mL", "5 g in 1000 mL", "1 g in 100 mL"], answer: 1, revealDigit: "3", feedback: "✅ 10g/100mL = 0.1 g/mL — the same mass in less volume = more concentrated. Digit <span class='digit-reveal'>3</span> revealed!" }
+        ],
+        // Slot 2 (reveals "5")
+        [
+          { type: "mc", text: "When you dilute an acid with water, what happens to the concentration?", options: ["It increases", "It stays the same", "It decreases", "It doubles"], answer: 2, revealDigit: "5", feedback: "✅ Adding water spreads solute into more volume — concentration drops. Digit <span class='digit-reveal'>5</span> revealed!" },
+          { type: "mc", text: "Pure water has a pH of:", options: ["0", "7", "14", "4"], answer: 1, revealDigit: "5", feedback: "✅ Pure water is neutral — pH exactly 7. Below 7 = acid; above 7 = base. Digit <span class='digit-reveal'>5</span> revealed!" },
+          { type: "mc", text: "A solution with pH 2 compared to one with pH 4 is:", options: ["Twice as acidic", "Half as acidic", "100 times more acidic", "The same acidity"], answer: 2, revealDigit: "5", feedback: "✅ The pH scale is logarithmic — each unit = 10x difference. pH 2 is 10² = 100x more acidic. Digit <span class='digit-reveal'>5</span> revealed!" }
+        ],
+        // Slot 3 (reveals "9")
+        [
+          { type: "mc", text: "What does a base/alkali produce in water?", options: ["H⁺ ions", "OH⁻ (hydroxide) ions", "Salt crystals", "CO₂ gas"], answer: 1, revealDigit: "9", feedback: "✅ Bases release OH⁻ ions in water — acids release H⁺. Digit <span class='digit-reveal'>9</span> revealed!" },
+          { type: "mc", text: "Neutralization always produces:", options: ["Only water", "Only a salt", "A salt and water", "A gas and a base"], answer: 2, revealDigit: "9", feedback: "✅ Acid + Base → Salt + Water. Every time! Digit <span class='digit-reveal'>9</span> revealed!" },
+          { type: "mc", text: "Which of the following is a BASE?", options: ["HCl", "H₂SO₄", "NaOH", "CH₃COOH"], answer: 2, revealDigit: "9", feedback: "✅ NaOH (sodium hydroxide) is a strong base — it dissociates to give Na⁺ and OH⁻. Digit <span class='digit-reveal'>9</span> revealed!" }
+        ]
+      ]
+    ];
+
+    const ROOMS = [
+      // ─── ROOM 1: Lab Safety & Matter ───
+      {
+        id: 1,
+        emoji: "☣️",
+        title: "ROOM 1: Lab Safety & Matter",
+        desc: "The first door is sealed with a hazard code. Use your WHMIS and chemistry knowledge to crack it open.",
+        code: "2741",
+        questions: [
+          {
+            type: "mc",
+            text: "A truck is hauling propane bottles to a gas station. Which TWO WHMIS hazard symbols would most likely appear on that truck?",
+            options: [
+              "Compressed Gas + Flammable",
+              "Corrosive + Biohazard",
+              "Acute Toxicity + Oxidizing",
+              "Environmental Hazard + Explosive"
+            ],
+            answer: 0,
+            revealDigit: "2",
+            feedback: "✅ Correct! Propane is a compressed gas that is also highly flammable — both symbols apply. The digit <span class='digit-reveal'>2</span> is revealed!",
+            hint: "Think about the two most obvious dangerous properties of propane."
+          },
+          {
+            type: "mc",
+            text: "Which of the following is a CHEMICAL change — not a physical change?",
+            options: [
+              "Water evaporates from a puddle",
+              "Ice melts in a glass",
+              "Milk sours in the fridge",
+              "A solid is crushed to powder"
+            ],
+            answer: 2,
+            revealDigit: "7",
+            feedback: "✅ Correct! Milk souring is a chemical change — a new substance is formed. The digit <span class='digit-reveal'>7</span> is revealed!",
+            hint: "In a physical change, the substance is still the same — just a different size or state."
+          },
+          {
+            type: "mc",
+            text: "Salt dissolved in water is best classified as:",
+            options: [
+              "Heterogeneous mixture",
+              "Pure element",
+              "Homogeneous mixture (solution)",
+              "Compound"
+            ],
+            answer: 2,
+            revealDigit: "4",
+            feedback: "✅ Correct! Salt water is a homogeneous mixture (solution) — it looks uniform throughout. The digit <span class='digit-reveal'>4</span> is revealed!",
+            hint: "The key question: can you see two different parts when you look at it?"
+          },
+          {
+            type: "mc",
+            text: "Which of the following is a PHYSICAL property of a substance?",
+            options: [
+              "Combustibility",
+              "Reactivity with acid",
+              "Ability to oxidize",
+              "Melting point"
+            ],
+            answer: 3,
+            revealDigit: "1",
+            feedback: "✅ Correct! Melting point is a physical property — you observe it without changing the chemical identity. The digit <span class='digit-reveal'>1</span> is revealed!",
+            hint: "Physical properties can be measured or observed without changing what the substance IS."
+          }
+        ]
+      },
+
+      // ─── ROOM 2: Atomic Models ───
+      {
+        id: 2,
+        emoji: "⚛️",
+        title: "ROOM 2: The Atomic Archives",
+        desc: "Four scientists. Four models. One locked vault. Match the discoveries to reveal the code.",
+        code: "3158",
+        questions: [
+          {
+            type: "mc",
+            text: "\"I discovered a negatively charged particle using cathode ray tubes. My model shows the atom as a sphere of positive charge with electrons embedded in it.\" — Who said this?",
+            options: ["John Dalton", "Ernest Rutherford", "J.J. Thomson", "Niels Bohr"],
+            answer: 2,
+            revealDigit: "3",
+            feedback: "✅ J.J. Thomson! He used cathode ray tubes to discover the electron, creating the Plum Pudding/Raisin Bun model. Digit <span class='digit-reveal'>3</span> revealed!",
+            hint: "This scientist worked with cathode ray tubes (early TVs were based on this!) in 1894."
+          },
+          {
+            type: "mc",
+            text: "Rutherford fired alpha particles at gold foil. Some reflected backwards. What did he conclude from THIS specific observation?",
+            options: [
+              "Atoms are mostly empty space",
+              "Electrons  orbit like planets",
+              "There is a dense, positively charged nucleus",
+              "Atoms cannot be divided"
+            ],
+            answer: 2,
+            revealDigit: "1",
+            feedback: "✅ Correct! The backwards-reflected particles proved a dense, positive nucleus exists. Digit <span class='digit-reveal'>1</span> revealed!",
+            hint: "If something bounces BACK, what does that tell you about what it hit?"
+          },
+          {
+            type: "mc",
+            text: "Which scientist proposed that electrons exist in SET ENERGY LEVELS and cannot be found between levels?",
+            options: ["Dalton", "Thomson", "Rutherford", "Bohr"],
+            answer: 3,
+            revealDigit: "5",
+            feedback: "✅ Niels Bohr (1913)! He studied which colours of light atoms absorbed to conclude electrons occupy fixed energy levels. Digit <span class='digit-reveal'>5</span> revealed!",
+            hint: "This is the model you use to draw those circle diagrams with electrons on rings."
+          },
+          {
+            type: "mc",
+            text: "Which of Dalton's original statements does our MODERN understanding DISAGREE with?",
+            options: [
+              "All matter is made of tiny particles called atoms",
+              "Atoms cannot be created or destroyed",
+              "Atoms cannot be divided into smaller particles",
+              "Compounds form when atoms combine in fixed proportions"
+            ],
+            answer: 2,
+            revealDigit: "8",
+            feedback: "✅ Correct! We now know atoms CAN be divided into protons, neutrons, and electrons. Digit <span class='digit-reveal'>8</span> revealed!",
+            hint: "We've since discovered three smaller particles INSIDE the atom."
+          }
+        ]
+      },
+
+      // ─── ROOM 3: Periodic Table & Isotopes ───
+      {
+        id: 3,
+        emoji: "🔢",
+        title: "ROOM 3: The Periodic Puzzle",
+        desc: "The periodic table holds the key. Isotopes and element families guard this room's code.",
+        code: "6924",
+        questions: [
+          {
+            type: "mc",
+            text: "Carbon-14 has 6 protons. How many NEUTRONS does it have?",
+            options: ["6", "8", "14", "20"],
+            answer: 1,
+            revealDigit: "6",
+            feedback: "✅ Correct! Neutrons = Mass number − Atomic number = 14 − 6 = 8. Digit <span class='digit-reveal'>6</span> revealed!",
+            hint: "Neutrons = Mass number − Proton number."
+          },
+          {
+            type: "mc",
+            text: "Chlorine-37 has 17 protons. Which statement correctly describes its relationship to Chlorine-35?",
+            options: [
+              "They are different elements",
+              "They are isotopes — same protons, different neutrons",
+              "They are ions — same protons, different electrons",
+              "They are the same atom"
+            ],
+            answer: 1,
+            revealDigit: "9",
+            feedback: "✅ Correct! Isotopes have the same number of protons but different numbers of neutrons. Digit <span class='digit-reveal'>9</span> revealed!",
+            hint: "What particle changes when the mass number changes but the element stays the same?"
+          },
+          {
+            type: "mc",
+            text: "You are told an element is in Group 17 (halogens). Which of the following is TRUE about it?",
+            options: [
+              "It is colourless and non-reactive",
+              "It is a soft, shiny metal",
+              "It is highly reactive, especially with metals",
+              "It is found only as a solid at room temperature"
+            ],
+            answer: 2,
+            revealDigit: "2",
+            feedback: "✅ Correct! Halogens are highly reactive, especially with metals. They can be gas, liquid, or solid in the same family! Digit <span class='digit-reveal'>2</span> revealed!",
+            hint: "The noble gases are the non-reactive ones. Halogens are just to their left..."
+          },
+          {
+            type: "mc",
+            text: "An element has an atomic number of 12 and a mass number of 25. How many ELECTRONS does the neutral ATOM (not ion) have?",
+            options: ["12", "13", "25", "37"],
+            answer: 0,
+            revealDigit: "4",
+            feedback: "✅ Correct! A neutral atom always has the same number of electrons as protons = 12. Digit <span class='digit-reveal'>4</span> revealed!",
+            hint: "Neutral atoms have no charge, which means protons = electrons."
+          }
+        ]
+      },
+
+      // ─── ROOM 4: Bohr & Lewis Diagrams ───
+      {
+        id: 4,
+        emoji: "🔵",
+        title: "ROOM 4: The Diagram Decoder",
+        desc: "Bohr diagrams. Lewis structures. Energy levels. Visual knowledge unlocks this door.",
+        code: "5376",
+        questions: [
+          {
+            type: "mc",
+            text: "A Bohr diagram for Fluorine (F, atomic number 9) would show electrons as:",
+            options: [
+              "2 in level 1, 7 in level 2",
+              "9 in level 1",
+              "7 in level 1, 2 in level 2",
+              "2 in level 1, 2 in level 2, 5 in level 3"
+            ],
+            answer: 0,
+            revealDigit: "5",
+            feedback: "✅ Correct! Fluorine (Z=9): Level 1 holds max 2 electrons, then 7 more in Level 2. Digit <span class='digit-reveal'>5</span> revealed!",
+            hint: "The first energy level can only hold 2 electrons maximum."
+          },
+          {
+            type: "mc",
+            text: "What do elements in the SAME GROUP (family) on the periodic table have in common on their Bohr diagrams?",
+            options: [
+              "Same number of energy levels (rings)",
+              "Same number of valence electrons (outer level)",
+              "Same total number of electrons",
+              "Same number of neutrons"
+            ],
+            answer: 1,
+            revealDigit: "3",
+            feedback: "✅ Right! Elements in the same group have the same number of valence electrons — that's why they have similar chemical behaviour. Digit <span class='digit-reveal'>3</span> revealed!",
+            hint: "Think about what determines a column in the periodic table — it's the outer electrons!"
+          },
+          {
+            type: "mc",
+            text: "Sodium (Na) has 11 electrons. How many VALENCE electrons does it have, and how many LONE PAIRS are in its Lewis diagram?",
+            options: [
+              "1 valence electron, 0 lone pairs",
+              "1 valence electron, 1 lone pair",
+              "8 valence electrons, 4 lone pairs",
+              "3 valence electrons, 1 lone pair"
+            ],
+            answer: 0,
+            revealDigit: "7",
+            feedback: "✅ Correct! Na is in Group 1 → 1 valence electron. Since 1 < 2, there are no lone pairs (lone pairs need 2 electrons). Digit <span class='digit-reveal'>7</span> revealed!",
+            hint: "A lone pair needs 2 electrons together. Sodium is in Group 1, so..."
+          },
+          {
+            type: "mc",
+            text: "Noble gases (Group 18) are non-reactive. What do their Bohr diagrams ALWAYS show that explains this?",
+            options: [
+              "0 electrons in inner shells",
+              "A full outer valence energy level (8 electrons, or 2 for Helium)",
+              "Only 1 electron total",
+              "No nucleus"
+            ],
+            answer: 1,
+            revealDigit: "6",
+            feedback: "✅ Correct! Noble gases have a complete valence shell — they are already stable, so they don't need to react. Digit <span class='digit-reveal'>6</span> revealed!",
+            hint: "Atoms react to FILL their outer shell. What if it's already full?"
+          }
+        ]
+      },
+
+      // ─── ROOM 5: Ions & Ionic Bonding ───
+      {
+        id: 5,
+        emoji: "⚡",
+        title: "ROOM 5: The Ion Chamber",
+        desc: "Gain or lose — the charge matters. Ionic bonds and compound formulas lock this door.",
+        code: "2834",
+        questions: [
+          {
+            type: "mc",
+            text: "Magnesium (Mg) has 2 valence electrons. When it forms an ion, it will:",
+            options: [
+              "Gain 2 electrons → Mg²⁻",
+              "Gain 6 electrons → Mg⁶⁻",
+              "Lose 2 electrons → Mg²⁺",
+              "Stay neutral"
+            ],
+            answer: 2,
+            revealDigit: "2",
+            feedback: "✅ Correct! Metals lose electrons to form positive cations. Mg loses 2 → Mg²⁺. Digit <span class='digit-reveal'>2</span> revealed!",
+            hint: "Metals are on the left side — they GIVE electrons. It's faster than gaining 6!"
+          },
+          {
+            type: "mc",
+            text: "Which of the following correctly describes an ANION?",
+            options: [
+              "A positively charged ion (lost electrons)",
+              "A neutral atom",
+              "A negatively charged ion (gained electrons)",
+              "An atom in its ground state"
+            ],
+            answer: 2,
+            revealDigit: "8",
+            feedback: "✅ Correct! Anions are negatively charged. Remember: ANion → A-Negative. Digit <span class='digit-reveal'>8</span> revealed!",
+            hint: "The teacher's hint: anion looks like onion... and onions make you cry (negative feelings 😢)."
+          },
+          {
+            type: "mc",
+            text: "What is the correct ionic formula for calcium (Ca²⁺) combining with chlorine (Cl⁻)?",
+            options: ["CaCl", "Ca₂Cl", "CaCl₂", "Ca₂Cl₂"],
+            answer: 2,
+            revealDigit: "3",
+            feedback: "✅ Correct! Ca²⁺ needs 2 Cl⁻ ions to balance the charges (2+ cancels with two 1−). Formula = CaCl₂. Digit <span class='digit-reveal'>3</span> revealed!",
+            hint: "The charges must balance to zero. Ca gives charge 2+, so you need 2× Cl (1−) each."
+          },
+          {
+            type: "mc",
+            text: "Which property is characteristic of IONIC compounds but NOT molecular compounds?",
+            options: [
+              "Low melting point",
+              "Does not conduct electricity in water",
+              "Forms crystal lattices and conducts electricity when dissolved in water",
+              "Made only of non-metals"
+            ],
+            answer: 2,
+            revealDigit: "4",
+            feedback: "✅ Correct! Ionic compounds form crystal lattices and conduct electricity in solution (electrolytes). Digit <span class='digit-reveal'>4</span> revealed!",
+            hint: "This is why dissolved salt in water can conduct electricity!"
+          }
+        ]
+      },
+
+      // ─── ROOM 6: Naming Compounds & Acids ───
+      {
+        id: 6,
+        emoji: "🧪",
+        title: "ROOM 6: The Formula Vault",
+        desc: "The FINAL door. Chemical names and acid formulas. Get them right to escape the lab!",
+        code: "7516",
+        questions: [
+          {
+            type: "mc",
+            text: "What is the correct name for the compound K₂O?",
+            options: [
+              "Potassium oxide",
+              "Dipotassium monoxide",
+              "Potassium (II) oxide",
+              "Potassium oxygen"
+            ],
+            answer: 0,
+            revealDigit: "7",
+            feedback: "✅ Correct! K is a metal, O is a non-metal → ionic compound. No Roman numerals since K has only one possible charge. Name = Potassium oxide. Digit <span class='digit-reveal'>7</span> revealed!",
+            hint: "Ionic compounds: metal name + non-metal 'ide' ending. No prefixes needed."
+          },
+          {
+            type: "mc",
+            text: "What is the correct IUPAC name for the molecular compound N₂O₃?",
+            options: [
+              "Nitrogen trioxide",
+              "Dinitrogen trioxide",
+              "Nitrogen (III) oxide",
+              "Trinitrogen oxide"
+            ],
+            answer: 1,
+            revealDigit: "5",
+            feedback: "✅ Correct! Molecular compound → use prefixes. Di = 2, tri = 3. First element gets prefix only if >1. Name = Dinitrogen trioxide. Digit <span class='digit-reveal'>5</span> revealed!",
+            hint: "With molecular compounds, prefixes (di, tri, tetra...) tell you how many of each atom there are."
+          },
+          {
+            type: "mc",
+            text: "What is the correct name for the acid HCl(aq)?",
+            options: [
+              "Hydrogen chloride",
+              "Chloric acid",
+              "Hydrochloric acid",
+              "Hydrogen chlorate"
+            ],
+            answer: 2,
+            revealDigit: "1",
+            feedback: "✅ Correct! HCl → ionic name is 'hydrogen chloride' → ends in 'ide' → use 'hydro___ic acid' format → Hydrochloric acid. Digit <span class='digit-reveal'>1</span> revealed!",
+            hint: "If the ionic name ends in 'ide' → the acid name starts with 'hydro' and ends in 'ic acid'."
+          },
+          {
+            type: "mc",
+            text: "A solution turns RED litmus paper BLUE and phenolphthalein PINK. What is this solution?",
+            options: [
+              "An acid (pH < 7)",
+              "A neutral solution (pH = 7)",
+              "A base (pH > 7)",
+              "Water"
+            ],
+            answer: 2,
+            revealDigit: "6",
+            feedback: "✅ Correct! Red→Blue = base. Pink phenolphthalein = base. Bases have pH > 7 and contain hydroxide ions. Digit <span class='digit-reveal'>6</span> revealed!",
+            hint: "Remember: Blue litmus paper → Base (both start with B!)."
+          }
+        ]
+      },
+      // ─── ROOM 7: Lab Skills & Equipment ───
+      {
+        id: 7, emoji: "🔬",
+        title: "ROOM 7: Lab Skills & Equipment",
+        desc: "The equipment locker is sealed. Prove you know your way around a lab to crack this one open.",
+        code: "5329",
+        questions: [
+          {
+            type: "mc",
+            text: "When you 'tare' a balance before measuring a chemical, you are:",
+            options: ["Adding the mass of the empty container to your reading", "Zeroing the scale so only the substance is measured", "Calibrating the balance to 100 g", "Switching between grams and milligrams"],
+            answer: 1, revealDigit: "5",
+            feedback: "✅ Taring zeros out the container's mass so you only measure the substance. Digit <span class='digit-reveal'>5</span> revealed!"
+          },
+          {
+            type: "mc",
+            text: "You need to measure exactly 25.0 mL of liquid. Which glassware is BEST for precision?",
+            options: ["500 mL beaker", "250 mL Erlenmeyer flask", "25 mL graduated cylinder", "1 L volumetric flask"],
+            answer: 2, revealDigit: "3",
+            feedback: "✅ A graduated cylinder matched to the volume gives the most precise reading. Digit <span class='digit-reveal'>3</span> revealed!"
+          },
+          {
+            type: "mc",
+            text: "Which piece of lab equipment delivers small, precise volumes of solution during a titration?",
+            options: ["Pipette", "Beaker", "Burette", "Graduated cylinder"],
+            answer: 2, revealDigit: "2",
+            feedback: "✅ A burette is specifically designed to deliver precise, controlled volumes during titrations. Digit <span class='digit-reveal'>2</span> revealed!"
+          },
+          {
+            type: "mc",
+            text: "You spill a chemical on your skin in the lab. Your FIRST action should be:",
+            options: ["Tell your teacher, then wait", "Immediately rinse with large amounts of water", "Apply a paper towel to absorb it", "Check the WHMIS label on the bottle"],
+            answer: 1, revealDigit: "9",
+            feedback: "✅ Flush immediately with water — dilution minimizes damage. Then tell your teacher. Digit <span class='digit-reveal'>9</span> revealed!"
+          }
+        ]
+      },
+      // ─── ROOM 8: Types of Chemical Reactions ───
+      {
+        id: 8, emoji: "⚗️",
+        title: "ROOM 8: Reaction Chamber",
+        desc: "The reaction logs have been scrambled. Identify each type of chemical reaction to unlock the chamber.",
+        code: "4718",
+        questions: [
+          {
+            type: "mc",
+            text: "A + B → AB is the general form of a:",
+            options: ["Decomposition reaction", "Synthesis (combination) reaction", "Single displacement reaction", "Double displacement reaction"],
+            answer: 1, revealDigit: "4",
+            feedback: "✅ Two or more substances combining into one product = synthesis. Digit <span class='digit-reveal'>4</span> revealed!"
+          },
+          {
+            type: "mc",
+            text: "Hydrogen peroxide (H₂O₂) → water + oxygen gas. This is an example of:",
+            options: ["Synthesis", "Complete combustion", "Decomposition", "Single displacement"],
+            answer: 2, revealDigit: "7",
+            feedback: "✅ One compound breaking into simpler substances = decomposition. Digit <span class='digit-reveal'>7</span> revealed!"
+          },
+          {
+            type: "mc",
+            text: "Zinc + copper(II) sulfate → zinc sulfate + copper. This reaction is:",
+            options: ["Synthesis", "Double displacement", "Decomposition", "Single displacement"],
+            answer: 3, revealDigit: "1",
+            feedback: "✅ A more reactive element replaces a less reactive one in a compound = single displacement. Digit <span class='digit-reveal'>1</span> revealed!"
+          },
+          {
+            type: "mc",
+            text: "Methane undergoes COMPLETE combustion. The products are:",
+            options: ["CO + H₂", "CO₂ + H₂O", "C + H₂O", "CO₂ + H₂"],
+            answer: 1, revealDigit: "8",
+            feedback: "✅ Complete combustion of a hydrocarbon always produces CO₂ and H₂O. Digit <span class='digit-reveal'>8</span> revealed!"
+          }
+        ]
+      },
+      // ─── ROOM 9: Solutions & Concentration ───
+      {
+        id: 9, emoji: "💧",
+        title: "ROOM 9: Solution Lab",
+        desc: "The final lock needs chemistry knowledge about solutions, concentration, and pH. Solve it to escape!",
+        code: "6359",
+        questions: [
+          {
+            type: "mc",
+            text: "A substance that dissolves completely in water with no visible residue is described as:",
+            options: ["Insoluble", "Saturated", "Soluble", "Supersaturated"],
+            answer: 2, revealDigit: "6",
+            feedback: "✅ Soluble substances dissolve completely — no residue remains. Digit <span class='digit-reveal'>6</span> revealed!"
+          },
+          {
+            type: "mc",
+            text: "A solution contains 5 g of solute dissolved in 250 mL of solution. What is its concentration?",
+            options: ["0.002 g/mL", "0.02 g/mL", "0.2 g/mL", "2 g/mL"],
+            answer: 1, revealDigit: "3",
+            feedback: "✅ Concentration = 5 g ÷ 250 mL = 0.02 g/mL. Digit <span class='digit-reveal'>3</span> revealed!"
+          },
+          {
+            type: "mc",
+            text: "When you dilute a solution by adding more solvent, which quantity stays the SAME?",
+            options: ["Concentration", "Volume of solvent", "Volume of solution", "Amount (moles) of solute"],
+            answer: 3, revealDigit: "5",
+            feedback: "✅ Dilution spreads solute through more solvent — the amount of solute doesn't change. Digit <span class='digit-reveal'>5</span> revealed!"
+          },
+          {
+            type: "mc",
+            text: "HCl + NaOH → NaCl + H₂O is an example of:",
+            options: ["Decomposition", "Synthesis", "Neutralization", "Complete combustion"],
+            answer: 2, revealDigit: "9",
+            feedback: "✅ An acid reacting with a base to form a salt and water = neutralization. Digit <span class='digit-reveal'>9</span> revealed!"
+          }
+        ]
+      }
+    ];
+
+    /* ==============================================================
+       STATE
+    ============================================================== */
+    let currentRoom = 0;
+    let startTime = null;
+    let roomsCleared = 0;
+    const swapDepth = {}; // tracks how many swaps have happened per slot: `roomIdx-qi` => count
+
+    /* ==============================================================
+       PARTICLES
+    ============================================================== */
+    function createParticles() {
+      const container = document.getElementById('particles');
+      const colors = ['#00c9ff', '#7c3aed', '#10b981', '#fbbf24', '#ef4444'];
+      for (let i = 0; i < 30; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 8 + 3;
+        p.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random() * 100}%;
+      background:${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration:${Math.random() * 15 + 8}s;
+      animation-delay:${Math.random() * 10}s;
+    `;
+        container.appendChild(p);
+      }
+    }
+
+    /* ==============================================================
+       PROGRESS PILLS
+    ============================================================== */
+    function updatePills() {
+      const container = document.getElementById('progressPills');
+      container.innerHTML = '';
+      ROOMS.forEach((r, i) => {
+        const pill = document.createElement('div');
+        pill.className = 'pill';
+        if (i < currentRoom) pill.classList.add('done');
+        else if (i === currentRoom) pill.classList.add('active');
+        container.appendChild(pill);
+      });
+      document.getElementById('roomNumber').textContent =
+        `ROOM ${currentRoom + 1} / ${ROOMS.length}`;
+    }
+
+    /* ==============================================================
+       RENDER ROOM
+    ============================================================== */
+    function renderRoom(roomIdx) {
+      const room = ROOMS[roomIdx];
+      const container = document.getElementById('roomContainer');
+      container.innerHTML = '';
+
+      // Header
+      const header = document.createElement('div');
+      header.className = 'room-header';
+      header.innerHTML = `
+    <span class="room-emoji">${room.emoji}</span>
+    <h2 class="room-title">${room.title}</h2>
+    <p class="room-desc">${room.desc}</p>
+  `;
+      container.appendChild(header);
+
+
+      // Questions
+      const qGrid = document.createElement('div');
+      qGrid.className = 'questions-grid';
+
+      room.questions.forEach((q, qi) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `qcard-${qi}`;
+
+        let inputHTML = '';
+        if (q.type === 'mc') {
+          inputHTML = `<div class="options-grid">` +
+            q.options.map((opt, oi) =>
+              `<button class="option-btn" id="opt-${qi}-${oi}" onclick="checkMC(${qi},${oi})">${opt}</button>`
+            ).join('') +
+            `</div>`;
+        } else {
+          inputHTML = `<div class="answer-row">
+        <input class="answer-input" id="ans-${qi}" placeholder="Type your answer..."
+          onkeydown="if(event.key==='Enter') checkText(${qi})" />
+        <button class="submit-btn" id="sub-${qi}" onclick="checkText(${qi})">Check →</button>
+      </div>`;
+        }
+
+        card.innerHTML = `
+      <div class="q-header">
+        <div class="q-badge">Q${qi + 1}</div>
+        <div class="question-text">${q.text}</div>
+      </div>
+      ${inputHTML}
+      <div class="feedback" id="fb-${qi}"></div>
+    `;
+        qGrid.appendChild(card);
+      });
+
+      container.appendChild(qGrid);
+
+      // Next room button
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'next-room-btn';
+      nextBtn.id = 'nextBtn';
+      nextBtn.onclick = () => advanceRoom();
+      nextBtn.textContent = currentRoom < ROOMS.length - 1
+        ? `🔓 Advance to Room ${currentRoom + 2} →`
+        : '🏆 ESCAPE THE LAB!';
+      container.appendChild(nextBtn);
+
+      updateCodeDisplay();
+    }
+
+    /* ==============================================================
+       CODE DISPLAY
+    ============================================================== */
+    const roomAnswered = [];
+
+    // Per-room riddles: students collect digits, then solve clues to find the ORDER
+    const ROOM_RIDDLES = [
+      { intro: "You've collected all 4 digits — but the rogue scientist scrambled the order! Arrange them correctly to unlock the door." },
+      { intro: "Digits secured from the Atomic Archives! The code is yours — but in what order do they go?" },
+      { intro: "The periodic table gave you the digits. Now it's up to you to crack the correct sequence." },
+      { intro: "Your Bohr diagram knowledge paid off — you have all 4 digits. Can you find the right order?" },
+      { intro: "The Ion Chamber surrendered its digits. Figure out the correct sequence to escape!" },
+      { intro: "FINAL DOOR. You have all 4 digits from the Formula Vault. Arrange them correctly — and escape the lab!" },
+      { intro: "The Lab sealed its digits in the equipment room. You've unlocked them — now arrange them to escape!" },
+      { intro: "Reaction data retrieved! You have all 4 digits. Find the correct sequence to blow the door open." },
+      { intro: "The solution is in your hands — literally. Arrange the 4 digits in the right order to escape!" }
+    ];
+
+    function updateCodeDisplay() {
+      const room = ROOMS[currentRoom];
+      const answered = roomAnswered[currentRoom] || [];
+
+      // All questions answered — show riddle panel
+      if (answered.length === room.questions.length) {
+        if (!document.getElementById('riddlePanel')) {
+          const riddle = ROOM_RIDDLES[currentRoom];
+          const panel = document.createElement('div');
+          panel.className = 'riddle-panel';
+          panel.id = 'riddlePanel';
+          const shuffled = [...room.code].sort(() => Math.random() - 0.5);
+          panel.innerHTML = `
+            <div class="riddle-title">🔐 CRACK THE CODE</div>
+            <p class="riddle-intro">${riddle.intro}</p>
+            <p style="font-size:0.82rem;color:var(--muted);margin-bottom:12px;">Your 4 digits (order scrambled):</p>
+            <div class="digits-collected" style="margin-bottom:20px;">
+              ${shuffled.map(d => `<span class="digit-chip">${d}</span>`).join('')}
+            </div>
+            <p style="font-size:0.8rem;color:var(--muted);margin-bottom:16px;">Enter one digit per box. ✅ Correct position stays green &amp; locks. ❌ Wrong clears — keep trying!</p>
+            <div class="code-boxes-row" id="codeBoxesRow">
+              ${[0, 1, 2, 3].map(i => `
+                <input class="code-box" id="cbox-${i}" maxlength="1" inputmode="numeric"
+                  oninput="cboxInput(${i})" onkeydown="cboxKey(event,${i})" />
+              `).join('')}
+            </div>
+            <div class="riddle-feedback" id="riddleFb"></div>
+          `;
+          const nextBtn = document.getElementById('nextBtn');
+          if (nextBtn) nextBtn.parentNode.insertBefore(panel, nextBtn);
+          // Focus first box
+          setTimeout(() => { const b = document.getElementById('cbox-0'); if (b) b.focus(); }, 50);
+        }
+      }
+    }
+
+    // Called when a digit is typed into a code box
+    // Typing into a code box — just validate & advance, no feedback yet
+    function cboxInput(i) {
+      const box = document.getElementById(`cbox-${i}`);
+      if (!box) return;
+      box.value = box.value.replace(/[^0-9]/g, '').slice(-1);
+      if (!box.value) return;
+
+      // Auto-advance to the next unlocked box
+      if (i < 3) {
+        const next = document.getElementById(`cbox-${i + 1}`);
+        if (next && !next.disabled) next.focus();
+      }
+
+      // All 4 must be filled — disabled (locked-correct) boxes count as filled
+      const allFilled = [0, 1, 2, 3].every(j => {
+        const b = document.getElementById(`cbox-${j}`);
+        return b && (b.disabled || b.value);
+      });
+      if (allFilled) submitCode();
+    }
+
+    // Backspace: move to previous box if current is empty
+    function cboxKey(e, i) {
+      if (e.key === 'Backspace') {
+        const box = document.getElementById(`cbox-${i}`);
+        if (box && !box.value && i > 0) {
+          const prev = document.getElementById(`cbox-${i - 1}`);
+          if (prev && !prev.disabled) { prev.focus(); prev.value = ''; }
+        }
+      }
+    }
+
+    // Check all 4 boxes at once after they're all filled
+    function submitCode() {
+      const room = ROOMS[currentRoom];
+      let allCorrect = true;
+
+      // Evaluate only unlocked boxes — already-locked ones are already correct
+      [0, 1, 2, 3].forEach(i => {
+        const box = document.getElementById(`cbox-${i}`);
+        if (!box || box.disabled) return; // skip already-locked correct boxes
+        if (box.value === room.code[i]) {
+          box.classList.add('cbox-correct');
+          box.disabled = true;
+        } else {
+          allCorrect = false;
+          box.classList.add('cbox-wrong');
+          setTimeout(() => {
+            box.classList.remove('cbox-wrong');
+            box.value = '';
+          }, 600);
+        }
+      });
+
+      if (allCorrect) {
+        const fb = document.getElementById('riddleFb');
+        if (fb) { fb.innerHTML = `✅ Correct! The door unlocks!`; fb.className = 'riddle-feedback correct show'; }
+        const nextBtn = document.getElementById('nextBtn');
+        if (nextBtn) nextBtn.classList.add('visible');
+      } else {
+        // After animations settle, focus the first empty box
+        setTimeout(() => {
+          for (let j = 0; j <= 3; j++) {
+            const b = document.getElementById(`cbox-${j}`);
+            if (b && !b.disabled) { b.focus(); break; }
+          }
+        }, 700);
+      }
+    }
+
+    function checkCode() { } // legacy stub
+
+
+    /* ==============================================================
+       ANSWER CHECKING — MC
+    ============================================================== */
+    function checkMC(qi, selectedIdx) {
+      const room = ROOMS[currentRoom];
+      const q = room.questions[qi];
+      const card = document.getElementById(`qcard-${qi}`);
+
+      // Disable all options immediately so they can't click again during swap
+      room.questions[qi].answered = true;
+      for (let i = 0; i < q.options.length; i++) {
+        const btn = document.getElementById(`opt-${qi}-${i}`);
+        if (btn) btn.disabled = true;
+      }
+
+      const fb = document.getElementById(`fb-${qi}`);
+
+      if (selectedIdx === q.answer) {
+        // ✅ CORRECT
+        document.getElementById(`opt-${qi}-${selectedIdx}`).classList.add('correct');
+        card.classList.add('answered');
+        revealDigit(qi, q.revealDigit);
+        fb.innerHTML = q.feedback;
+        fb.className = 'feedback correct show';
+        updateCodeDisplay();
+      } else {
+        // ❌ WRONG — show brief error, then swap in a new question
+        document.getElementById(`opt-${qi}-${selectedIdx}`).classList.add('incorrect');
+        fb.innerHTML = `❌ Not quite! A new question is coming your way...`;
+        fb.className = 'feedback incorrect show';
+        card.classList.add('shake');
+        setTimeout(() => card.classList.remove('shake'), 500);
+
+        // After 1.5s, fade out and swap in backup question
+        setTimeout(() => swapQuestion(qi), 1500);
+      }
+    }
+
+    /* ==============================================================
+       SWAP QUESTION — replaces a wrongly-answered card with a backup
+    ============================================================== */
+    function swapQuestion(qi) {
+      const card = document.getElementById(`qcard-${qi}`);
+      if (!card) return;
+
+      // Cycle through the backup pool for this slot
+      const swapKey = `${currentRoom}-${qi}`;
+      const depth = swapDepth[swapKey] || 0;
+      const pool = BACKUP_POOLS[currentRoom] && BACKUP_POOLS[currentRoom][qi];
+      if (!pool || pool.length === 0) return;
+      const backup = pool[depth % pool.length];
+      swapDepth[swapKey] = depth + 1;
+
+      // Fade out
+      card.classList.add('card-swapping');
+      setTimeout(() => {
+        // Update the live question in ROOMS so revealDigit etc. still work
+        ROOMS[currentRoom].questions[qi] = { ...backup, answered: false };
+
+        // Rebuild options HTML
+        let inputHTML = '';
+        const q = ROOMS[currentRoom].questions[qi];
+        if (q.type === 'mc') {
+          inputHTML = `<div class="options-grid">` +
+            q.options.map((opt, oi) =>
+              `<button class="option-btn" id="opt-${qi}-${oi}" onclick="checkMC(${qi},${oi})">${opt}</button>`
+            ).join('') +
+            `</div>`;
+        } else {
+          inputHTML = `<div class="answer-row">
+        <input class="answer-input" id="ans-${qi}" placeholder="Type your answer..."
+          onkeydown="if(event.key==='Enter') checkText(${qi})" />
+        <button class="submit-btn" id="sub-${qi}" onclick="checkText(${qi})">Check →</button>
+      </div>`;
+        }
+
+        card.className = 'question-card card-swapped-in';
+        card.innerHTML = `
+      <div class="q-header">
+        <div class="q-badge">Q${qi + 1}</div>
+        <div class="question-text">${q.text}</div>
+      </div>
+      ${inputHTML}
+      <div class="feedback" id="fb-${qi}"></div>
+    `;
+      }, 400); // match fadeOut duration
+    }
+
+    /* ==============================================================
+       ANSWER CHECKING — TEXT
+    ============================================================== */
+    function checkText(qi) {
+      const room = ROOMS[currentRoom];
+      const q = room.questions[qi];
+      const input = document.getElementById(`ans-${qi}`);
+      const submitBtn = document.getElementById(`sub-${qi}`);
+      const fb = document.getElementById(`fb-${qi}`);
+      const card = document.getElementById(`qcard-${qi}`);
+
+      const userAns = input.value.trim().toLowerCase();
+      const correctAns = (Array.isArray(q.answer) ? q.answer : [q.answer])
+        .map(a => String(a).toLowerCase());
+
+      submitBtn.disabled = true;
+      input.disabled = true;
+
+      if (correctAns.some(a => userAns === a || userAns.includes(a))) {
+        input.classList.add('correct');
+        card.classList.add('answered');
+        revealDigit(qi, q.revealDigit);
+        fb.innerHTML = q.feedback;
+        fb.className = 'feedback correct show';
+        updateCodeDisplay();
+      } else {
+        input.classList.add('incorrect');
+        card.classList.add('wrong');
+        fb.innerHTML = `❌ Not quite. The correct answer is: <strong>${Array.isArray(q.answer) ? q.answer.join(' or ') : q.answer}</strong>`;
+        fb.className = 'feedback incorrect show';
+        card.classList.add('shake');
+        setTimeout(() => card.classList.remove('shake'), 500);
+      }
+    }
+
+    /* ==============================================================
+       DIGIT REVEAL
+    ============================================================== */
+    function revealDigit(qi, digit) {
+      if (!roomAnswered[currentRoom]) roomAnswered[currentRoom] = [];
+      if (!roomAnswered[currentRoom].includes(qi)) {
+        roomAnswered[currentRoom].push(qi);
+      }
+    }
+
+
+
+    /* ==============================================================
+       ADVANCE ROOM
+    ============================================================== */
+    function advanceRoom() {
+      roomsCleared++;
+      currentRoom++;
+      if (currentRoom >= ROOMS.length) {
+        showWin();
+        return;
+      }
+      updatePills();
+      renderRoom(currentRoom);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ==============================================================
+       START / RESTART
+    ============================================================== */
+    function startGame() {
+      currentRoom = 0;
+      roomsCleared = 0;
+      startTimer();
+      roomAnswered.length = 0;
+      Object.keys(swapDepth).forEach(k => delete swapDepth[k]);
+      ROOMS.forEach((r, ri) => r.questions.forEach((q, qi) => {
+        delete q.answered;
+        // Restore original questions from backup if they were swapped in
+        // (We re-load from the ROOMS const so nothing to undo — startGame re-renders fresh)
+      }));
+      // Re-initialize ROOMS questions from original data on restart
+      // (since we mutate them during play, we keep originals in a snapshot)
+      for (let ri = 0; ri < ROOMS.length; ri++) {
+        for (let qi = 0; qi < ROOMS[ri].questions.length; qi++) {
+          if (_originalQuestions[ri] && _originalQuestions[ri][qi]) {
+            ROOMS[ri].questions[qi] = { ..._originalQuestions[ri][qi] };
+          }
+        }
+      }
+
+      document.getElementById('intro').classList.remove('active');
+      document.getElementById('win').classList.remove('active');
+      document.getElementById('game').classList.add('active');
+
+      updatePills();
+      renderRoom(0);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function restartGame() {
+      document.getElementById('win').classList.remove('active');
+      document.getElementById('game').classList.remove('active');
+      document.getElementById('intro').classList.add('active');
+    }
+
+    /* ==============================================================
+       WIN
+    ============================================================== */
+    function showWin() {
+      stopTimer();
+      document.getElementById('game').classList.remove('active');
+      document.getElementById('win').classList.add('active');
+
+      const totalSec = Math.round((Date.now() - startTime) / 1000);
+      const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
+      const ss = String(totalSec % 60).padStart(2, '0');
+      const timeStr = `${mm}:${ss}`;
+      lastTimeSec = totalSec;
+
+      document.getElementById('finalScore').textContent = `${ROOMS.length}/${ROOMS.length}`;
+      document.getElementById('finalTime').textContent = timeStr;
+
+      loadLeaderboard();
+
+      // Confetti burst
+      const emojis = ['🎉', '⭐', '🧪', '⚗️', '🔬', '🏆', '✨', '💥', '🌟', '🎊'];
+      for (let i = 0; i < 40; i++) {
+        setTimeout(() => {
+          const el = document.createElement('div');
+          el.className = 'confetti-emoji';
+          el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+          el.style.cssText = `
+        left: ${Math.random() * 100}vw;
+        animation-duration: ${Math.random() * 2 + 2}s;
+        animation-delay: ${Math.random() * 1}s;
+        font-size: ${Math.random() * 1.5 + 1}rem;
+      `;
+          document.body.appendChild(el);
+          setTimeout(() => el.remove(), 4000);
+        }, i * 80);
+      }
+    }
+
+    /* ==============================================================
+       INIT — snapshot original questions so restart can restore them
+    ============================================================== */
+    const _originalQuestions = ROOMS.map(r => r.questions.map(q => ({ ...q })));
+    createParticles();
+
+    /* ==============================================================
+       TIMER
+    ============================================================== */
+    let _timerInterval = null;
+    let lastTimeSec = 0;
+
+    function startTimer() {
+      startTime = Date.now();
+      const el = document.getElementById('floatingTimer');
+      if (el) el.style.display = 'block';
+      clearInterval(_timerInterval);
+      _timerInterval = setInterval(() => {
+        const sec = Math.floor((Date.now() - startTime) / 1000);
+        const mm = String(Math.floor(sec / 60)).padStart(2, '0');
+        const ss = String(sec % 60).padStart(2, '0');
+        if (el) {
+          el.textContent = `⏱️ ${mm}:${ss}`;
+          el.classList.toggle('danger', sec > 900); // red after 15 min
+        }
+      }, 500);
+    }
+
+    function stopTimer() {
+      clearInterval(_timerInterval);
+      const el = document.getElementById('floatingTimer');
+      if (el) el.style.display = 'none';
+    }
+
+    /* ==============================================================
+       LEADERBOARD  (Firebase Realtime Database REST)
+       ─ HOW TO SET UP (free, no credit card):
+         1. Go to console.firebase.google.com → Add project
+         2. Build → Realtime Database → Create database (start in test mode)
+         3. Copy your Database URL (looks like https://YOUR-PROJECT-default-rtdb.firebaseio.com)
+         4. Paste it below as FIREBASE_URL
+       ─ Students' scores are written to /scores.json
+    ============================================================== */
+    const FIREBASE_URL = ''; // ← paste your Firebase Realtime Database URL here
+
+    const BLOCKED_INITIALS = ['ass', 'ars', 'fuk', 'fuc', 'cun', 'bch', 'sht', 'sex', 'nut', 'jiz', 'fag', 'fck', 'pns', 'kys'];
+    function isCleanInitials(str) {
+      const s = str.toLowerCase();
+      return s.length === 3 && !BLOCKED_INITIALS.some(b => s.includes(b));
+    }
+
+    async function loadLeaderboard() {
+      const wrap = document.getElementById('lbTableWrap');
+      const status = document.getElementById('lbStatus');
+      const inputRow = document.getElementById('lbInputRow');
+      const msg = document.getElementById('lbMsg');
+      if (!FIREBASE_URL) {
+        if (wrap) wrap.innerHTML = `<p class="lb-not-configured">📋 <strong>Leaderboard not yet configured.</strong><br>To enable it, create a free Firebase Realtime Database and paste the URL into the <code>FIREBASE_URL</code> constant in the HTML file.</p>`;
+        return;
+      }
+      try {
+        const res = await fetch(`${FIREBASE_URL}/scores.json`);
+        const data = await res.json();
+        const scores = data ? Object.values(data) : [];
+        scores.sort((a, b) => a.sec - b.sec);
+        const top = scores.slice(0, 10);
+        const medals = ['🥇', '🥈', '🥉'];
+        if (top.length === 0) {
+          wrap.innerHTML = `<p style="text-align:center;color:var(--muted);font-size:0.85rem;">No scores yet — be the first!</p>`;
+        } else {
+          wrap.innerHTML = `<table class="lb-table"><thead><tr><th>#</th><th>Name</th><th>Time</th></tr></thead><tbody>
+            ${top.map((s, i) => `<tr><td>${medals[i] || i + 1}</td><td>${s.name}</td><td>${s.time}</td></tr>`).join('')}
+          </tbody></table>`;
+        }
+        if (inputRow) inputRow.style.display = 'flex';
+        if (msg) msg.textContent = '';
+      } catch (e) {
+        if (wrap) wrap.innerHTML = `<p class="lb-not-configured">Could not load leaderboard. Check your Firebase URL.</p>`;
+      }
+    }
+
+    async function submitScore() {
+      const input = document.getElementById('lbInitials');
+      const msg = document.getElementById('lbMsg');
+      if (!input || !FIREBASE_URL) return;
+      const name = input.value.trim().toUpperCase();
+      if (name.length !== 3) { msg.textContent = 'Enter exactly 3 letters.'; return; }
+      if (!isCleanInitials(name)) { msg.textContent = 'Those initials are not allowed. Try again!'; return; }
+      const totalSec = lastTimeSec;
+      const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
+      const ss = String(totalSec % 60).padStart(2, '0');
+      const entry = { name, sec: totalSec, time: `${mm}:${ss}` };
+      try {
+        await fetch(`${FIREBASE_URL}/scores.json`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(entry)
+        });
+        msg.textContent = `✅ Score submitted! Great work, ${name}!`;
+        document.getElementById('lbInputRow').style.display = 'none';
+        loadLeaderboard();
+      } catch (e) {
+        msg.textContent = 'Could not save score — check your internet connection.';
+      }
+    }
+
+  </script>
+</body>
+
+</html>
+
