@@ -17,13 +17,10 @@
    A sim can appear in more than one course: just add another line with a
    different "course" but the SAME "file" path (see Significant Digits below).
 
-   Physics 20 units (use these exact spellings so grouping stays tidy):
-     "Skills & Measurement"  (intro / foundational skills)
-     "Kinematics"
-     "Dynamics"
-     "Circular Motion"
-     "Oscillatory Motion & Waves"
-   (We'll settle Science 10 and Physics 30 unit names when you build those out.)
+   Unit names (use these exact spellings so grouping stays tidy):
+     Science 10 : "Chemistry"  "Physics"  "Biology"
+     Physics 20 : "Skills & Measurement"  "Kinematics"  "Dynamics"  "Circular Motion"  "Oscillatory Motion & Waves"
+     Physics 30 : "Skills & Measurement"  (more to be added as you build them out)
 
    TO ADD A SIMULATION: copy an existing line, paste it inside the [ ] brackets,
    and change the fields. Keep the comma at the end of each line.
@@ -31,7 +28,8 @@
 const SIMS = [
 
   /* ---- Science 10 ---- */
-  { course:"sci10",  unit:"Skills & Measurement", title:"Significant Digits", desc:"Practice reading and rounding to the correct number of significant figures.", file:"sims/physics20/sigdig.html" },
+  { course:"sci10",  unit:"Chemistry", title:"Chapters 1–2 Escape Room", desc:"Work through chemistry challenges from the first two chapters to break out.", file:"sims/science10/ch1-2escape.html" },
+  { course:"sci10",  unit:"Physics", title:"Significant Digits", desc:"Practice reading and rounding to the correct number of significant figures.", file:"sims/physics20/sigdig.html" },
 
   /* ---- Physics 20 ---- */
   { course:"phys20", unit:"Skills & Measurement", title:"Significant Digits", desc:"Practice reading and rounding to the correct number of significant figures.", file:"sims/physics20/sigdig.html" },
