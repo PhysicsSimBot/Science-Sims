@@ -1,0 +1,3322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alberta Physics 20 - Significant Digits & Measurement Lab</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            alberta: {
+              navy: '#002B49',
+              gold: '#FFB81C',
+              blue: '#0072CE',
+              sky: '#41B6E6',
+              forest: '#2C5E3B',
+              rose: '#D9381E'
+            }
+          },
+          animation: {
+            'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            'shake': 'shake 0.4s ease-in-out',
+            'fade-out-up': 'fadeOutUp 0.35s ease-out forwards',
+            'fade-in-down': 'fadeInDown 0.35s ease-out forwards',
+            'pulse-subtle': 'pulseSubtle 2s infinite',
+          },
+          keyframes: {
+            pop: {
+              '0%': { transform: 'scale(0.85)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            },
+            shake: {
+              '0%, 100%': { transform: 'translateX(0)' },
+              '20%, 60%': { transform: 'translateX(-6px)' },
+              '40%, 80%': { transform: 'translateX(6px)' }
+            },
+            fadeOutUp: {
+              '0%': { transform: 'translateY(0) scale(1)', opacity: '1' },
+              '100%': { transform: 'translateY(-20px) scale(0.9)', opacity: '0' }
+            },
+            fadeInDown: {
+              '0%': { transform: 'translateY(20px) scale(0.9)', opacity: '0' },
+              '100%': { transform: 'translateY(0) scale(1)', opacity: '1' }
+            },
+            pulseSubtle: {
+              '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+              '50%': { opacity: '0.85', transform: 'scale(1.02)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+    }
+
+    .font-mono-math {
+      font-family: 'Fira Code', monospace;
+    }
+
+    .font-heading {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* Interactive Ruler Styles */
+    .ruler-container {
+      position: relative;
+      touch-action: none;
+    }
+
+    .ruler-wood {
+      background: linear-gradient(180deg, #FDE68A 0%, #D97706 8%, #F59E0B 85%, #B45309 100%);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 2px rgba(0,0,0,0.3);
+    }
+
+    .ruler-steel {
+      background: linear-gradient(180deg, #f8fafc 0%, #cbd5e1 15%, #94a3b8 50%, #64748b 85%, #334155 100%);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 2px rgba(0,0,0,0.4);
+    }
+
+    /* Magnifier Loupe */
+    .loupe-lens {
+      pointer-events: none;
+      border: 3px solid #0284c7;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.8) inset;
+      border-radius: 50%;
+      position: absolute;
+      overflow: hidden;
+      display: none;
+      z-index: 50;
+      background-color: #ffffff;
+    }
+
+    /* Card hover */
+    .quiz-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .quiz-card:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Print styles */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #print-report-modal, #print-report-modal * {
+        visibility: visible;
+      }
+      #print-report-modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+        box-shadow: none;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col selection:bg-alberta-gold selection:text-alberta-navy">
+
+  <!-- ================= WELCOME / LOADING SCREEN ================= -->
+  <div id="welcome-screen" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 transition-opacity duration-500">
+    <div class="bg-slate-900 border-2 border-alberta-blue/60 rounded-3xl max-w-lg w-full p-6 sm:p-8 flex flex-col gap-6 shadow-2xl animate-pop relative overflow-hidden">
+      
+      <!-- Ambient Glow Decor -->
+      <div class="absolute -top-24 -right-24 w-48 h-48 bg-alberta-blue/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-alberta-gold/15 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Header & Badges -->
+      <div class="text-center space-y-2">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-alberta-blue via-alberta-sky to-alberta-gold shadow-lg shadow-alberta-blue/30 text-white text-2xl mb-1">
+          <i class="fa-solid fa-ruler-combined"></i>
+        </div>
+        <div>
+          <span class="text-xs bg-alberta-gold/20 text-alberta-gold border border-alberta-gold/40 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">Physics 20</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white font-heading tracking-wide">Significant Digits Online Lab</h1>
+        <p class="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
+          Explore measurement rules, instrumental precision, and calculations through an interactive two-part physics laboratory.
+        </p>
+      </div>
+
+      <!-- Student Name Input Form -->
+      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 space-y-3.5">
+        <label for="welcome-name-input" class="block text-xs sm:text-sm font-bold text-slate-200">
+          <i class="fa-solid fa-user-pen text-alberta-sky mr-1.5"></i>Please enter your first and last name:
+        </label>
+        <div class="relative">
+          <input type="text" id="welcome-name-input" placeholder="e.g. Jane Doe" 
+            onkeydown="if(event.key==='Enter') submitWelcomeName()"
+            class="w-full bg-slate-950 border border-slate-600 rounded-xl px-4 py-3 text-sm sm:text-base font-semibold text-white placeholder-slate-500 focus:outline-none focus:border-alberta-blue focus:ring-2 focus:ring-alberta-blue/50 transition shadow-inner" />
+        </div>
+        <div id="welcome-name-error" class="text-xs text-rose-400 hidden font-medium flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span>Please enter your first and last name to proceed.</span>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div>
+        <button onclick="submitWelcomeName()" class="w-full py-3.5 bg-gradient-to-r from-alberta-blue via-alberta-sky to-alberta-blue hover:brightness-110 text-white font-bold rounded-xl shadow-lg shadow-alberta-blue/25 transition transform active:scale-[0.99] flex items-center justify-center gap-2 text-sm sm:text-base">
+          <span>Begin Lab Experience</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+      <!-- Quick Info Badges -->
+      <div class="grid grid-cols-3 gap-2 text-[11px] text-slate-400 border-t border-slate-800 pt-3">
+        <div class="flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-check text-emerald-400"></i>
+          <span>Part 1: Sig Digs Grid</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <i class="fa-solid fa-calculator text-alberta-sky"></i>
+          <span>Part 2: Operations Quiz</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <i class="fa-solid fa-ruler text-alberta-gold"></i>
+          <span>Part 3: Ruler & Area Lab</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= TOP HEADER & NAVIGATION ================= -->
+  <header class="bg-slate-800/90 backdrop-blur border-b border-slate-700/80 sticky top-0 z-40 px-4 lg:px-8 py-3 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <!-- Title & Alberta Physics Badge -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-alberta-blue via-alberta-sky to-alberta-gold flex items-center justify-center shadow-lg shadow-alberta-blue/20">
+          <i class="fa-solid fa-ruler-combined text-white text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-bold text-white font-heading tracking-wide">Physics 20: Significant Digits Lab</h1>
+            <span class="text-xs bg-alberta-gold/20 text-alberta-gold border border-alberta-gold/40 px-2 py-0.5 rounded-full font-semibold">Alberta Curriculum</span>
+          </div>
+          <p class="text-xs text-slate-400">Unit 1: Kinematics & Scientific Foundations • Measurement & Precision</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs & Actions -->
+      <div class="flex items-center gap-2 sm:gap-4">
+        <!-- Stage Tabs (3 Parts) -->
+        <nav class="flex bg-slate-900/80 p-1 rounded-xl border border-slate-700 gap-1">
+          <button id="tab-quiz-btn" onclick="switchTab('quiz')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 bg-alberta-blue text-white shadow">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>Part 1: Sig Digs Grid</span>
+            <span id="tab-quiz-badge" class="bg-white/20 text-xs px-1.5 py-0.5 rounded-full font-mono">0/20</span>
+          </button>
+
+          <button id="tab-calc-btn" onclick="switchTab('calc')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 text-slate-400 hover:text-slate-200">
+            <i id="tab-calc-lock-icon" class="fa-solid fa-lock text-xs text-amber-400"></i>
+            <span>Part 2: Operations Quiz</span>
+            <span id="tab-calc-badge" class="hidden bg-emerald-500/20 text-emerald-400 text-xs px-1.5 py-0.5 rounded-full font-mono">0/20</span>
+          </button>
+
+          <button id="tab-ruler-btn" onclick="switchTab('ruler')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 text-slate-400 hover:text-slate-200">
+            <i id="tab-ruler-lock-icon" class="fa-solid fa-lock text-xs text-amber-400"></i>
+            <span>Part 3: Ruler & Area Lab</span>
+            <span id="tab-ruler-badge" class="hidden bg-emerald-500/20 text-emerald-400 text-xs px-1.5 py-0.5 rounded-full font-mono">Ready</span>
+          </button>
+        </nav>
+
+        <!-- Tools -->
+        <div class="flex items-center gap-2">
+          <!-- Audio Toggle -->
+          <button onclick="toggleAudio()" id="audio-toggle-btn" class="p-2 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-300 transition text-sm" title="Toggle Sound Effects">
+            <i class="fa-solid fa-volume-high"></i>
+          </button>
+          
+          <!-- Rules Reference Modal Button -->
+          <button onclick="openRulesModal()" class="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs font-semibold text-alberta-sky flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-book-open"></i>
+            <span class="hidden sm:inline">Rules Guide</span>
+          </button>
+
+          <!-- Teacher Bypass Toggle -->
+          <button onclick="toggleTeacherUnlock()" id="teacher-bypass-btn" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-[11px] text-slate-400 transition" title="Teacher / Preview Mode: Unlocks all stations immediately">
+            <i class="fa-solid fa-key mr-1 text-amber-400"></i><span class="hidden md:inline">Teacher Bypass</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
+
+    <!-- ============================================================== -->
+    <!-- SECTION 1: 20-QUESTION SIGNIFICANT DIGITS GRID (PART 1)        -->
+    <!-- ============================================================== -->
+    <section id="section-quiz" class="flex flex-col gap-6 transition-all duration-300">
+      
+      <!-- Part 1 Header & Live Banner -->
+      <div class="bg-gradient-to-r from-slate-800 via-slate-800/90 to-slate-800 border border-slate-700/80 rounded-2xl p-5 sm:p-6 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="bg-alberta-blue/20 text-alberta-sky border border-alberta-blue/30 text-xs px-2.5 py-1 rounded-md font-bold uppercase tracking-wider">Mission 1</span>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white font-heading">Sig Digs Mastery Challenge</h2>
+          </div>
+          <p class="text-sm text-slate-300 max-w-2xl">
+            Determine the exact number of significant digits for all <strong class="text-alberta-gold">20 live cards</strong> simultaneously. 
+            <span class="text-amber-300"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Careful:</span> If you answer incorrectly, the card will disappear and generate a brand-new measurement to conquer!
+          </p>
+        </div>
+
+        <!-- Master Score Meter -->
+        <div class="bg-slate-900/90 border border-slate-700 px-5 py-3.5 rounded-xl flex items-center gap-4 min-w-[240px] shadow-inner">
+          <div class="relative w-14 h-14 flex items-center justify-center">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <path class="text-slate-700" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path id="quiz-progress-circle" class="text-alberta-gold transition-all duration-500 ease-out" stroke-dasharray="0, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            </svg>
+            <span id="quiz-progress-text" class="absolute text-sm font-bold text-white font-mono">0%</span>
+          </div>
+          <div>
+            <div class="text-xs text-slate-400 uppercase font-semibold">Mastery Goal</div>
+            <div class="text-lg font-extrabold text-white font-mono"><span id="quiz-solved-count" class="text-alberta-gold text-2xl">0</span> / 20</div>
+            <div id="quiz-streak-indicator" class="text-[11px] text-emerald-400 font-medium">Get all 20 to unlock Part 2</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part 1: The 20 Questions Responsive Grid -->
+      <div id="cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 sm:gap-4">
+        <!-- Dynamically rendered by JavaScript on load -->
+      </div>
+
+      <!-- Part 1 Completion Banner -->
+      <div id="quiz-unlocked-banner" class="hidden bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 border-2 border-emerald-500/80 rounded-2xl p-6 shadow-2xl text-center space-y-4 animate-pop">
+        <div class="inline-flex p-3 bg-emerald-500/20 text-emerald-400 rounded-full text-2xl">
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+        <h3 class="text-2xl font-extrabold text-white font-heading">Mission 1 Mastered! All 20 Questions Solved!</h3>
+        <p class="text-slate-300 max-w-xl mx-auto text-sm">
+          Outstanding work. You have proven your mastery of significant digits rules under the Alberta Physics 20 curriculum. 
+          Part 2: Significant Digits Operations & Rounding Quiz is now unlocked!
+        </p>
+        <div>
+          <button onclick="switchTab('calc')" class="px-6 py-3 bg-gradient-to-r from-alberta-blue to-alberta-sky text-white font-bold rounded-xl shadow-lg shadow-alberta-blue/30 hover:scale-105 transition transform flex items-center gap-2 mx-auto">
+            <span>Proceed to Part 2: Operations Quiz</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== -->
+    <!-- SECTION 2: OPERATIONS & ROUNDING QUIZ (PART 2)                 -->
+    <!-- ============================================================== -->
+    <section id="section-calc" class="hidden flex-col gap-6 transition-all duration-300">
+      
+      <!-- Part 2 Header & Live Banner -->
+      <div class="bg-gradient-to-r from-slate-800 via-slate-800/90 to-slate-800 border border-slate-700/80 rounded-2xl p-5 sm:p-6 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="bg-sky-500/20 text-alberta-sky border border-sky-500/30 text-xs px-2.5 py-1 rounded-md font-bold uppercase tracking-wider">Mission 2</span>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white font-heading">Sig Digs Operations & Rounding Quiz</h2>
+          </div>
+          <p class="text-sm text-slate-300 max-w-2xl">
+            Calculate and correctly round all <strong class="text-alberta-sky">20 live operational cards</strong>.
+            <span class="text-amber-300"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Rule:</span> If you answer incorrectly, a popup rule explanation will guide you and provide a fresh problem to master!
+          </p>
+        </div>
+
+        <!-- Master Score Meter -->
+        <div class="bg-slate-900/90 border border-slate-700 px-5 py-3.5 rounded-xl flex items-center gap-4 min-w-[240px] shadow-inner">
+          <div class="relative w-14 h-14 flex items-center justify-center">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <path class="text-slate-700" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path id="calc-progress-circle" class="text-alberta-sky transition-all duration-500 ease-out" stroke-dasharray="0, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            </svg>
+            <span id="calc-progress-text" class="absolute text-sm font-bold text-white font-mono">0%</span>
+          </div>
+          <div>
+            <div class="text-xs text-slate-400 uppercase font-semibold">Mastery Goal</div>
+            <div class="text-lg font-extrabold text-white font-mono"><span id="calc-solved-count" class="text-alberta-sky text-2xl">0</span> / 20</div>
+            <div id="calc-streak-indicator" class="text-[11px] text-emerald-400 font-medium">Get all 20 to unlock Part 3</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Reference Summary Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Mult / Div Rule -->
+        <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl p-4 flex items-start gap-3 shadow-md">
+          <div class="w-9 h-9 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-base mt-0.5">
+            ✕ ÷
+          </div>
+          <div class="space-y-1 text-xs">
+            <div class="font-bold text-slate-200">Multiplication & Division Rule</div>
+            <p class="text-slate-400">
+              Round your final calculated result to the <strong>fewest significant digits</strong> in the problem: $\min(\text{SD}_1, \text{SD}_2)$.
+            </p>
+          </div>
+        </div>
+
+        <!-- Add / Sub Rule -->
+        <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl p-4 flex items-start gap-3 shadow-md">
+          <div class="w-9 h-9 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-base mt-0.5">
+            ＋ −
+          </div>
+          <div class="space-y-1 text-xs">
+            <div class="font-bold text-slate-200">Addition & Subtraction Rule</div>
+            <p class="text-slate-400">
+              Round your final calculated result to the <strong>fewest decimal places</strong> (least precise place value): $\min(\text{DP}_1, \text{DP}_2)$.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part 2: The 20 Calculation Questions Responsive Grid -->
+      <div id="calc-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 sm:gap-4">
+        <!-- Dynamically rendered by JavaScript -->
+      </div>
+
+      <!-- Part 2 Completion Banner -->
+      <div id="calc-unlocked-banner" class="hidden bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 border-2 border-emerald-500/80 rounded-2xl p-6 shadow-2xl text-center space-y-4 animate-pop">
+        <div class="inline-flex p-3 bg-emerald-500/20 text-emerald-400 rounded-full text-2xl">
+          <i class="fa-solid fa-award"></i>
+        </div>
+        <h3 class="text-2xl font-extrabold text-white font-heading">Mission 2 Mastered! All 20 Operations Solved!</h3>
+        <p class="text-slate-300 max-w-xl mx-auto text-sm">
+          Sensational performance. You have mastered significant digits multiplication, division, addition, and subtraction rounding rules.
+          Part 3: Ruler Precision & Area Calculation Lab is now unlocked!
+        </p>
+        <div>
+          <button onclick="switchTab('ruler')" class="px-6 py-3 bg-gradient-to-r from-alberta-blue to-alberta-sky text-white font-bold rounded-xl shadow-lg shadow-alberta-blue/30 hover:scale-105 transition transform flex items-center gap-2 mx-auto">
+            <span>Proceed to Part 3: Ruler & Area Lab</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================================================== -->
+    <!-- SECTION 3: RULER PRECISION & AREA CALCULATION LAB (PART 3)    -->
+    <!-- ============================================================== -->
+    <section id="section-ruler" class="hidden flex-col gap-6 transition-all duration-300">
+      
+      <!-- Student Identity Profile Bar -->
+      <div class="bg-slate-800 border-2 border-alberta-blue/50 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-xl bg-alberta-blue/20 text-alberta-sky flex items-center justify-center text-xl font-bold border border-alberta-blue/40">
+            <i class="fa-solid fa-id-card"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <label for="global-student-name" class="font-bold text-white text-sm">Student Name:</label>
+            </div>
+            <p class="text-xs text-slate-400">Your lab specimens and measurements are configured for your profile.</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 w-full md:w-auto">
+          <input type="text" id="global-student-name" placeholder="Enter Full Name (e.g. Alex Morgan)" 
+            oninput="handleStudentNameChange(this.value)"
+            class="flex-1 md:w-64 bg-slate-900 border border-slate-600 rounded-xl px-3.5 py-2 text-sm font-semibold text-white placeholder-slate-500 focus:outline-none focus:border-alberta-blue focus:ring-1 focus:ring-alberta-blue transition" />
+          <button onclick="openReportModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-xl text-xs sm:text-sm font-bold text-white flex items-center gap-2 shadow transition shrink-0">
+            <i class="fa-solid fa-file-signature text-alberta-gold"></i>
+            <span class="hidden sm:inline">Lab Report</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Station Selector Bar (Exactly 4 Stations) -->
+      <div class="flex flex-wrap items-center gap-2 bg-slate-800/60 p-2 rounded-xl border border-slate-700/80">
+        <span class="text-xs text-slate-400 font-bold uppercase px-2"><i class="fa-solid fa-flask mr-1"></i>Station:</span>
+        <button onclick="loadStation(0)" id="station-btn-0" class="station-tab px-3 py-1.5 rounded-lg text-xs font-bold transition bg-alberta-blue text-white shadow">
+          Station 1: 1-cm Ruler
+        </button>
+        <button onclick="loadStation(1)" id="station-btn-1" class="station-tab px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-slate-200">
+          Station 2: Millimeter Ruler
+        </button>
+        <button onclick="loadStation(2)" id="station-btn-2" class="station-tab px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-slate-200">
+          Station 3: Mixed (Top: 1-cm | Side: mm) ⚖️
+        </button>
+        <button onclick="loadStation(3)" id="station-btn-3" class="station-tab px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-slate-200">
+          Station 4: Mixed (Top: mm | Side: 1-cm) ⚖️
+        </button>
+      </div>
+
+      <!-- Interactive Lab Workspace Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left 7 Cols: Interactive Canvas / Ruler Workspace -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
+          <!-- Canvas Container Card -->
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 shadow-xl flex flex-col relative overflow-hidden">
+            
+            <!-- Canvas Action Header -->
+            <div class="flex items-center justify-between pb-3 mb-2 border-b border-slate-700/60 text-xs">
+              <div class="flex items-center gap-2">
+                <span id="station-title-badge" class="font-bold text-white text-sm">Station 1</span>
+                <span id="station-ruler-badge" class="bg-slate-700 text-alberta-sky px-2 py-0.5 rounded text-[11px] font-mono">1-cm Graduations</span>
+              </div>
+
+              <!-- Controls -->
+              <div class="flex items-center gap-2">
+                <button onclick="resetRulerPositions()" class="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-xs transition" title="Reset ruler positions to gold bar">
+                  <i class="fa-solid fa-rotate-left mr-1"></i>Reset
+                </button>
+                <button onclick="toggleZeroSnap()" id="snap-btn" class="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-xs transition" title="Snap ruler origin (0.0 cm) to gold bar corner">
+                  <i class="fa-solid fa-magnet mr-1"></i>Snap 0 cm
+                </button>
+              </div>
+            </div>
+
+            <!-- Interactive Stage Area -->
+            <div id="interactive-stage" class="relative w-full h-[400px] sm:h-[450px] bg-slate-950/80 rounded-xl border border-slate-700/80 overflow-hidden cursor-crosshair">
+              
+              <!-- Grid background -->
+              <div class="absolute inset-0 bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:16px_16px] opacity-40"></div>
+
+              <!-- Gold Bar Specimen Rectangle -->
+              <div id="specimen-rect" class="absolute border-2 border-amber-400 rounded-sm shadow-2xl transition-all duration-300 flex items-center justify-center pointer-events-none" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.4), rgba(217, 119, 6, 0.65)); left: 90px; top: 120px; width: 260px; height: 150px;">
+                <div class="text-center font-bold text-amber-100 text-xs uppercase tracking-wider px-2.5 py-1 rounded flex items-center gap-1.5 shadow-md border border-amber-300/40 bg-slate-950/40 backdrop-blur-sm">
+                  <i class="fa-solid fa-bars-staggered text-amber-300 text-sm"></i>
+                  <span id="specimen-id-text">100 oz Gold Bar</span>
+                </div>
+                <!-- Dimension hints -->
+                <div class="absolute -top-5 left-0 right-0 text-center text-[10px] text-amber-300/90 font-mono font-semibold">Length (L) →</div>
+                <div class="absolute -left-6 top-0 bottom-0 flex items-center text-[10px] text-amber-300/90 font-mono font-semibold -rotate-90">Width (W) →</div>
+              </div>
+
+              <!-- Horizontal Interactive Ruler -->
+              <div id="horizontal-ruler" class="ruler-container absolute cursor-grab active:cursor-grabbing select-none shadow-2xl rounded-sm border border-slate-900/50" style="left: 60px; top: 50px; width: 460px; height: 60px;"></div>
+
+              <!-- Vertical Interactive Ruler -->
+              <div id="vertical-ruler" class="ruler-container absolute cursor-grab active:cursor-grabbing select-none shadow-2xl rounded-sm border border-slate-900/50" style="left: 20px; top: 80px; width: 60px; height: 330px;"></div>
+
+              <!-- Floating Optical Precision Magnifier -->
+              <div id="loupe-lens" class="loupe-lens w-36 h-36 border-4 border-alberta-sky shadow-2xl">
+                <canvas id="loupe-canvas" width="144" height="144" class="w-full h-full"></canvas>
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div class="w-full h-[1px] bg-red-500/80"></div>
+                  <div class="h-full w-[1px] bg-red-500/80 absolute"></div>
+                  <div class="w-3 h-3 rounded-full border border-red-500 absolute"></div>
+                </div>
+              </div>
+
+              <!-- Draggable / Instruction Overlay Pill -->
+              <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[11px] text-slate-400 bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 pointer-events-none">
+                <div class="flex items-center gap-2">
+                  <span class="text-alberta-gold"><i class="fa-solid fa-hand-pointer mr-1"></i>Drag rulers</span> to align with gold bar edges.
+                </div>
+                <div class="hidden sm:flex items-center gap-1.5 text-slate-300">
+                  <i class="fa-solid fa-magnifying-glass text-alberta-sky"></i>
+                  <span>Hover over tick marks to use the magnifying feature</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Instrument Resolution Guidance Card -->
+            <div class="mt-3 bg-slate-900/70 border border-slate-700/60 rounded-xl p-3 text-xs flex items-start gap-3">
+              <div class="p-2 bg-alberta-blue/20 text-alberta-sky rounded-lg mt-0.5">
+                <i class="fa-solid fa-circle-info text-sm"></i>
+              </div>
+              <div class="space-y-1">
+                <div class="font-bold text-slate-200" id="instrument-guide-title">How to read this ruler:</div>
+                <p class="text-slate-400" id="instrument-guide-desc">
+                  Carefully inspect the ruler graduations. Record all certain digits directly from the scale and estimate one uncertain digit further according to Alberta Physics 20 rules.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: Measurement & Sig Dig Calculation Worksheet -->
+        <div class="lg:col-span-5 flex flex-col gap-4">
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
+            
+            <div class="border-b border-slate-700/80 pb-3">
+              <div class="flex items-center justify-between">
+                <h3 class="font-bold text-white text-base font-heading flex items-center gap-2">
+                  <i class="fa-solid fa-calculator text-alberta-gold"></i>
+                  <span id="worksheet-title">Lab Worksheet & Calculation</span>
+                </h3>
+                <span id="station-status-pill" class="text-[11px] bg-slate-700 text-slate-300 px-2 py-0.5 rounded font-mono font-semibold">In Progress</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1" id="worksheet-subtitle">Measure Length and Width, identify sig figs, and calculate the rounded area.</p>
+            </div>
+
+            <!-- Single Station Measurement Section (For Station 1 & 2) -->
+            <div id="single-station-form" class="space-y-4">
+              <!-- Step 1: Length Measurement -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-xs">
+                  <label class="font-bold text-slate-200 flex items-center gap-1.5">
+                    <span class="w-4 h-4 rounded-full bg-slate-700 text-[10px] inline-flex items-center justify-center text-alberta-sky">1</span>
+                    <span>Measured Length (<var>L</var>):</span>
+                  </label>
+                  <span class="text-[11px] text-slate-400" id="length-format-hint"></span>
+                </div>
+                <div class="flex gap-2">
+                  <div class="relative flex-1">
+                    <input type="text" id="input-length" placeholder="Length (cm)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-white placeholder-slate-500 focus:outline-none focus:border-alberta-blue" />
+                    <span class="absolute right-3 top-2 text-xs text-slate-400 font-mono">cm</span>
+                  </div>
+                  <div class="w-28">
+                    <input type="number" id="input-length-sd" placeholder="Sig Digs" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-2 text-sm font-mono text-center text-white placeholder-slate-500 focus:outline-none focus:border-alberta-blue" title="Number of significant digits in length" />
+                  </div>
+                </div>
+                <div id="length-feedback" class="text-[11px] hidden font-medium"></div>
+              </div>
+
+              <!-- Step 2: Width Measurement -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-xs">
+                  <label class="font-bold text-slate-200 flex items-center gap-1.5">
+                    <span class="w-4 h-4 rounded-full bg-slate-700 text-[10px] inline-flex items-center justify-center text-alberta-sky">2</span>
+                    <span>Measured Width (<var>W</var>):</span>
+                  </label>
+                  <span class="text-[11px] text-slate-400" id="width-format-hint"></span>
+                </div>
+                <div class="flex gap-2">
+                  <div class="relative flex-1">
+                    <input type="text" id="input-width" placeholder="Width (cm)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-white placeholder-slate-500 focus:outline-none focus:border-alberta-blue" />
+                    <span class="absolute right-3 top-2 text-xs text-slate-400 font-mono">cm</span>
+                  </div>
+                  <div class="w-28">
+                    <input type="number" id="input-width-sd" placeholder="Sig Digs" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-2 text-sm font-mono text-center text-white placeholder-slate-500 focus:outline-none focus:border-alberta-blue" title="Number of significant digits in width" />
+                  </div>
+                </div>
+                <div id="width-feedback" class="text-[11px] hidden font-medium"></div>
+              </div>
+
+              <!-- Step 3: Raw Area Calculation -->
+              <div class="space-y-1.5 pt-2 border-t border-slate-700/60">
+                <div class="flex items-center justify-between text-xs">
+                  <label class="font-bold text-slate-200 flex items-center gap-1.5">
+                    <span class="w-4 h-4 rounded-full bg-slate-700 text-[10px] inline-flex items-center justify-center text-alberta-sky">3</span>
+                    <span>Raw Product (<var>A</var> = <var>L</var> × <var>W</var>):</span>
+                  </label>
+                  <span class="text-[11px] text-slate-400 font-mono">Unrounded</span>
+                </div>
+                <div class="relative">
+                  <input type="text" id="input-raw-area" placeholder="Full unrounded product" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-white placeholder-slate-500 focus:outline-none focus:border-alberta-blue" />
+                  <span class="absolute right-3 top-2 text-xs text-slate-400 font-mono">cm²</span>
+                </div>
+                <div id="raw-area-feedback" class="text-[11px] hidden font-medium"></div>
+              </div>
+
+              <!-- Step 4: Rounded Area (Physics 20 Rule) -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-xs">
+                  <label class="font-bold text-alberta-gold flex items-center gap-1.5">
+                    <span class="w-4 h-4 rounded-full bg-alberta-gold/20 text-alberta-gold text-[10px] inline-flex items-center justify-center font-bold">4</span>
+                    <span>Final Correct Area (Sig Digs Rule):</span>
+                  </label>
+                  <span id="final-sd-rule-hint" class="text-[11px] text-alberta-sky font-semibold">Fewest Sig Digs Rule</span>
+                </div>
+                <div class="flex gap-2">
+                  <div class="relative flex-1">
+                    <input type="text" id="input-final-area" placeholder="Stated Area (cm²)" class="w-full bg-slate-900 border-2 border-alberta-gold/50 rounded-lg px-3 py-2 text-sm font-mono text-white placeholder-slate-500 focus:outline-none focus:border-alberta-gold" />
+                    <span class="absolute right-3 top-2 text-xs text-slate-400 font-mono">cm²</span>
+                  </div>
+                  <div class="w-28">
+                    <input type="number" id="input-final-sd" placeholder="Final SD" class="w-full bg-slate-900 border-2 border-alberta-gold/50 rounded-lg px-2.5 py-2 text-sm font-mono text-center text-white placeholder-slate-500 focus:outline-none focus:border-alberta-gold" title="Number of sig digs in final answer" />
+                  </div>
+                </div>
+                <div id="final-area-feedback" class="text-[11px] hidden font-medium"></div>
+              </div>
+            </div>
+
+            <!-- Check & Next Action Buttons -->
+            <div class="pt-2 flex flex-col gap-2">
+              <button onclick="checkWorksheet()" id="check-worksheet-btn" class="w-full py-2.5 bg-gradient-to-r from-alberta-blue to-alberta-sky hover:brightness-110 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Validate Station Measurements & Calculation</span>
+              </button>
+
+              <button onclick="nextStation()" id="next-station-btn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-md transition hidden flex items-center justify-center gap-2 text-sm">
+                <span>Station Complete! Proceed to Next Station</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+
+            <!-- Full Pedagogical Solution Breakdown -->
+            <div id="solution-breakdown-card" class="hidden bg-slate-900/90 border border-slate-700 rounded-xl p-3.5 space-y-2 text-xs">
+              <div class="font-bold text-emerald-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-nodes"></i>
+                <span>Physics 20 Precision Analysis:</span>
+              </div>
+              <div id="solution-breakdown-text" class="text-slate-300 space-y-1 font-mono text-[11px]"></div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-slate-800/80 border-t border-slate-700/80 px-6 py-4 mt-auto text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="text-alberta-gold font-bold">Physics 20 Alberta Curriculum</span>
+        <span>•</span>
+        <span>Significant Digits, Precision & Instrumental Uncertainty</span>
+      </div>
+      <div>
+        <span>Alberta Physics 20 • Interactive Online Laboratory</span>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ================= MODAL: ALBERTA PHYSICS SIG DIG RULES REFERENCE ================= -->
+  <div id="rules-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl animate-pop">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-alberta-blue/20 text-alberta-sky flex items-center justify-center">
+            <i class="fa-solid fa-book-bookmark"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white font-heading">Alberta Physics 20: Significant Digits Rulebook</h3>
+        </div>
+        <button onclick="closeRulesModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Modal Content Scrollable -->
+      <div class="p-6 overflow-y-auto space-y-4 text-xs sm:text-sm text-slate-300">
+        
+        <!-- Rule 1: Non-Zero Digits -->
+        <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3.5 space-y-1">
+          <div class="font-bold text-alberta-gold flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-alberta-gold/20 rounded text-xs">Rule 1</span>
+            <span>Non-Zero Digits</span>
+          </div>
+          <p>All non-zero digits ($1, 2, 3, 4, 5, 6, 7, 8, 9$) are <strong>always significant</strong>.</p>
+          <div class="text-slate-400 font-mono text-xs">Example: <code class="text-white">438 m</code> has <strong class="text-emerald-400">3</strong> sig digs.</div>
+        </div>
+
+        <!-- Rule 2: Captive Zeros -->
+        <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3.5 space-y-1">
+          <div class="font-bold text-alberta-gold flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-alberta-gold/20 rounded text-xs">Rule 2</span>
+            <span>Captive (Sandwiched) Zeros</span>
+          </div>
+          <p>Zeros between non-zero digits are <strong>always significant</strong>.</p>
+          <div class="text-slate-400 font-mono text-xs">Examples: <code class="text-white">5004 kg</code> has <strong class="text-emerald-400">4</strong> sig digs; <code class="text-white">20.08 s</code> has <strong class="text-emerald-400">4</strong> sig digs.</div>
+        </div>
+
+        <!-- Rule 3: Leading Zeros -->
+        <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3.5 space-y-1">
+          <div class="font-bold text-alberta-gold flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-alberta-gold/20 rounded text-xs">Rule 3</span>
+            <span>Leading Zeros (Placeholders)</span>
+          </div>
+          <p>Zeros to the left of the first non-zero digit are <strong>NEVER significant</strong>; they only locate the decimal point.</p>
+          <div class="text-slate-400 font-mono text-xs">Examples: <code class="text-white">0.0025 m</code> has <strong class="text-emerald-400">2</strong> sig digs; <code class="text-white">0.080 m</code> has <strong class="text-emerald-400">2</strong> sig digs.</div>
+        </div>
+
+        <!-- Rule 4: Trailing Zeros -->
+        <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3.5 space-y-1">
+          <div class="font-bold text-alberta-gold flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-alberta-gold/20 rounded text-xs">Rule 4</span>
+            <span>Trailing Zeros</span>
+          </div>
+          <p>
+            • With a decimal point: <strong>ARE significant</strong> (indicates instrument precision).<br>
+            • Without a decimal point: <strong>NOT significant</strong> (treated as placeholders unless given in scientific notation).
+          </p>
+          <div class="text-slate-400 font-mono text-xs">Examples: <code class="text-white">45.00 m</code> has <strong class="text-emerald-400">4</strong> sig digs; <code class="text-white">500. m</code> has <strong class="text-emerald-400">3</strong> sig digs; <code class="text-white">500 m</code> has <strong class="text-emerald-400">1</strong> sig dig.</div>
+        </div>
+
+        <!-- Rule 5: Scientific Notation -->
+        <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3.5 space-y-1">
+          <div class="font-bold text-alberta-gold flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-alberta-gold/20 rounded text-xs">Rule 5</span>
+            <span>Scientific Notation</span>
+          </div>
+          <p>Only the mantissa/coefficient is counted. The power of 10 does not affect significant digits.</p>
+          <div class="text-slate-400 font-mono text-xs">Examples: <code class="text-white">3.00 × 10⁸ m/s</code> has <strong class="text-emerald-400">3</strong> sig digs; <code class="text-white">6.670 × 10⁻¹¹</code> has <strong class="text-emerald-400">4</strong> sig digs.</div>
+        </div>
+
+        <!-- Rule 6: Multiplication & Division -->
+        <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3.5 space-y-1">
+          <div class="font-bold text-alberta-sky flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-alberta-sky/20 rounded text-xs">Calculation Rule 1</span>
+            <span>Multiplication & Division (Area, Volume, Speed)</span>
+          </div>
+          <p>The final calculated result must be rounded to have the <strong>same number of significant digits as the measurement with the FEWEST significant digits</strong>: $\min(\text{SD}_1, \text{SD}_2)$.</p>
+          <div class="text-slate-400 font-mono text-xs">Example: <code class="text-white">8.4 cm (2 SD) × 4.35 cm (3 SD) = 36.54 cm²</code> → <strong class="text-emerald-400">37 cm²</strong> (2 SD).</div>
+        </div>
+
+        <!-- Rule 7: Addition & Subtraction -->
+        <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3.5 space-y-1">
+          <div class="font-bold text-alberta-gold flex items-center gap-2">
+            <span class="px-1.5 py-0.5 bg-alberta-gold/20 rounded text-xs">Calculation Rule 2</span>
+            <span>Addition & Subtraction (Perimeter, Mass Changes)</span>
+          </div>
+          <p>The final calculated result must be rounded to have the <strong>same number of decimal places (least precise place value) as the measurement with the FEWEST decimal places</strong>: $\min(\text{DP}_1, \text{DP}_2)$.</p>
+          <div class="text-slate-400 font-mono text-xs">Example: <code class="text-white">125.4 g (1 DP) + 3.12 g (2 DP) = 128.52 g</code> → <strong class="text-emerald-400">128.5 g</strong> (1 DP).</div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-3 border-t border-slate-700 bg-slate-900/50 flex justify-end">
+        <button onclick="closeRulesModal()" class="px-4 py-2 bg-alberta-blue hover:bg-alberta-sky text-white text-xs font-bold rounded-lg transition">
+          Got It! Back to Lab
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ================= MODAL: STUDENT LAB REPORT & CERTIFICATE ================= -->
+  <div id="report-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div id="print-report-modal" class="bg-white text-slate-900 rounded-2xl max-w-2xl w-full p-6 sm:p-8 flex flex-col gap-5 shadow-2xl">
+      
+      <!-- Report Header -->
+      <div class="border-b-2 border-alberta-navy pb-4 flex items-center justify-between">
+        <div>
+          <div class="text-xs uppercase font-bold text-alberta-blue tracking-wider">Alberta Physics 20 • Lab Certificate</div>
+          <h2 class="text-2xl font-extrabold text-alberta-navy font-heading">Significant Digits & Measurement Lab</h2>
+          <p class="text-xs text-slate-500">Student Laboratory Performance Record (3-Part Master Lab)</p>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-alberta-navy text-alberta-gold flex items-center justify-center text-xl font-bold shadow">
+          <i class="fa-solid fa-award"></i>
+        </div>
+      </div>
+
+      <!-- Student Info Inputs -->
+      <div class="grid grid-cols-2 gap-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Student Name:</label>
+          <input type="text" id="report-student-name" placeholder="Enter Full Name" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-800 focus:outline-none focus:border-alberta-blue" />
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Date & Seed Code:</label>
+          <input type="text" id="report-date" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-sm text-slate-800 bg-slate-50 font-mono" readonly />
+        </div>
+      </div>
+
+      <!-- Lab Summary Stats Table -->
+      <div class="border border-slate-200 rounded-xl overflow-hidden text-xs">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+            <tr>
+              <th class="p-2.5">Lab Component</th>
+              <th class="p-2.5">Status</th>
+              <th class="p-2.5 text-right">Mastery Metric</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 font-medium">
+            <tr>
+              <td class="p-2.5 font-semibold">Part 1: Sig Digs Identification Grid</td>
+              <td class="p-2.5"><span id="report-p1-status" class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">Completed (20/20)</span></td>
+              <td class="p-2.5 text-right font-mono font-bold" id="report-p1-score">20 / 20 Solved</td>
+            </tr>
+            <tr>
+              <td class="p-2.5 font-semibold">Part 2: Sig Digs Operations & Calculations</td>
+              <td class="p-2.5"><span id="report-p2-status" class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600">Pending</span></td>
+              <td class="p-2.5 text-right font-mono font-bold" id="report-p2-score">0 / 20 Solved</td>
+            </tr>
+            <tr>
+              <td class="p-2.5">Part 3: Station 1 (Coarse 1-cm Ruler)</td>
+              <td class="p-2.5"><span id="report-s1-status" class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600">Pending</span></td>
+              <td class="p-2.5 text-right font-mono" id="report-s1-score">—</td>
+            </tr>
+            <tr>
+              <td class="p-2.5">Part 3: Station 2 (Millimeter 0.1-cm Ruler)</td>
+              <td class="p-2.5"><span id="report-s2-status" class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600">Pending</span></td>
+              <td class="p-2.5 text-right font-mono" id="report-s2-score">—</td>
+            </tr>
+            <tr>
+              <td class="p-2.5">Part 3: Station 3 (Mixed: Top 1-cm | Side mm)</td>
+              <td class="p-2.5"><span id="report-s3-status" class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600">Pending</span></td>
+              <td class="p-2.5 text-right font-mono" id="report-s3-score">—</td>
+            </tr>
+            <tr>
+              <td class="p-2.5">Part 3: Station 4 (Mixed: Top mm | Side 1-cm)</td>
+              <td class="p-2.5"><span id="report-s4-status" class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600">Pending</span></td>
+              <td class="p-2.5 text-right font-mono" id="report-s4-score">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-900">
+        <strong>Curriculum Competencies Verified:</strong>
+        <ul class="list-disc pl-4 mt-1 space-y-0.5 text-[11px]">
+          <li>Determining significant digits from scientific values and measurement instruments.</li>
+          <li>Performing calculations and applying multiplication/division (fewest sig digs) rules.</li>
+          <li>Performing calculations and applying addition/subtraction (fewest decimal places) rules.</li>
+          <li>Estimating uncertain tenths of calibration divisions on analog scales.</li>
+          <li>Contrasting precision differences between coarse (1-cm) and fine (0.1-cm) instruments.</li>
+        </ul>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-end gap-3 pt-2 no-print">
+        <button onclick="closeReportModal()" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-bold rounded-lg transition">
+          Close
+        </button>
+        <button onclick="window.print()" class="px-5 py-2 bg-alberta-navy text-white hover:bg-slate-800 text-xs font-bold rounded-lg shadow flex items-center gap-2 transition">
+          <i class="fa-solid fa-print"></i>
+          <span>Print / Save as PDF</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ================= MODAL: TEACHER PASSWORD ================= -->
+  <div id="teacher-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-sm w-full p-6 flex flex-col gap-4 shadow-2xl animate-pop">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-key"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white font-heading">Teacher Access</h3>
+            <p class="text-[11px] text-slate-400">Enter password to unlock all lab sections</p>
+          </div>
+        </div>
+        <button onclick="closeTeacherModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-2">
+        <label for="teacher-pass-input" class="block text-xs font-semibold text-slate-300">Teacher Password:</label>
+        <input type="password" id="teacher-pass-input" placeholder="Enter Password" 
+          onkeydown="if(event.key==='Enter') submitTeacherPassword()"
+          class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition" />
+        <div id="teacher-pass-error" class="text-xs text-rose-400 hidden font-medium flex items-center gap-1.5 mt-1">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span>Incorrect password. Please try again.</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeTeacherModal()" class="px-3.5 py-1.5 rounded-lg border border-slate-600 text-xs font-semibold text-slate-300 hover:bg-slate-700 transition">
+          Cancel
+        </button>
+        <button onclick="submitTeacherPassword()" class="px-4 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition shadow flex items-center gap-1.5">
+          <i class="fa-solid fa-unlock text-xs"></i>
+          <span>Unlock All Parts</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= MODAL: PART 2 CALCULATION WRONG ANSWER POPUP ================= -->
+  <div id="calc-hint-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4" onkeydown="if(event.key==='Enter'||event.key==='Escape') dismissCalcHintModal()">
+    <div class="bg-slate-800 border-2 border-sky-500/70 rounded-2xl max-w-md w-full p-6 flex flex-col gap-4 shadow-2xl animate-pop">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-xl font-bold border border-sky-500/30 shadow-inner">
+            <i class="fa-solid fa-calculator"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white font-heading">Calculation & Rounding Explanation</h3>
+            <p class="text-xs text-sky-300 font-medium">Let's review the Alberta Physics 20 rule:</p>
+          </div>
+        </div>
+        <button onclick="dismissCalcHintModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Problem & Response Review Box -->
+      <div class="bg-slate-900/90 border border-slate-700 rounded-xl p-3.5 space-y-2 text-xs">
+        <div class="flex items-center justify-between text-slate-400 border-b border-slate-800 pb-1.5">
+          <span>Problem:</span>
+          <span id="calc-hint-problem" class="text-sm font-mono font-bold text-white"></span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-[11px]">
+          <div>
+            <span class="text-slate-400">You Entered:</span>
+            <div id="calc-hint-user-val" class="font-mono font-bold text-rose-400 mt-0.5"></div>
+          </div>
+          <div>
+            <span class="text-slate-400">Raw Calculator:</span>
+            <div id="calc-hint-raw-val" class="font-mono text-slate-300 mt-0.5"></div>
+          </div>
+        </div>
+        <div class="border-t border-slate-800 pt-1.5 flex items-center justify-between">
+          <span class="text-emerald-400 font-bold">Correct Stated Answer:</span>
+          <span id="calc-hint-correct-val" class="font-mono font-extrabold text-emerald-400 text-sm"></span>
+        </div>
+      </div>
+
+      <!-- Dynamic Step-by-Step Rule Explanation -->
+      <div class="bg-slate-900/60 border border-sky-500/30 rounded-xl p-3.5 space-y-2 text-xs">
+        <div class="font-bold text-alberta-sky flex items-center gap-1.5">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span id="calc-hint-rule-title">Applicable Physics 20 Rule</span>
+        </div>
+        <p id="calc-hint-rule-body" class="text-slate-200 leading-relaxed text-[11px]"></p>
+        <div id="calc-hint-step-breakdown" class="text-[11px] font-mono text-slate-400 bg-slate-950/60 p-2 rounded border border-slate-800 space-y-0.5"></div>
+      </div>
+
+      <div class="text-[11px] text-slate-400 italic text-center">
+        A new <span id="calc-hint-op-name" class="text-sky-300 font-semibold">problem</span> will be generated for you to try!
+      </div>
+
+      <!-- Action Button -->
+      <div class="pt-1">
+        <button id="calc-hint-ok-btn" onclick="dismissCalcHintModal()" class="w-full py-2.5 bg-gradient-to-r from-sky-600 to-alberta-blue hover:brightness-110 text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+          <span>Okay, Got It!</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ================= MODAL: WRONG ANSWER RULE POPUP ================= -->
+  <div id="hint-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4" onkeydown="if(event.key==='Enter'||event.key==='Escape') dismissHintModal()">
+    <div class="bg-slate-800 border-2 border-rose-500/70 rounded-2xl max-w-md w-full p-6 flex flex-col gap-4 shadow-2xl animate-pop">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl font-bold border border-rose-500/30 shadow-inner">
+            <i class="fa-solid fa-lightbulb"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white font-heading">Sig Digs Rule Explanation</h3>
+            <p class="text-xs text-rose-300 font-medium">Not quite! Here is the rule to remember:</p>
+          </div>
+        </div>
+        <button onclick="dismissHintModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Measurement Details Card -->
+      <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-4 space-y-2">
+        <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider text-center">Measurement Given</div>
+        <div id="hint-modal-measurement" class="text-center font-mono-math text-xl font-bold text-white py-1">
+          <!-- Populated by JavaScript -->
+        </div>
+        <div class="flex items-center justify-around text-xs border-t border-slate-800 pt-2.5 font-mono">
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400 font-sans">You Entered:</span>
+            <span id="hint-modal-user-ans" class="text-rose-400 font-bold bg-rose-950/70 border border-rose-800/60 px-2 py-0.5 rounded">2 SD</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400 font-sans">Correct:</span>
+            <span id="hint-modal-correct-ans" class="text-emerald-400 font-bold bg-emerald-950/70 border border-emerald-800/60 px-2 py-0.5 rounded">4 SD</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Explanation / Rule Text Card -->
+      <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3.5 flex items-start gap-3">
+        <i class="fa-solid fa-circle-info text-amber-400 text-base mt-0.5 shrink-0"></i>
+        <div class="space-y-1">
+          <div class="text-xs font-bold text-amber-300 font-heading tracking-wide">Alberta Physics 20 Rule:</div>
+          <p id="hint-modal-rule-text" class="text-xs text-slate-200 leading-relaxed font-sans">
+            <!-- Populated by JavaScript -->
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div class="pt-1">
+        <button id="hint-modal-ok-btn" onclick="dismissHintModal()" class="w-full py-2.5 bg-gradient-to-r from-alberta-blue to-alberta-sky hover:brightness-110 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm focus:ring-2 focus:ring-alberta-sky focus:outline-none">
+          <span>Okay, Got It! Try New Question</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ================= JAVASCRIPT SIMULATION LOGIC ================= -->
+  <script>
+    /* ========================================================== */
+    /* AUDIO SYNTHESIZER (Web Audio API)                         */
+    /* ========================================================== */
+    let audioEnabled = true;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSound(type) {
+      if (!audioEnabled) return;
+      try {
+        initAudio();
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const now = audioCtx.currentTime;
+        if (type === 'correct') {
+          [659.25, 830.61, 987.77].forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + i * 0.08);
+            gain.gain.setValueAtTime(0.12, now + i * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.35);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + i * 0.08);
+            osc.stop(now + i * 0.08 + 0.35);
+          });
+        } else if (type === 'wrong') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(160, now);
+          osc.frequency.linearRampToValueAtTime(110, now + 0.25);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.28);
+        } else if (type === 'tick') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(800, now);
+          gain.gain.setValueAtTime(0.03, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.04);
+        } else if (type === 'fanfare') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + i * 0.1);
+            gain.gain.setValueAtTime(0.15, now + i * 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.8);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + i * 0.1);
+            osc.stop(now + i * 0.1 + 0.8);
+          });
+        }
+      } catch (e) {
+        console.warn('Audio awaiting interaction', e);
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById('audio-toggle-btn');
+      btn.innerHTML = audioEnabled 
+        ? '<i class="fa-solid fa-volume-high"></i>' 
+        : '<i class="fa-solid fa-volume-xmark text-rose-400"></i>';
+    }
+
+
+    /* ========================================================== */
+    /* DETERMINISTIC NAME-SEEDED PRNG ENGINE                     */
+    /* ========================================================== */
+    let currentStudentName = 'Physics Student';
+
+    function hashString(str) {
+      let hash = 0;
+      const clean = str.trim().toLowerCase();
+      for (let i = 0; i < clean.length; i++) {
+        const char = clean.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash |= 0;
+      }
+      return Math.abs(hash) || 12345;
+    }
+
+    function mulberry32(a) {
+      return function() {
+        let t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+
+    function getStationDimensions(studentName, stationIdx) {
+      const seed = hashString(studentName + `_st_${stationIdx}`);
+      const rand = mulberry32(seed);
+
+      if (stationIdx === 0) {
+        const l = Math.round((6.2 + rand() * 5.6) * 10) / 10;
+        const w = Math.round((3.4 + rand() * 3.4) * 10) / 10;
+        const oz = Math.round(l * w * 2.5);
+        return { length: l, width: w, label: `${oz} oz Gold Bar` };
+      } else if (stationIdx === 1) {
+        const l = Math.round((6.20 + rand() * 5.60) * 100) / 100;
+        const w = Math.round((3.40 + rand() * 3.40) * 100) / 100;
+        const oz = Math.round(l * w * 2.5);
+        return { length: l, width: w, label: `${oz} oz Gold Bar` };
+      } else if (stationIdx === 2) {
+        // Station 3: Top is 1-cm ruler (1 dec place), Side is mm ruler (2 dec places)
+        const l = Math.round((7.1 + rand() * 4.5) * 10) / 10;
+        const w = Math.round((3.85 + rand() * 2.80) * 100) / 100;
+        const oz = Math.round(l * w * 2.5);
+        return { length: l, width: w, label: `${oz} oz Gold Bar` };
+      } else {
+        // Station 4: Top is mm ruler (2 dec places), Side is 1-cm ruler (1 dec place)
+        const l = Math.round((8.20 + rand() * 3.70) * 100) / 100;
+        const w = Math.round((4.1 + rand() * 2.6) * 10) / 10;
+        const oz = Math.round(l * w * 2.5);
+        return { length: l, width: w, label: `${oz} oz Gold Bar` };
+      }
+    }
+
+    function submitWelcomeName() {
+      const input = document.getElementById('welcome-name-input');
+      const err = document.getElementById('welcome-name-error');
+      const name = input ? input.value.trim() : '';
+
+      if (!name || name.length < 2) {
+        if (err) err.classList.remove('hidden');
+        if (input) {
+          input.classList.add('border-rose-500');
+          input.focus();
+        }
+        playSound('wrong');
+        return;
+      }
+
+      currentStudentName = name;
+      const globalInput = document.getElementById('global-student-name');
+      const reportInput = document.getElementById('report-student-name');
+      if (globalInput) globalInput.value = name;
+      if (reportInput) reportInput.value = name;
+
+      loadStation(currentStationIndex);
+      playSound('correct');
+
+      const welcomeScreen = document.getElementById('welcome-screen');
+      if (welcomeScreen) {
+        welcomeScreen.style.opacity = '0';
+        setTimeout(() => {
+          welcomeScreen.classList.add('hidden');
+          welcomeScreen.classList.remove('flex');
+          focusNextUnsolved();
+        }, 400);
+      }
+    }
+
+    function handleStudentNameChange(name) {
+      currentStudentName = name || 'Physics Student';
+      const reportInput = document.getElementById('report-student-name');
+      if (reportInput) reportInput.value = name;
+      loadStation(currentStationIndex);
+    }
+
+
+    /* ========================================================== */
+    /* PART 1: EXPANDED DYNAMIC SIGNIFICANT DIGITS ENGINE        */
+    /* ========================================================== */
+    const PHYSICS_UNITS = [
+      'm', 's', 'kg', 'm/s', 'm/s²', 'N', 'J', 'W', 'V', 'Ω', 'Hz', 'Pa', 'C', 'T',
+      'km', 'cm', 'mm', 'g', 'mg', 'km/h', 'kJ', 'kN', 'kPa', 'μm', 'ms', 'μC'
+    ];
+
+    function getRandomNonZero() {
+      return Math.floor(Math.random() * 9) + 1;
+    }
+
+    function generateRandomQuestion(id) {
+      const types = [
+        'all_nonzero_int',
+        'all_nonzero_dec',
+        'captive_zeros_single',
+        'captive_zeros_multi',
+        'leading_zeros_simple',
+        'leading_zeros_multidigit',
+        'leading_and_captive_zeros',
+        'leading_and_trailing_zeros',
+        'leading_captive_trailing',
+        'trailing_zeros_explicit_decimal',
+        'trailing_zeros_after_decimal_int',
+        'trailing_zeros_after_decimal_mixed',
+        'trailing_zeros_nodecimal_simple',
+        'trailing_zeros_nodecimal_multidigit',
+        'scientific_notation_pos',
+        'scientific_notation_neg',
+        'scientific_notation_trailing'
+      ];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const unit = PHYSICS_UNITS[Math.floor(Math.random() * PHYSICS_UNITS.length)];
+      let numStr = '';
+      let correctSD = 0;
+      let ruleHint = '';
+
+      switch(type) {
+        case 'all_nonzero_int': {
+          const len = Math.floor(Math.random() * 4) + 2; // 2 to 5 digits
+          let digits = '';
+          for (let i = 0; i < len; i++) {
+            digits += getRandomNonZero();
+          }
+          numStr = digits;
+          correctSD = len;
+          ruleHint = 'All non-zero digits are always significant.';
+          break;
+        }
+        case 'all_nonzero_dec': {
+          const totalLen = Math.floor(Math.random() * 4) + 3; // 3 to 6 digits
+          const decPos = Math.floor(Math.random() * (totalLen - 1)) + 1;
+          let digits = '';
+          for (let i = 0; i < totalLen; i++) {
+            digits += getRandomNonZero();
+          }
+          numStr = digits.slice(0, decPos) + '.' + digits.slice(decPos);
+          correctSD = totalLen;
+          ruleHint = 'All non-zero digits (both before and after decimal points) are always significant.';
+          break;
+        }
+        case 'captive_zeros_single': {
+          const first = getRandomNonZero();
+          const last = getRandomNonZero();
+          const extra = Math.random() > 0.5 ? getRandomNonZero().toString() : '';
+          if (Math.random() > 0.5) {
+            numStr = `${first}0${last}${extra}`;
+          } else {
+            numStr = `${first}.0${last}${extra}`;
+          }
+          correctSD = 3 + extra.length;
+          ruleHint = 'Captive zeros sandwiched between non-zero digits are always significant.';
+          break;
+        }
+        case 'captive_zeros_multi': {
+          const first = getRandomNonZero();
+          const last = getRandomNonZero();
+          const zeroCount = Math.floor(Math.random() * 3) + 2; // 2 to 4 zeros
+          const midDigit = Math.random() > 0.5 ? getRandomNonZero() : '';
+          if (midDigit) {
+            numStr = `${first}0${midDigit}0${last}`;
+            correctSD = 5;
+          } else {
+            const zeros = '0'.repeat(zeroCount);
+            numStr = Math.random() > 0.5 ? `${first}.${zeros}${last}` : `${first}${zeros}${last}`;
+            correctSD = 2 + zeroCount;
+          }
+          ruleHint = 'All captive zeros between non-zero digits are always significant.';
+          break;
+        }
+        case 'leading_zeros_simple': {
+          const leadCount = Math.floor(Math.random() * 4) + 1; // 0.x to 0.000x
+          const singleDigit = getRandomNonZero();
+          numStr = '0.' + '0'.repeat(leadCount - 1) + singleDigit;
+          correctSD = 1;
+          ruleHint = 'Leading zeros before the first non-zero digit are placeholders and NEVER significant.';
+          break;
+        }
+        case 'leading_zeros_multidigit': {
+          const leadCount = Math.floor(Math.random() * 3) + 1;
+          const valLen = Math.floor(Math.random() * 3) + 2; // 2 to 4 non-zero digits
+          let digits = '';
+          for (let i = 0; i < valLen; i++) {
+            digits += getRandomNonZero();
+          }
+          numStr = '0.' + '0'.repeat(leadCount - 1) + digits;
+          correctSD = valLen;
+          ruleHint = 'Leading zeros only locate the decimal point and are never significant.';
+          break;
+        }
+        case 'leading_and_captive_zeros': {
+          const leadCount = Math.floor(Math.random() * 3) + 1;
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const zeroCount = Math.floor(Math.random() * 2) + 1;
+          numStr = '0.' + '0'.repeat(leadCount - 1) + `${d1}${'0'.repeat(zeroCount)}${d2}`;
+          correctSD = 2 + zeroCount;
+          ruleHint = 'Leading zeros are NOT significant, but captive zeros sandwiched between non-zeros ARE significant.';
+          break;
+        }
+        case 'leading_and_trailing_zeros': {
+          const leadCount = Math.floor(Math.random() * 3) + 1;
+          const d1 = getRandomNonZero();
+          const trailCount = Math.floor(Math.random() * 3) + 1;
+          numStr = '0.' + '0'.repeat(leadCount - 1) + `${d1}${'0'.repeat(trailCount)}`;
+          correctSD = 1 + trailCount;
+          ruleHint = 'Leading zeros are placeholders (not significant), but trailing zeros in a decimal number ARE significant.';
+          break;
+        }
+        case 'leading_captive_trailing': {
+          const leadCount = Math.floor(Math.random() * 2) + 1;
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const trailCount = Math.floor(Math.random() * 2) + 1;
+          numStr = '0.' + '0'.repeat(leadCount - 1) + `${d1}0${d2}${'0'.repeat(trailCount)}`;
+          correctSD = 3 + trailCount;
+          ruleHint = 'Leading zeros do not count; captive zeros and trailing decimal zeros both count as significant.';
+          break;
+        }
+        case 'trailing_zeros_explicit_decimal': {
+          const lead = getRandomNonZero();
+          const second = Math.random() > 0.4 ? getRandomNonZero() : '';
+          const zeroCount = Math.floor(Math.random() * 3) + 1;
+          numStr = `${lead}${second}${'0'.repeat(zeroCount)}.`;
+          correctSD = (1 + (second ? 1 : 0)) + zeroCount;
+          ruleHint = 'An explicit decimal point at the end of a whole number makes all trailing zeros significant.';
+          break;
+        }
+        case 'trailing_zeros_after_decimal_int': {
+          const lead = getRandomNonZero();
+          const extraInt = Math.random() > 0.4 ? getRandomNonZero() : '';
+          const trailZeros = Math.floor(Math.random() * 3) + 1;
+          numStr = `${lead}${extraInt}.${'0'.repeat(trailZeros)}`;
+          correctSD = (1 + (extraInt ? 1 : 0)) + trailZeros;
+          ruleHint = 'Trailing zeros to the right of a decimal point indicate measurement precision and are always significant.';
+          break;
+        }
+        case 'trailing_zeros_after_decimal_mixed': {
+          const lead = getRandomNonZero();
+          const decDigit = getRandomNonZero();
+          const trailZeros = Math.floor(Math.random() * 3) + 1;
+          numStr = `${lead}.${decDigit}${'0'.repeat(trailZeros)}`;
+          correctSD = 2 + trailZeros;
+          ruleHint = 'Trailing zeros after non-zero digits in a decimal number are always significant.';
+          break;
+        }
+        case 'trailing_zeros_nodecimal_simple': {
+          const lead = getRandomNonZero();
+          const zeroCount = Math.floor(Math.random() * 4) + 1; // 1 to 4 zeros
+          numStr = `${lead}${'0'.repeat(zeroCount)}`;
+          correctSD = 1;
+          ruleHint = 'Trailing zeros in whole numbers WITHOUT a decimal point are NOT significant (placeholders).';
+          break;
+        }
+        case 'trailing_zeros_nodecimal_multidigit': {
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const d3 = Math.random() > 0.5 ? getRandomNonZero().toString() : '';
+          const zeroCount = Math.floor(Math.random() * 3) + 1;
+          numStr = `${d1}${d2}${d3}${'0'.repeat(zeroCount)}`;
+          correctSD = 2 + d3.length;
+          ruleHint = 'Without a decimal point, trailing zeros are placeholders and do not count toward significant digits.';
+          break;
+        }
+        case 'scientific_notation_pos': {
+          const m1 = getRandomNonZero();
+          const m2 = Math.random() > 0.3 ? getRandomNonZero() : '';
+          const m3 = (m2 && Math.random() > 0.5) ? getRandomNonZero() : '';
+          const mantissa = m2 ? `${m1}.${m2}${m3}` : `${m1}`;
+          const exp = Math.floor(Math.random() * 26) + 2; // e.g. 10^2 to 10^28
+          numStr = `${mantissa} × 10^{${exp}}`;
+          correctSD = mantissa.replace('.', '').length;
+          ruleHint = 'In scientific notation, count all digits in the coefficient (mantissa); the power of 10 does not affect sig digs.';
+          break;
+        }
+        case 'scientific_notation_neg': {
+          const m1 = getRandomNonZero();
+          const m2 = getRandomNonZero();
+          const m3 = Math.random() > 0.5 ? getRandomNonZero() : '';
+          const mantissa = `${m1}.${m2}${m3}`;
+          const exp = -(Math.floor(Math.random() * 32) + 1); // e.g. 10^-1 to 10^-33
+          numStr = `${mantissa} × 10^{${exp}}`;
+          correctSD = mantissa.replace('.', '').length;
+          ruleHint = 'In scientific notation, negative exponents only locate the decimal point; only mantissa digits are significant.';
+          break;
+        }
+        case 'scientific_notation_trailing': {
+          const m1 = getRandomNonZero();
+          const m2 = Math.random() > 0.5 ? getRandomNonZero().toString() : '';
+          const trailZeros = Math.floor(Math.random() * 2) + 1;
+          const mantissa = `${m1}.${m2}${'0'.repeat(trailZeros)}`;
+          const exp = Math.random() > 0.5 ? (Math.floor(Math.random() * 15) + 2) : -(Math.floor(Math.random() * 15) + 1);
+          numStr = `${mantissa} × 10^{${exp}}`;
+          correctSD = mantissa.replace('.', '').length;
+          ruleHint = 'Trailing zeros in the mantissa of scientific notation are intentional and ARE significant.';
+          break;
+        }
+        default: {
+          numStr = '0.04050';
+          correctSD = 4;
+          ruleHint = 'Leading zeros do not count; captive and trailing decimal zeros do count.';
+        }
+      }
+
+      return {
+        id: id,
+        display: numStr,
+        unit: unit,
+        correctSD: correctSD,
+        solved: false,
+        ruleHint: ruleHint,
+        attemptCount: 0
+      };
+    }
+
+    function generateUniqueQuestion(id, existingList) {
+      const existingDisplays = new Set((existingList || []).map(c => c.display));
+      for (let attempt = 0; attempt < 80; attempt++) {
+        const q = generateRandomQuestion(id);
+        if (!existingDisplays.has(q.display)) {
+          return q;
+        }
+      }
+      return generateRandomQuestion(id);
+    }
+
+    let quizCards = [];
+    let solvedCount = 0;
+    let part2Unlocked = false;
+
+    function initQuiz() {
+      quizCards = [];
+      solvedCount = 0;
+      for (let i = 0; i < 20; i++) {
+        quizCards.push(generateUniqueQuestion(i + 1, quizCards));
+      }
+      renderQuizGrid();
+      updateQuizProgress();
+    }
+
+    function formatNumberDisplay(str) {
+      if (str.includes('× 10^{')) {
+        return str.replace(/× 10\^{(-?\d+)}/, (match, p1) => {
+          return `&times; 10<sup class="text-alberta-sky">${p1}</sup>`;
+        });
+      }
+      return str;
+    }
+
+    function renderQuizGrid() {
+      const container = document.getElementById('cards-grid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      quizCards.forEach((card, index) => {
+        const cardEl = document.createElement('div');
+        cardEl.id = `quiz-card-${card.id}`;
+        cardEl.className = `quiz-card bg-slate-800 border ${card.solved ? 'border-emerald-500/60 bg-slate-800/90' : 'border-slate-700'} rounded-xl p-3.5 flex flex-col justify-between gap-3 shadow-md relative overflow-hidden transition-all duration-300`;
+
+        if (card.solved) {
+          cardEl.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-mono font-bold text-slate-400">#${index + 1}</span>
+              <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded-full flex items-center gap-1">
+                <i class="fa-solid fa-check"></i> Mastered
+              </span>
+            </div>
+            <div class="my-1 text-center font-mono-math text-base font-bold text-emerald-300">
+              ${formatNumberDisplay(card.display)} <span class="text-xs text-slate-400 font-sans">${card.unit}</span>
+            </div>
+            <div class="bg-emerald-950/60 border border-emerald-800/50 rounded-lg p-2 text-center text-xs text-emerald-200 font-bold">
+              <i class="fa-solid fa-lock text-emerald-400 mr-1"></i> ${card.correctSD} Sig Digs
+            </div>
+          `;
+        } else {
+          cardEl.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-mono font-bold text-slate-400">#${index + 1}</span>
+              <span class="text-[10px] text-slate-500 font-mono">Count SD</span>
+            </div>
+            <div class="my-1 text-center font-mono-math text-base sm:text-lg font-bold text-white tracking-wide">
+              ${formatNumberDisplay(card.display)} <span class="text-xs text-alberta-sky font-sans">${card.unit}</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <input type="number" min="1" max="10" id="card-input-${card.id}" 
+                placeholder="?" 
+                onkeydown="if(event.key==='Enter') submitCardAnswer(${card.id})"
+                class="w-full bg-slate-900 border border-slate-600 rounded-lg px-2.5 py-1.5 text-center font-mono text-white text-sm font-bold placeholder-slate-500 focus:outline-none focus:border-alberta-blue focus:ring-1 focus:ring-alberta-blue transition" />
+              <button onclick="submitCardAnswer(${card.id})" class="px-3 py-1.5 bg-alberta-blue hover:bg-alberta-sky text-white rounded-lg text-xs font-bold transition shadow">
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          `;
+        }
+
+        container.appendChild(cardEl);
+      });
+    }
+
+    let pendingWrongCard = null;
+
+    function openHintModal(card, enteredVal) {
+      pendingWrongCard = card;
+      const modal = document.getElementById('hint-modal');
+      const measEl = document.getElementById('hint-modal-measurement');
+      const userAnsEl = document.getElementById('hint-modal-user-ans');
+      const correctAnsEl = document.getElementById('hint-modal-correct-ans');
+      const ruleTextEl = document.getElementById('hint-modal-rule-text');
+      const okBtn = document.getElementById('hint-modal-ok-btn');
+
+      if (measEl) {
+        measEl.innerHTML = `${formatNumberDisplay(card.display)} <span class="text-sm text-alberta-sky font-sans">${card.unit}</span>`;
+      }
+      if (userAnsEl) userAnsEl.innerText = `${enteredVal} SD`;
+      if (correctAnsEl) correctAnsEl.innerText = `${card.correctSD} SD`;
+      if (ruleTextEl) ruleTextEl.innerText = card.ruleHint;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      if (okBtn) setTimeout(() => okBtn.focus(), 80);
+    }
+
+    function dismissHintModal() {
+      const modal = document.getElementById('hint-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+
+      if (!pendingWrongCard) return;
+      const card = pendingWrongCard;
+      const cardIndex = quizCards.findIndex(c => c.id === card.id);
+      if (cardIndex === -1) return;
+
+      const cardEl = document.getElementById(`quiz-card-${card.id}`);
+      if (cardEl) {
+        cardEl.classList.remove('animate-shake');
+        cardEl.classList.add('animate-fade-out-up');
+      }
+
+      setTimeout(() => {
+        const newCard = generateUniqueQuestion(card.id, quizCards);
+        quizCards[cardIndex] = newCard;
+        renderQuizGrid();
+
+        const refreshedCardEl = document.getElementById(`quiz-card-${newCard.id}`);
+        if (refreshedCardEl) {
+          refreshedCardEl.classList.add('animate-fade-in-down');
+          const newInput = document.getElementById(`card-input-${newCard.id}`);
+          if (newInput) newInput.focus();
+        }
+        pendingWrongCard = null;
+      }, 300);
+    }
+
+    function submitCardAnswer(cardId) {
+      const cardIndex = quizCards.findIndex(c => c.id === cardId);
+      if (cardIndex === -1) return;
+      const card = quizCards[cardIndex];
+      if (card.solved) return;
+
+      const inputEl = document.getElementById(`card-input-${card.id}`);
+      if (!inputEl) return;
+      const val = parseInt(inputEl.value.trim(), 10);
+
+      if (isNaN(val) || val <= 0) {
+        inputEl.focus();
+        return;
+      }
+
+      const cardEl = document.getElementById(`quiz-card-${card.id}`);
+
+      if (val === card.correctSD) {
+        card.solved = true;
+        solvedCount++;
+        playSound('correct');
+        updateQuizProgress();
+
+        cardEl.classList.add('animate-pop');
+        renderQuizGrid();
+        focusNextUnsolved();
+
+        if (solvedCount >= 20) {
+          triggerQuizCompletion();
+        }
+      } else {
+        playSound('wrong');
+        card.attemptCount++;
+        cardEl.classList.add('animate-shake');
+        inputEl.classList.add('border-rose-500', 'bg-rose-950/40');
+        openHintModal(card, val);
+      }
+    }
+
+    function focusNextUnsolved() {
+      const firstUnsolved = quizCards.find(c => !c.solved);
+      if (firstUnsolved) {
+        const inp = document.getElementById(`card-input-${firstUnsolved.id}`);
+        if (inp) inp.focus();
+      }
+    }
+
+    function updateQuizProgress() {
+      const percent = Math.round((solvedCount / 20) * 100);
+      document.getElementById('quiz-solved-count').innerText = solvedCount;
+      document.getElementById('tab-quiz-badge').innerText = `${solvedCount}/20`;
+      document.getElementById('quiz-progress-text').innerText = `${percent}%`;
+      
+      const circle = document.getElementById('quiz-progress-circle');
+      circle.setAttribute('stroke-dasharray', `${percent}, 100`);
+
+      const indicator = document.getElementById('quiz-streak-indicator');
+      if (solvedCount === 20) {
+        indicator.innerText = 'All 20 Solved! Part 2 Unlocked';
+        indicator.className = 'text-[11px] text-emerald-400 font-bold';
+      } else {
+        indicator.innerText = `${20 - solvedCount} more needed for Part 2`;
+        indicator.className = 'text-[11px] text-slate-400';
+      }
+    }
+
+    function triggerQuizCompletion() {
+      part2Unlocked = true;
+      playSound('fanfare');
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
+      const calcLock = document.getElementById('tab-calc-lock-icon');
+      if (calcLock) calcLock.className = 'fa-solid fa-unlock text-xs text-emerald-400';
+      const calcBadge = document.getElementById('tab-calc-badge');
+      if (calcBadge) calcBadge.classList.remove('hidden');
+
+      const banner = document.getElementById('quiz-unlocked-banner');
+      if (banner) banner.classList.remove('hidden');
+    }
+
+
+    /* ========================================================== */
+    /* PART 2: SIGNIFICANT DIGITS OPERATIONS & ROUNDING ENGINE   */
+    /* ========================================================== */
+    let calcCards = [];
+    let calcSolvedCount = 0;
+    let part3Unlocked = false;
+    let pendingWrongCalcCard = null;
+
+    const CALC_CATEGORIES = [
+      'mult_2sd_2sd',
+      'mult_3sd_2sd',
+      'mult_4sd_3sd',
+      'mult_leading_zeros',
+      'mult_trailing_zeros',
+      'div_3sd_2sd',
+      'div_4sd_3sd',
+      'div_small_decimals',
+      'div_integer_result',
+      'add_1dp_2dp',
+      'add_2dp_3dp',
+      'add_whole_decimal',
+      'sub_2dp_1dp',
+      'sub_3dp_2dp',
+      'sub_cancel_precision',
+      'sci_mult',
+      'sci_div',
+      'sci_add'
+    ];
+
+    function countStringSD(str) {
+      if (!str) return 0;
+      let s = str.trim();
+      if (s.includes('× 10^{') || s.includes('x10^') || s.includes('e') || s.includes('E')) {
+        const mantissa = s.split(/[×xeE]/)[0].trim();
+        return countStringSD(mantissa);
+      }
+      s = s.replace(/^[+-]/, '').trim();
+      if (s.includes('.')) {
+        const withoutDot = s.replace('.', '');
+        const withoutLeading = withoutDot.replace(/^0+/, '');
+        return withoutLeading.length;
+      } else {
+        const withoutTrailing = s.replace(/0+$/, '');
+        return withoutTrailing.length;
+      }
+    }
+
+    function countStringDP(str) {
+      if (!str) return 0;
+      let s = str.trim();
+      if (s.includes('× 10^{') || s.includes('x10^') || s.includes('e') || s.includes('E')) {
+        const mantissa = s.split(/[×xeE]/)[0].trim();
+        return countStringDP(mantissa);
+      }
+      if (!s.includes('.')) return 0;
+      return s.split('.')[1].length;
+    }
+
+    function formatNumberWithSD(val, sd) {
+      if (val === 0) return '0';
+      const absVal = Math.abs(val);
+      if (absVal >= 10000 || absVal < 0.001) {
+        const sci = val.toExponential(sd - 1);
+        const [m, e] = sci.split('e');
+        return `${m} × 10^{${parseInt(e, 10)}}`;
+      }
+      const prec = Number(val.toPrecision(sd));
+      const precStr = prec.toString();
+      const currentSD = countStringSD(precStr);
+      if (currentSD < sd) {
+        if (!precStr.includes('.')) {
+          if (precStr.endsWith('0')) {
+            // e.g. 30 with 2 SD -> 30. or 3.0 × 10^1
+            return `${precStr}.`;
+          } else {
+            return `${precStr}.${'0'.repeat(sd - currentSD)}`;
+          }
+        } else {
+          return `${precStr}${'0'.repeat(sd - currentSD)}`;
+        }
+      }
+      return precStr;
+    }
+
+    function formatNumberWithDP(val, dp) {
+      if (dp === 0) {
+        return Math.round(val).toString();
+      }
+      return val.toFixed(dp);
+    }
+
+    function generateRandomCalcQuestion(id, specificCategory) {
+      const category = specificCategory || CALC_CATEGORIES[(id - 1) % CALC_CATEGORIES.length];
+
+      let num1Str = '', num2Str = '', op = '×', opSymbol = '×', unit1 = '', unit2 = '', ansUnit = '';
+      let num1Val = 1, num2Val = 1, rawVal = 1, finalRoundedStr = '';
+      let ruleType = 'fewest_sd'; // 'fewest_sd' or 'fewest_dp'
+      let num1SD = 2, num2SD = 2, expectedSD = 2;
+      let num1DP = 1, num2DP = 1, expectedDP = 1;
+      let ruleTitle = '', ruleBody = '', stepBreakdown = '', opName = 'multiplication problem';
+
+      switch (category) {
+        case 'mult_2sd_2sd': {
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const d3 = getRandomNonZero();
+          const d4 = getRandomNonZero();
+          num1Str = `${d1}.${d2}`;
+          num2Str = `${d3}.${d4}`;
+          unit1 = 'm'; unit2 = 's'; ansUnit = 'm·s';
+          op = '×'; opSymbol = '×'; opName = 'multiplication problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val * num2Val;
+          ruleType = 'fewest_sd';
+          num1SD = 2; num2SD = 2; expectedSD = 2;
+          finalRoundedStr = formatNumberWithSD(rawVal, expectedSD);
+          ruleTitle = 'Multiplication & Division Rule (Fewest Sig Digs)';
+          ruleBody = `When multiplying, round your final answer to have the same number of significant digits as the measurement with the FEWEST sig digs.`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1SD} SD</strong><br>• ${num2Str} ${unit2} has <strong>${num2SD} SD</strong><br>• min(${num1SD}, ${num2SD}) = <strong>${expectedSD} SD</strong><br>• Raw Calculator: ${rawVal.toFixed(4)} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedSD} SD)`;
+          break;
+        }
+        case 'mult_3sd_2sd': {
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const d3 = getRandomNonZero();
+          const d4 = getRandomNonZero();
+          const d5 = getRandomNonZero();
+          num1Str = `${d1}${d2}.${d3}`;
+          num2Str = `${d4}.${d5}`;
+          unit1 = 'm/s'; unit2 = 's'; ansUnit = 'm';
+          op = '×'; opSymbol = '×'; opName = 'multiplication problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val * num2Val;
+          ruleType = 'fewest_sd';
+          num1SD = 3; num2SD = 2; expectedSD = 2;
+          finalRoundedStr = formatNumberWithSD(rawVal, expectedSD);
+          ruleTitle = 'Multiplication Rule: Fewest Significant Digits';
+          ruleBody = `Round the product to match the factor with the fewest significant digits.`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1SD} SD</strong><br>• ${num2Str} ${unit2} has <strong>${num2SD} SD</strong><br>• min(${num1SD}, ${num2SD}) = <strong>${expectedSD} SD</strong><br>• Raw Calculator: ${rawVal.toFixed(4)} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedSD} SD)`;
+          break;
+        }
+        case 'mult_4sd_3sd': {
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const d3 = getRandomNonZero();
+          const d4 = getRandomNonZero();
+          const d5 = getRandomNonZero();
+          const d6 = getRandomNonZero();
+          num1Str = `${d1}${d2}${d3}.${d4}`;
+          num2Str = `${d5}.${d6}0`;
+          unit1 = 'N'; unit2 = 'm'; ansUnit = 'J';
+          op = '×'; opSymbol = '×'; opName = 'multiplication problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val * num2Val;
+          ruleType = 'fewest_sd';
+          num1SD = 4; num2SD = 3; expectedSD = 3;
+          finalRoundedStr = formatNumberWithSD(rawVal, expectedSD);
+          ruleTitle = 'Multiplication Rule: Trailing Zeros in Factors';
+          ruleBody = `${num2Str} has 3 SD because trailing zeros after a decimal point are significant. The product must be rounded to 3 SD.`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1SD} SD</strong><br>• ${num2Str} ${unit2} has <strong>${num2SD} SD</strong><br>• min(${num1SD}, ${num2SD}) = <strong>${expectedSD} SD</strong><br>• Raw Calculator: ${rawVal.toFixed(4)} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedSD} SD)`;
+          break;
+        }
+        case 'mult_leading_zeros': {
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const d3 = getRandomNonZero();
+          const d4 = getRandomNonZero();
+          num1Str = `0.0${d1}${d2}`;
+          num2Str = `${d3}.${d4}0`;
+          unit1 = 'kg'; unit2 = 'm/s'; ansUnit = 'kg·m/s';
+          op = '×'; opSymbol = '×'; opName = 'multiplication problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val * num2Val;
+          ruleType = 'fewest_sd';
+          num1SD = 2; num2SD = 3; expectedSD = 2;
+          finalRoundedStr = formatNumberWithSD(rawVal, expectedSD);
+          ruleTitle = 'Multiplication with Leading Zeros';
+          ruleBody = `Leading zeros (0.0...) are placeholders and not significant, giving 2 SD. The answer is rounded to 2 SD.`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1SD} SD</strong> (leading zeros don't count)<br>• ${num2Str} ${unit2} has <strong>${num2SD} SD</strong><br>• min(${num1SD}, ${num2SD}) = <strong>${expectedSD} SD</strong><br>• Raw Calculator: ${rawVal.toFixed(6)} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedSD} SD)`;
+          break;
+        }
+        case 'mult_trailing_zeros': {
+          const d1 = getRandomNonZero();
+          num1Str = `${d1}5.0`;
+          num2Str = `4.0`;
+          unit1 = 'm'; unit2 = 's'; ansUnit = 'm·s';
+          op = '×'; opSymbol = '×'; opName = 'multiplication problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val * num2Val;
+          ruleType = 'fewest_sd';
+          num1SD = 3; num2SD = 2; expectedSD = 2;
+          finalRoundedStr = formatNumberWithSD(rawVal, expectedSD);
+          ruleTitle = 'Multiplication Rule: Fewest Significant Digits';
+          ruleBody = `Trailing zeros in ${num2Str} make it 2 SD, so the answer must have exactly 2 SD.`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1SD} SD</strong><br>• ${num2Str} ${unit2} has <strong>${num2SD} SD</strong><br>• min(${num1SD}, ${num2SD}) = <strong>${expectedSD} SD</strong><br>• Raw Calculator: ${rawVal.toFixed(2)} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedSD} SD)`;
+          break;
+        }
+        case 'div_3sd_2sd': {
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const d3 = getRandomNonZero();
+          const d4 = getRandomNonZero();
+          num1Str = `${d1}${d2}.${d3}`;
+          num2Str = `${d4}.0`;
+          unit1 = 'm'; unit2 = 's'; ansUnit = 'm/s';
+          op = '÷'; opSymbol = '÷'; opName = 'division problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val / num2Val;
+          ruleType = 'fewest_sd';
+          num1SD = 3; num2SD = 2; expectedSD = 2;
+          finalRoundedStr = formatNumberWithSD(rawVal, expectedSD);
+          ruleTitle = 'Division Rule: Fewest Significant Digits';
+          ruleBody = `When dividing, round the quotient to the fewest significant digits among the numerator and denominator.`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1SD} SD</strong><br>• ${num2Str} ${unit2} has <strong>${num2SD} SD</strong><br>• min(${num1SD}, ${num2SD}) = <strong>${expectedSD} SD</strong><br>• Raw Calculator: ${rawVal.toFixed(4)} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedSD} SD)`;
+          break;
+        }
+        case 'div_4sd_3sd': {
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const d3 = getRandomNonZero();
+          const d4 = getRandomNonZero();
+          num1Str = `${d1}${d2}${d3}.${d4}`;
+          num2Str = `12.0`;
+          unit1 = 'J'; unit2 = 's'; ansUnit = 'W';
+          op = '÷'; opSymbol = '÷'; opName = 'division problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val / num2Val;
+          ruleType = 'fewest_sd';
+          num1SD = 4; num2SD = 3; expectedSD = 3;
+          finalRoundedStr = formatNumberWithSD(rawVal, expectedSD);
+          ruleTitle = 'Division Rule: Fewest Significant Digits';
+          ruleBody = `12.0 has 3 SD (trailing zero counts). The quotient is rounded to 3 SD.`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1SD} SD</strong><br>• ${num2Str} ${unit2} has <strong>${num2SD} SD</strong><br>• min(${num1SD}, ${num2SD}) = <strong>${expectedSD} SD</strong><br>• Raw Calculator: ${rawVal.toFixed(4)} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedSD} SD)`;
+          break;
+        }
+        case 'div_small_decimals': {
+          const d1 = getRandomNonZero();
+          num1Str = `0.${d1}50`;
+          num2Str = `2.5`;
+          unit1 = 'm'; unit2 = 's'; ansUnit = 'm/s';
+          op = '÷'; opSymbol = '÷'; opName = 'division problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val / num2Val;
+          ruleType = 'fewest_sd';
+          num1SD = 3; num2SD = 2; expectedSD = 2;
+          finalRoundedStr = formatNumberWithSD(rawVal, expectedSD);
+          ruleTitle = 'Division with Decimal Placeholders';
+          ruleBody = `0.${d1}50 has 3 SD and 2.5 has 2 SD. The answer must be given to 2 SD (including trailing zeros like ${finalRoundedStr}).`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1SD} SD</strong><br>• ${num2Str} ${unit2} has <strong>${num2SD} SD</strong><br>• min(${num1SD}, ${num2SD}) = <strong>${expectedSD} SD</strong><br>• Raw Calculator: ${rawVal.toFixed(4)} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedSD} SD)`;
+          break;
+        }
+        case 'div_integer_result': {
+          const d1 = getRandomNonZero();
+          num1Str = `${d1 * 12}.0`;
+          num2Str = `3.0`;
+          unit1 = 'N'; unit2 = 'kg'; ansUnit = 'm/s²';
+          op = '÷'; opSymbol = '÷'; opName = 'division problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val / num2Val;
+          ruleType = 'fewest_sd';
+          num1SD = countStringSD(num1Str); num2SD = 2; expectedSD = 2;
+          finalRoundedStr = formatNumberWithSD(rawVal, expectedSD);
+          ruleTitle = 'Division Rule: Integer Outputs';
+          ruleBody = `Even if the calculator outputs an exact integer, it must be expressed with the required number of sig digs (2 SD).`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1SD} SD</strong><br>• ${num2Str} ${unit2} has <strong>${num2SD} SD</strong><br>• min(${num1SD}, ${num2SD}) = <strong>${expectedSD} SD</strong><br>• Raw Calculator: ${rawVal} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedSD} SD)`;
+          break;
+        }
+        case 'add_1dp_2dp': {
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const d3 = getRandomNonZero();
+          const d4 = getRandomNonZero();
+          num1Str = `${d1}${d2}.${d3}`;
+          num2Str = `3.${d4}5`;
+          unit1 = 'm'; unit2 = 'm'; ansUnit = 'm';
+          op = '+'; opSymbol = '＋'; opName = 'addition problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val + num2Val;
+          ruleType = 'fewest_dp';
+          num1DP = 1; num2DP = 2; expectedDP = 1;
+          finalRoundedStr = formatNumberWithDP(rawVal, expectedDP);
+          ruleTitle = 'Addition & Subtraction Rule: Fewest Decimal Places';
+          ruleBody = `For addition and subtraction, the answer is rounded to the fewest decimal places (least precise place value), NOT fewest sig digs!`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1DP} decimal place</strong> (tenths)<br>• ${num2Str} ${unit2} has <strong>${num2DP} decimal places</strong> (hundredths)<br>• min(${num1DP}, ${num2DP}) = <strong>${expectedDP} decimal place</strong><br>• Raw Calculator: ${rawVal.toFixed(3)} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedDP} DP)`;
+          break;
+        }
+        case 'add_2dp_3dp': {
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const d3 = getRandomNonZero();
+          num1Str = `${d1}.${d2}${d3}`;
+          num2Str = `0.125`;
+          unit1 = 's'; unit2 = 's'; ansUnit = 's';
+          op = '+'; opSymbol = '＋'; opName = 'addition problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val + num2Val;
+          ruleType = 'fewest_dp';
+          num1DP = 2; num2DP = 3; expectedDP = 2;
+          finalRoundedStr = formatNumberWithDP(rawVal, expectedDP);
+          ruleTitle = 'Addition Rule: Fewest Decimal Places';
+          ruleBody = `Round the sum to the least number of decimal places (2 decimal places).`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1DP} decimal places</strong><br>• ${num2Str} ${unit2} has <strong>${num2DP} decimal places</strong><br>• min(${num1DP}, ${num2DP}) = <strong>${expectedDP} decimal places</strong><br>• Raw Calculator: ${rawVal.toFixed(3)} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedDP} DP)`;
+          break;
+        }
+        case 'add_whole_decimal': {
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const d3 = getRandomNonZero();
+          num1Str = `${d1}${d2}0`;
+          num2Str = `4.${d3}`;
+          unit1 = 'g'; unit2 = 'g'; ansUnit = 'g';
+          op = '+'; opSymbol = '＋'; opName = 'addition problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val + num2Val;
+          ruleType = 'fewest_dp';
+          num1DP = 0; num2DP = 1; expectedDP = 0;
+          finalRoundedStr = formatNumberWithDP(rawVal, expectedDP);
+          ruleTitle = 'Addition Rule: Whole Numbers (0 Decimal Places)';
+          ruleBody = `${num1Str} has no decimal places (precision limited to whole units/tens). The sum must be rounded to the nearest whole unit (0 decimal places).`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>0 decimal places</strong><br>• ${num2Str} ${unit2} has <strong>1 decimal place</strong><br>• min(0, 1) = <strong>0 decimal places</strong> (nearest whole unit)<br>• Raw Calculator: ${rawVal.toFixed(1)} → <strong>${finalRoundedStr} ${ansUnit}</strong>`;
+          break;
+        }
+        case 'sub_2dp_1dp': {
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const d3 = getRandomNonZero();
+          const d4 = getRandomNonZero();
+          num1Str = `${d1 + 4}8.${d2}${d3}`;
+          num2Str = `12.${d4}`;
+          unit1 = 'm'; unit2 = 'm'; ansUnit = 'm';
+          op = '−'; opSymbol = '−'; opName = 'subtraction problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val - num2Val;
+          ruleType = 'fewest_dp';
+          num1DP = 2; num2DP = 1; expectedDP = 1;
+          finalRoundedStr = formatNumberWithDP(rawVal, expectedDP);
+          ruleTitle = 'Subtraction Rule: Fewest Decimal Places';
+          ruleBody = `For subtraction, round the difference to the fewest decimal places (tenths place = 1 DP).`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1DP} decimal places</strong><br>• ${num2Str} ${unit2} has <strong>${num2DP} decimal place</strong><br>• min(${num1DP}, ${num2DP}) = <strong>${expectedDP} decimal place</strong><br>• Raw Calculator: ${rawVal.toFixed(2)} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedDP} DP)`;
+          break;
+        }
+        case 'sub_3dp_2dp': {
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const d3 = getRandomNonZero();
+          num1Str = `15.${d1}${d2}5`;
+          num2Str = `3.${d3}0`;
+          unit1 = 'kg'; unit2 = 'kg'; ansUnit = 'kg';
+          op = '−'; opSymbol = '−'; opName = 'subtraction problem';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val - num2Val;
+          ruleType = 'fewest_dp';
+          num1DP = 3; num2DP = 2; expectedDP = 2;
+          finalRoundedStr = formatNumberWithDP(rawVal, expectedDP);
+          ruleTitle = 'Subtraction Rule: Fewest Decimal Places';
+          ruleBody = `3.${d3}0 has 2 decimal places. The answer must be rounded to 2 decimal places.`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1DP} decimal places</strong><br>• ${num2Str} ${unit2} has <strong>${num2DP} decimal places</strong><br>• min(${num1DP}, ${num2DP}) = <strong>${expectedDP} decimal places</strong><br>• Raw Calculator: ${rawVal.toFixed(3)} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedDP} DP)`;
+          break;
+        }
+        case 'sub_cancel_precision': {
+          const d1 = getRandomNonZero();
+          num1Str = `105.${d1}`;
+          num2Str = `102.15`;
+          unit1 = 's'; unit2 = 's'; ansUnit = 's';
+          op = '−'; opSymbol = '−'; opName = 'subtraction with digit loss';
+          num1Val = parseFloat(num1Str);
+          num2Val = parseFloat(num2Str);
+          rawVal = num1Val - num2Val;
+          ruleType = 'fewest_dp';
+          num1DP = 1; num2DP = 2; expectedDP = 1;
+          finalRoundedStr = formatNumberWithDP(rawVal, expectedDP);
+          ruleTitle = 'Subtraction Rule: Decimal Places vs Sig Digs';
+          ruleBody = `Even though significant digits decrease dramatically after subtracting close numbers, the rule for subtraction is ALWAYS fewest decimal places (1 DP)!`;
+          stepBreakdown = `• ${num1Str} ${unit1} has <strong>${num1DP} decimal place</strong><br>• ${num2Str} ${unit2} has <strong>${num2DP} decimal places</strong><br>• min(${num1DP}, ${num2DP}) = <strong>${expectedDP} decimal place</strong><br>• Raw Calculator: ${rawVal.toFixed(2)} → <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedDP} DP)`;
+          break;
+        }
+        case 'sci_mult': {
+          const d1 = getRandomNonZero();
+          const d2 = getRandomNonZero();
+          const d3 = getRandomNonZero();
+          num1Str = `${d1}.${d2} × 10^{4}`;
+          num2Str = `2.00 × 10^{2}`;
+          unit1 = 'm/s'; unit2 = 's'; ansUnit = 'm';
+          op = '×'; opSymbol = '×'; opName = 'scientific notation multiplication';
+          const m1 = parseFloat(`${d1}.${d2}`);
+          const m2 = 2.00;
+          rawVal = (m1 * 1e4) * (m2 * 1e2);
+          ruleType = 'fewest_sd';
+          num1SD = 2; num2SD = 3; expectedSD = 2;
+          const resM = (m1 * m2).toFixed(expectedSD - 1);
+          finalRoundedStr = `${resM} × 10^{6}`;
+          ruleTitle = 'Scientific Notation: Multiplication Rule';
+          ruleBody = `Multiply mantissas and add exponents. Round the final coefficient to the fewest sig digs in the factors (2 SD).`;
+          stepBreakdown = `• (${num1Str} ${unit1}) has <strong>${num1SD} SD</strong><br>• (${num2Str} ${unit2}) has <strong>${num2SD} SD</strong><br>• min(${num1SD}, ${num2SD}) = <strong>${expectedSD} SD</strong><br>• Result: <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedSD} SD)`;
+          break;
+        }
+        case 'sci_div': {
+          const d1 = getRandomNonZero();
+          num1Str = `${d1 * 2}.40 × 10^{6}`;
+          num2Str = `2.0 × 10^{3}`;
+          unit1 = 'J'; unit2 = 's'; ansUnit = 'W';
+          op = '÷'; opSymbol = '÷'; opName = 'scientific notation division';
+          const m1 = parseFloat(`${d1 * 2}.40`);
+          const m2 = 2.0;
+          rawVal = (m1 * 1e6) / (m2 * 1e3);
+          ruleType = 'fewest_sd';
+          num1SD = 3; num2SD = 2; expectedSD = 2;
+          const resM = (m1 / m2).toPrecision(expectedSD);
+          finalRoundedStr = `${resM} × 10^{3}`;
+          ruleTitle = 'Scientific Notation: Division Rule';
+          ruleBody = `Divide mantissas and subtract exponents. Round the coefficient to the fewest sig digs (2 SD).`;
+          stepBreakdown = `• (${num1Str} ${unit1}) has <strong>${num1SD} SD</strong><br>• (${num2Str} ${unit2}) has <strong>${num2SD} SD</strong><br>• min(${num1SD}, ${num2SD}) = <strong>${expectedSD} SD</strong><br>• Result: <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedSD} SD)`;
+          break;
+        }
+        default: { // sci_add
+          const d1 = getRandomNonZero();
+          num1Str = `4.${d1}0 × 10^{3}`;
+          num2Str = `1.2 × 10^{3}`;
+          unit1 = 'N'; unit2 = 'N'; ansUnit = 'N';
+          op = '+'; opSymbol = '＋'; opName = 'scientific notation addition';
+          const m1 = parseFloat(`4.${d1}0`);
+          const m2 = 1.2;
+          rawVal = (m1 * 1e3) + (m2 * 1e3);
+          ruleType = 'fewest_dp';
+          num1DP = 2; num2DP = 1; expectedDP = 1;
+          const resM = (m1 + m2).toFixed(expectedDP);
+          finalRoundedStr = `${resM} × 10^{3}`;
+          ruleTitle = 'Scientific Notation: Addition Rule';
+          ruleBody = `When adding numbers with the same power of 10, round the mantissa to the fewest decimal places (1 DP).`;
+          stepBreakdown = `• (${num1Str} ${unit1}) has <strong>${num1DP} decimal places</strong><br>• (${num2Str} ${unit2}) has <strong>${num2DP} decimal place</strong><br>• min(${num1DP}, ${num2DP}) = <strong>${expectedDP} decimal place</strong><br>• Result: <strong>${finalRoundedStr} ${ansUnit}</strong> (${expectedDP} DP)`;
+          break;
+        }
+      }
+
+      return {
+        id: id,
+        category: category,
+        num1Str: num1Str,
+        num2Str: num2Str,
+        op: op,
+        opSymbol: opSymbol,
+        opName: opName,
+        unit1: unit1,
+        unit2: unit2,
+        ansUnit: ansUnit,
+        rawVal: rawVal,
+        expectedStr: finalRoundedStr,
+        ruleType: ruleType,
+        ruleTitle: ruleTitle,
+        ruleBody: ruleBody,
+        stepBreakdown: stepBreakdown,
+        solved: false,
+        attemptCount: 0
+      };
+    }
+
+    function generateUniqueCalcQuestion(id, specificCategory, existingList) {
+      const existingFormulas = new Set((existingList || []).map(c => `${c.num1Str} ${c.op} ${c.num2Str}`));
+      for (let attempt = 0; attempt < 80; attempt++) {
+        const q = generateRandomCalcQuestion(id, specificCategory);
+        const formula = `${q.num1Str} ${q.op} ${q.num2Str}`;
+        if (!existingFormulas.has(formula)) {
+          return q;
+        }
+      }
+      return generateRandomCalcQuestion(id, specificCategory);
+    }
+
+    function initCalcQuiz() {
+      calcCards = [];
+      calcSolvedCount = 0;
+      for (let i = 0; i < 20; i++) {
+        calcCards.push(generateUniqueCalcQuestion(i + 1, null, calcCards));
+      }
+      renderCalcGrid();
+      updateCalcProgress();
+    }
+
+    function renderCalcGrid() {
+      const container = document.getElementById('calc-cards-grid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      calcCards.forEach((card, index) => {
+        const cardEl = document.createElement('div');
+        cardEl.id = `calc-card-${card.id}`;
+        cardEl.className = `calc-card bg-slate-800 border ${card.solved ? 'border-sky-500/60 bg-slate-800/90' : 'border-slate-700'} rounded-xl p-3.5 flex flex-col justify-between gap-3 shadow-md relative overflow-hidden transition-all duration-300`;
+
+        const opBadgeColor = (card.op === '×' || card.op === '÷') ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-sky-500/20 text-sky-300 border-sky-500/30';
+        const opLabel = (card.op === '×') ? 'Mult (Fewest SD)' : (card.op === '÷') ? 'Div (Fewest SD)' : (card.op === '+') ? 'Add (Fewest DP)' : 'Sub (Fewest DP)';
+
+        if (card.solved) {
+          cardEl.innerHTML = `
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-[11px] font-mono font-bold text-slate-400">#${index + 1}</span>
+              <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded-full flex items-center gap-1">
+                <i class="fa-solid fa-check"></i> Mastered
+              </span>
+            </div>
+            <div class="my-1 text-center font-mono-math text-xs sm:text-sm text-slate-400">
+              ${formatNumberDisplay(card.num1Str)} ${card.unit1} <span class="text-sky-400 font-bold">${card.opSymbol}</span> ${formatNumberDisplay(card.num2Str)} ${card.unit2}
+            </div>
+            <div class="bg-sky-950/60 border border-sky-800/50 rounded-lg p-2 text-center text-xs text-sky-200 font-bold font-mono">
+              = ${formatNumberDisplay(card.expectedStr)} ${card.ansUnit}
+            </div>
+          `;
+        } else {
+          cardEl.innerHTML = `
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-[11px] font-mono font-bold text-slate-400">#${index + 1}</span>
+              <span class="px-1.5 py-0.5 border ${opBadgeColor} text-[10px] font-bold rounded">${opLabel}</span>
+            </div>
+            <div class="my-1.5 text-center font-mono-math text-xs sm:text-sm font-bold text-white tracking-wide leading-tight">
+              ${formatNumberDisplay(card.num1Str)} <span class="text-slate-400 text-[11px] font-sans">${card.unit1}</span>
+              <span class="text-alberta-sky px-1 font-bold text-base">${card.opSymbol}</span>
+              ${formatNumberDisplay(card.num2Str)} <span class="text-slate-400 text-[11px] font-sans">${card.unit2}</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <div class="relative flex-1">
+                <input type="text" id="calc-input-${card.id}" 
+                  placeholder="e.g. ${card.expectedStr.includes('×') ? '6.4e6' : '34'}" 
+                  onkeydown="if(event.key==='Enter') submitCalcCardAnswer(${card.id})"
+                  class="w-full bg-slate-900 border border-slate-600 rounded-lg px-2.5 py-1.5 text-center font-mono text-white text-xs sm:text-sm font-bold placeholder-slate-600 focus:outline-none focus:border-alberta-sky focus:ring-1 focus:ring-alberta-sky transition" />
+                <span class="absolute right-2 top-2 text-[10px] text-slate-500 font-sans pointer-events-none">${card.ansUnit}</span>
+              </div>
+              <button onclick="submitCalcCardAnswer(${card.id})" class="px-3 py-1.5 bg-gradient-to-r from-alberta-blue to-alberta-sky hover:brightness-110 text-white rounded-lg text-xs font-bold transition shadow">
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          `;
+        }
+
+        container.appendChild(cardEl);
+      });
+    }
+
+    function parseNumericInput(text) {
+      if (!text) return null;
+      let t = text.trim().toLowerCase();
+      // Support scientific notations: e.g. 6.4*10^6, 6.4x10^6, 6.4 × 10^6, 6.4e6
+      t = t.replace(/×/g, 'x').replace(/\*/g, 'x').replace(/\s+/g, '');
+      let match = t.match(/^([+-]?\d*\.?\d+)x10\^?([+-]?\d+)$/);
+      if (match) {
+        const m = parseFloat(match[1]);
+        const e = parseInt(match[2], 10);
+        return {
+          numVal: m * Math.pow(10, e),
+          mantissa: match[1],
+          exp: e,
+          isSci: true,
+          rawClean: text.trim()
+        };
+      }
+      match = t.match(/^([+-]?\d*\.?\d+)e([+-]?\d+)$/);
+      if (match) {
+        const m = parseFloat(match[1]);
+        const e = parseInt(match[2], 10);
+        return {
+          numVal: m * Math.pow(10, e),
+          mantissa: match[1],
+          exp: e,
+          isSci: true,
+          rawClean: text.trim()
+        };
+      }
+      const val = parseFloat(t);
+      if (isNaN(val)) return null;
+      return {
+        numVal: val,
+        mantissa: t,
+        exp: 0,
+        isSci: false,
+        rawClean: text.trim()
+      };
+    }
+
+    function checkCalcAnswerMatch(card, enteredText) {
+      const parsed = parseNumericInput(enteredText);
+      if (!parsed) return { ok: false, reason: 'Please enter a valid numeric calculation answer.' };
+
+      const cleanExpected = card.expectedStr.replace(/[{}]/g, '');
+      const parsedExpected = parseNumericInput(cleanExpected);
+
+      // Check numerical value match (within 0.2% tolerance)
+      const diff = Math.abs(parsed.numVal - parsedExpected.numVal);
+      const denom = Math.max(1e-9, Math.abs(parsedExpected.numVal));
+      if (diff / denom > 0.005 && diff > 0.005) {
+        return { ok: false, reason: 'Calculation error: Your numeric value does not match the product or sum.' };
+      }
+
+      // Check sig digs or decimal place rounding precision
+      if (card.ruleType === 'fewest_sd') {
+        const enteredSD = countStringSD(parsed.mantissa);
+        const expSD = countStringSD(parsedExpected.mantissa);
+        if (enteredSD !== expSD) {
+          return {
+            ok: false,
+            reason: `Significant digits error: You recorded ${enteredSD} significant digit${enteredSD === 1 ? '' : 's'}, but the fewest sig digs rule requires exactly ${expSD} SD.`
+          };
+        }
+      } else {
+        const enteredDP = countStringDP(parsed.mantissa);
+        const expDP = countStringDP(parsedExpected.mantissa);
+        if (enteredDP !== expDP) {
+          return {
+            ok: false,
+            reason: `Decimal places error: You recorded ${enteredDP} decimal place${enteredDP === 1 ? '' : 's'}, but the addition/subtraction rule requires exactly ${expDP} decimal place${expDP === 1 ? '' : 's'}.`
+          };
+        }
+      }
+
+      return { ok: true };
+    }
+
+    function submitCalcCardAnswer(cardId) {
+      const cardIndex = calcCards.findIndex(c => c.id === cardId);
+      if (cardIndex === -1) return;
+      const card = calcCards[cardIndex];
+      if (card.solved) return;
+
+      const inputEl = document.getElementById(`calc-input-${card.id}`);
+      if (!inputEl) return;
+      const enteredText = inputEl.value.trim();
+
+      if (!enteredText) {
+        inputEl.focus();
+        return;
+      }
+
+      const res = checkCalcAnswerMatch(card, enteredText);
+      const cardEl = document.getElementById(`calc-card-${card.id}`);
+
+      if (res.ok) {
+        card.solved = true;
+        calcSolvedCount++;
+        playSound('correct');
+        updateCalcProgress();
+
+        cardEl.classList.add('animate-pop');
+        renderCalcGrid();
+        focusNextUnsolvedCalc();
+
+        if (calcSolvedCount >= 20) {
+          triggerCalcCompletion();
+        }
+      } else {
+        playSound('wrong');
+        card.attemptCount++;
+        cardEl.classList.add('animate-shake');
+        inputEl.classList.add('border-rose-500', 'bg-rose-950/40');
+        openCalcHintModal(card, enteredText, res.reason);
+      }
+    }
+
+    function openCalcHintModal(card, enteredVal, reason) {
+      pendingWrongCalcCard = card;
+      const modal = document.getElementById('calc-hint-modal');
+      const probEl = document.getElementById('calc-hint-problem');
+      const userAnsEl = document.getElementById('calc-hint-user-val');
+      const rawValEl = document.getElementById('calc-hint-raw-val');
+      const correctAnsEl = document.getElementById('calc-hint-correct-val');
+      const ruleTitleEl = document.getElementById('calc-hint-rule-title');
+      const ruleBodyEl = document.getElementById('calc-hint-rule-body');
+      const stepEl = document.getElementById('calc-hint-step-breakdown');
+      const opNameEl = document.getElementById('calc-hint-op-name');
+      const okBtn = document.getElementById('calc-hint-ok-btn');
+
+      if (probEl) {
+        probEl.innerHTML = `${formatNumberDisplay(card.num1Str)} ${card.unit1} <span class="text-sky-400 font-bold">${card.opSymbol}</span> ${formatNumberDisplay(card.num2Str)} ${card.unit2}`;
+      }
+      if (userAnsEl) userAnsEl.innerText = enteredVal ? `${enteredVal} ${card.ansUnit}` : 'Blank';
+      if (rawValEl) rawValEl.innerText = `${card.rawVal.toString().slice(0, 10)} ${card.ansUnit}`;
+      if (correctAnsEl) correctAnsEl.innerHTML = `${formatNumberDisplay(card.expectedStr)} ${card.ansUnit}`;
+      if (ruleTitleEl) ruleTitleEl.innerText = card.ruleTitle;
+      if (ruleBodyEl) ruleBodyEl.innerText = reason || card.ruleBody;
+      if (stepEl) stepEl.innerHTML = card.stepBreakdown;
+      if (opNameEl) opNameEl.innerText = card.opName;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      if (okBtn) setTimeout(() => okBtn.focus(), 80);
+    }
+
+    function dismissCalcHintModal() {
+      const modal = document.getElementById('calc-hint-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+
+      if (!pendingWrongCalcCard) return;
+      const card = pendingWrongCalcCard;
+      const cardIndex = calcCards.findIndex(c => c.id === card.id);
+      if (cardIndex === -1) return;
+
+      const cardEl = document.getElementById(`calc-card-${card.id}`);
+      if (cardEl) {
+        cardEl.classList.remove('animate-shake');
+        cardEl.classList.add('animate-fade-out-up');
+      }
+
+      setTimeout(() => {
+        // Regenerate problem of the EXACT SAME category
+        const newCard = generateUniqueCalcQuestion(card.id, card.category, calcCards);
+        calcCards[cardIndex] = newCard;
+        renderCalcGrid();
+
+        const refreshedCardEl = document.getElementById(`calc-card-${newCard.id}`);
+        if (refreshedCardEl) {
+          refreshedCardEl.classList.add('animate-fade-in-down');
+          const newInput = document.getElementById(`calc-input-${newCard.id}`);
+          if (newInput) newInput.focus();
+        }
+        pendingWrongCalcCard = null;
+      }, 300);
+    }
+
+    function focusNextUnsolvedCalc() {
+      const firstUnsolved = calcCards.find(c => !c.solved);
+      if (firstUnsolved) {
+        const inp = document.getElementById(`calc-input-${firstUnsolved.id}`);
+        if (inp) inp.focus();
+      }
+    }
+
+    function updateCalcProgress() {
+      const percent = Math.round((calcSolvedCount / 20) * 100);
+      const countEl = document.getElementById('calc-solved-count');
+      const badgeEl = document.getElementById('tab-calc-badge');
+      const textEl = document.getElementById('calc-progress-text');
+      const circle = document.getElementById('calc-progress-circle');
+      const indicator = document.getElementById('calc-streak-indicator');
+
+      if (countEl) countEl.innerText = calcSolvedCount;
+      if (badgeEl) badgeEl.innerText = `${calcSolvedCount}/20`;
+      if (textEl) textEl.innerText = `${percent}%`;
+      if (circle) circle.setAttribute('stroke-dasharray', `${percent}, 100`);
+
+      if (indicator) {
+        if (calcSolvedCount === 20) {
+          indicator.innerText = 'All 20 Solved! Part 3 Unlocked';
+          indicator.className = 'text-[11px] text-emerald-400 font-bold';
+        } else {
+          indicator.innerText = `${20 - calcSolvedCount} more needed for Part 3`;
+          indicator.className = 'text-[11px] text-slate-400';
+        }
+      }
+    }
+
+    function triggerCalcCompletion() {
+      part3Unlocked = true;
+      playSound('fanfare');
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+
+      const rulerLock = document.getElementById('tab-ruler-lock-icon');
+      if (rulerLock) rulerLock.className = 'fa-solid fa-unlock text-xs text-emerald-400';
+      const rulerBadge = document.getElementById('tab-ruler-badge');
+      if (rulerBadge) rulerBadge.classList.remove('hidden');
+
+      const banner = document.getElementById('calc-unlocked-banner');
+      if (banner) banner.classList.remove('hidden');
+    }
+
+
+    /* ========================================================== */
+    /* TAB SWITCHING & TEACHER BYPASS                             */
+    /* ========================================================== */
+    const TEACHER_PASSWORD = 'MHHSPhysics';
+
+    function switchTab(tab) {
+      if (tab === 'calc' && !part2Unlocked) {
+        playSound('wrong');
+        openTeacherModal();
+        return;
+      }
+      if (tab === 'ruler' && !part3Unlocked) {
+        playSound('wrong');
+        openTeacherModal();
+        return;
+      }
+
+      const quizSec = document.getElementById('section-quiz');
+      const calcSec = document.getElementById('section-calc');
+      const rulerSec = document.getElementById('section-ruler');
+      const quizBtn = document.getElementById('tab-quiz-btn');
+      const calcBtn = document.getElementById('tab-calc-btn');
+      const rulerBtn = document.getElementById('tab-ruler-btn');
+
+      // Hide all sections
+      if (quizSec) quizSec.classList.add('hidden');
+      if (calcSec) calcSec.classList.add('hidden');
+      if (rulerSec) rulerSec.classList.add('hidden');
+
+      // Reset button styles
+      [quizBtn, calcBtn, rulerBtn].forEach(b => {
+        if (b) b.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 text-slate-400 hover:text-slate-200';
+      });
+
+      if (tab === 'quiz') {
+        if (quizSec) quizSec.classList.remove('hidden');
+        if (quizBtn) quizBtn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 bg-alberta-blue text-white shadow';
+      } else if (tab === 'calc') {
+        if (calcSec) calcSec.classList.remove('hidden');
+        if (calcBtn) calcBtn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 bg-alberta-blue text-white shadow';
+        focusNextUnsolvedCalc();
+      } else {
+        if (rulerSec) rulerSec.classList.remove('hidden');
+        if (rulerBtn) rulerBtn.className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 bg-alberta-blue text-white shadow';
+        setTimeout(initStageGeometry, 50);
+      }
+    }
+
+    function openTeacherModal() {
+      const modal = document.getElementById('teacher-modal');
+      const input = document.getElementById('teacher-pass-input');
+      const error = document.getElementById('teacher-pass-error');
+      if (input) {
+        input.value = '';
+        input.classList.remove('border-rose-500');
+      }
+      if (error) error.classList.add('hidden');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      if (input) setTimeout(() => input.focus(), 80);
+    }
+
+    function closeTeacherModal() {
+      const modal = document.getElementById('teacher-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function submitTeacherPassword() {
+      const input = document.getElementById('teacher-pass-input');
+      const error = document.getElementById('teacher-pass-error');
+      if (!input) return;
+
+      if (input.value.trim() === TEACHER_PASSWORD) {
+        closeTeacherModal();
+        part2Unlocked = true;
+        part3Unlocked = true;
+        playSound('correct');
+
+        const bypassBtn = document.getElementById('teacher-bypass-btn');
+        const calcLock = document.getElementById('tab-calc-lock-icon');
+        const calcBadge = document.getElementById('tab-calc-badge');
+        const rulerLock = document.getElementById('tab-ruler-lock-icon');
+        const rulerBadge = document.getElementById('tab-ruler-badge');
+
+        if (bypassBtn) bypassBtn.classList.add('bg-amber-500/20', 'border-amber-400', 'text-amber-300');
+        if (calcLock) calcLock.className = 'fa-solid fa-unlock text-xs text-emerald-400';
+        if (calcBadge) calcBadge.classList.remove('hidden');
+        if (rulerLock) rulerLock.className = 'fa-solid fa-unlock text-xs text-emerald-400';
+        if (rulerBadge) rulerBadge.classList.remove('hidden');
+      } else {
+        playSound('wrong');
+        if (error) error.classList.remove('hidden');
+        input.classList.add('border-rose-500');
+        input.focus();
+      }
+    }
+
+    function toggleTeacherUnlock() {
+      if (part2Unlocked && part3Unlocked) {
+        part2Unlocked = false;
+        part3Unlocked = false;
+        const bypassBtn = document.getElementById('teacher-bypass-btn');
+        const calcLock = document.getElementById('tab-calc-lock-icon');
+        const calcBadge = document.getElementById('tab-calc-badge');
+        const rulerLock = document.getElementById('tab-ruler-lock-icon');
+        const rulerBadge = document.getElementById('tab-ruler-badge');
+
+        if (bypassBtn) bypassBtn.classList.remove('bg-amber-500/20', 'border-amber-400', 'text-amber-300');
+        if (calcLock) calcLock.className = 'fa-solid fa-lock text-xs text-amber-400';
+        if (calcBadge) calcBadge.classList.add('hidden');
+        if (rulerLock) rulerLock.className = 'fa-solid fa-lock text-xs text-amber-400';
+        if (rulerBadge) rulerBadge.classList.add('hidden');
+        switchTab('quiz');
+        playSound('tick');
+      } else {
+        openTeacherModal();
+      }
+    }
+
+
+    /* ========================================================== */
+    /* PART 3: RULER PRECISION & AREA LAB SIMULATION              */
+    /* ========================================================== */
+    const PIXELS_PER_CM = 30;
+
+    const STATIONS = [
+      {
+        id: 0,
+        title: 'Station 1: Coarse 1-cm Ruler',
+        badge: '1-cm Graduations',
+        hRuler: { style: 'ruler-wood', graduationStep: 1.0, subdivisions: 1, decimalPlaces: 1 },
+        vRuler: { style: 'ruler-wood', graduationStep: 1.0, subdivisions: 1, decimalPlaces: 1 },
+        guideTitle: 'Reading the 1-cm Coarse Ruler:',
+        guideDesc: 'Both rulers have division marks every 1 cm. Read the whole number directly from the calibration marks and estimate one digit further according to Alberta Physics rules.',
+        completed: false
+      },
+      {
+        id: 1,
+        title: 'Station 2: Millimeter Ruler',
+        badge: '1-mm Graduations',
+        hRuler: { style: 'ruler-steel', graduationStep: 1.0, subdivisions: 10, decimalPlaces: 2 },
+        vRuler: { style: 'ruler-steel', graduationStep: 1.0, subdivisions: 10, decimalPlaces: 2 },
+        guideTitle: 'Reading the Millimeter Ruler:',
+        guideDesc: 'Both rulers have millimeter subdivisions (0.1 cm). Read certain digits directly from the calibration marks and estimate one digit further according to Alberta Physics rules.',
+        completed: false
+      },
+      {
+        id: 2,
+        title: 'Station 3: Mixed Rulers (Top: 1-cm | Side: mm)',
+        badge: 'Top: 1-cm Ruler | Side: Millimeter Ruler',
+        hRuler: { style: 'ruler-wood', graduationStep: 1.0, subdivisions: 1, decimalPlaces: 1 },
+        vRuler: { style: 'ruler-steel', graduationStep: 1.0, subdivisions: 10, decimalPlaces: 2 },
+        guideTitle: 'Mixed Precision Rulers (Length vs Width):',
+        guideDesc: 'The top ruler measures Length with 1-cm graduations, while the side ruler measures Width with 0.1-cm millimeter graduations. Measure each dimension according to its ruler, calculate the product, and apply the fewest significant digits rule.',
+        completed: false
+      },
+      {
+        id: 3,
+        title: 'Station 4: Mixed Rulers Practice (Top: mm | Side: 1-cm)',
+        badge: 'Top: Millimeter Ruler | Side: 1-cm Ruler',
+        hRuler: { style: 'ruler-steel', graduationStep: 1.0, subdivisions: 10, decimalPlaces: 2 },
+        vRuler: { style: 'ruler-wood', graduationStep: 1.0, subdivisions: 1, decimalPlaces: 1 },
+        guideTitle: 'Mixed Precision Practice Round:',
+        guideDesc: 'In this round, the top ruler is the Millimeter Ruler (measuring Length) and the side ruler is the 1-cm Coarse Ruler (measuring Width). Measure both dimensions and determine the correctly rounded stated area.',
+        completed: false
+      }
+    ];
+
+    let currentStationIndex = 0;
+    let rulerPos = {
+      h: { x: 60, y: 50 },
+      v: { x: 20, y: 80 }
+    };
+
+    function loadStation(index) {
+      currentStationIndex = index;
+      const st = STATIONS[index];
+
+      document.querySelectorAll('.station-tab').forEach((tab, i) => {
+        if (i === index) {
+          tab.className = 'station-tab px-3 py-1.5 rounded-lg text-xs font-bold transition bg-alberta-blue text-white shadow';
+        } else {
+          tab.className = 'station-tab px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-slate-200';
+        }
+      });
+
+      const spec = getStationDimensions(currentStudentName, index);
+      st.currentSpecimen = spec;
+
+      document.getElementById('station-title-badge').innerText = st.title;
+      document.getElementById('station-ruler-badge').innerText = st.badge;
+      document.getElementById('instrument-guide-title').innerText = st.guideTitle;
+      document.getElementById('instrument-guide-desc').innerText = st.guideDesc;
+      document.getElementById('specimen-id-text').innerText = spec.label;
+
+      document.getElementById('worksheet-title').innerText = 'Lab Worksheet & Calculation';
+      document.getElementById('worksheet-subtitle').innerText = 'Measure Length (top ruler) and Width (side ruler), identify sig figs, and calculate the rounded area.';
+
+      document.getElementById('length-format-hint').innerText = '';
+      document.getElementById('width-format-hint').innerText = '';
+
+      document.getElementById('input-length').value = '';
+      document.getElementById('input-length-sd').value = '';
+      document.getElementById('input-width').value = '';
+      document.getElementById('input-width-sd').value = '';
+      document.getElementById('input-raw-area').value = '';
+      document.getElementById('input-final-area').value = '';
+      document.getElementById('input-final-sd').value = '';
+
+      hideFeedback('length-feedback');
+      hideFeedback('width-feedback');
+      hideFeedback('raw-area-feedback');
+      hideFeedback('final-area-feedback');
+
+      document.getElementById('solution-breakdown-card').classList.add('hidden');
+      document.getElementById('next-station-btn').classList.add('hidden');
+      document.getElementById('check-worksheet-btn').classList.remove('hidden');
+
+      const pill = document.getElementById('station-status-pill');
+      if (st.completed) {
+        pill.innerText = 'Completed ✓';
+        pill.className = 'text-[11px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-mono font-semibold';
+      } else {
+        pill.innerText = 'In Progress';
+        pill.className = 'text-[11px] bg-slate-700 text-slate-300 px-2 py-0.5 rounded font-mono font-semibold';
+      }
+
+      renderSpecimen();
+      drawRulers();
+      resetRulerPositions();
+    }
+
+    function renderSpecimen() {
+      const st = STATIONS[currentStationIndex];
+      const spec = st.currentSpecimen;
+      const specEl = document.getElementById('specimen-rect');
+      const stage = document.getElementById('interactive-stage');
+
+      const stageW = stage.clientWidth || 450;
+      const stageH = stage.clientHeight || 420;
+
+      const specW = spec.length * PIXELS_PER_CM;
+      const specH = spec.width * PIXELS_PER_CM;
+
+      const left = Math.max(90, Math.round((stageW - specW) / 2) + 20);
+      const top = Math.max(100, Math.round((stageH - specH) / 2) + 20);
+
+      specEl.style.left = `${left}px`;
+      specEl.style.top = `${top}px`;
+      specEl.style.width = `${specW}px`;
+      specEl.style.height = `${specH}px`;
+    }
+
+    function drawRulers() {
+      const st = STATIONS[currentStationIndex];
+      const hProps = st.hRuler;
+      const vProps = st.vRuler;
+
+      const hRuler = document.getElementById('horizontal-ruler');
+      const vRuler = document.getElementById('vertical-ruler');
+
+      hRuler.className = `ruler-container absolute cursor-grab active:cursor-grabbing select-none shadow-xl rounded-sm border border-slate-900/60 ${hProps.style}`;
+      vRuler.className = `ruler-container absolute cursor-grab active:cursor-grabbing select-none shadow-xl rounded-sm border border-slate-900/60 ${vProps.style}`;
+
+      const hWidth = 460;
+      const hHeight = 60;
+      hRuler.style.width = `${hWidth}px`;
+      hRuler.style.height = `${hHeight}px`;
+
+      let hSvg = `<svg width="${hWidth}" height="${hHeight}" class="w-full h-full pointer-events-none">`;
+      const totalCm = 15;
+      for (let cm = 0; cm <= totalCm; cm += hProps.graduationStep) {
+        const x = 10 + (cm * PIXELS_PER_CM);
+        hSvg += `<line x1="${x}" y1="34" x2="${x}" y2="60" stroke="#0f172a" stroke-width="1.5" />`;
+        hSvg += `<text x="${x}" y="28" font-size="11" font-weight="bold" font-family="Fira Code, monospace" fill="#0f172a" text-anchor="middle">${cm}</text>`;
+
+        if (hProps.subdivisions > 1 && cm < totalCm) {
+          for (let s = 1; s < hProps.subdivisions; s++) {
+            const subX = x + (s * (PIXELS_PER_CM / hProps.subdivisions));
+            const tickH = (s === 5) ? 16 : 9;
+            hSvg += `<line x1="${subX}" y1="${60 - tickH}" x2="${subX}" y2="60" stroke="#1e293b" stroke-width="${s === 5 ? 1.2 : 0.8}" />`;
+          }
+        }
+      }
+      hSvg += `<text x="435" y="24" font-size="10" font-weight="bold" font-family="sans-serif" fill="#0f172a">cm</text>`;
+      hSvg += `</svg>`;
+      hRuler.innerHTML = hSvg;
+
+      const vWidth = 60;
+      const vHeight = 330;
+      vRuler.style.width = `${vWidth}px`;
+      vRuler.style.height = `${vHeight}px`;
+
+      let vSvg = `<svg width="${vWidth}" height="${vHeight}" class="w-full h-full pointer-events-none">`;
+      const totalVCm = 10;
+      for (let cm = 0; cm <= totalVCm; cm += vProps.graduationStep) {
+        const y = 10 + (cm * PIXELS_PER_CM);
+        vSvg += `<line x1="34" y1="${y}" x2="60" y2="${y}" stroke="#0f172a" stroke-width="1.5" />`;
+        vSvg += `<text x="26" y="${y + 4}" font-size="11" font-weight="bold" font-family="Fira Code, monospace" fill="#0f172a" text-anchor="end">${cm}</text>`;
+
+        if (vProps.subdivisions > 1 && cm < totalVCm) {
+          for (let s = 1; s < vProps.subdivisions; s++) {
+            const subY = y + (s * (PIXELS_PER_CM / vProps.subdivisions));
+            const tickW = (s === 5) ? 16 : 9;
+            vSvg += `<line x1="${60 - tickW}" y1="${subY}" x2="${60}" y2="${subY}" stroke="#1e293b" stroke-width="${s === 5 ? 1.2 : 0.8}" />`;
+          }
+        }
+      }
+      vSvg += `<text x="30" y="322" font-size="10" font-weight="bold" font-family="sans-serif" fill="#0f172a" text-anchor="middle">cm</text>`;
+      vSvg += `</svg>`;
+      vRuler.innerHTML = vSvg;
+    }
+
+    function resetRulerPositions() {
+      const specEl = document.getElementById('specimen-rect');
+      const specLeft = parseInt(specEl.style.left, 10) || 90;
+      const specTop = parseInt(specEl.style.top, 10) || 120;
+
+      rulerPos.h = { x: specLeft - 10, y: specTop - 60 };
+      rulerPos.v = { x: specLeft - 60, y: specTop - 10 };
+
+      updateRulerElements();
+      playSound('tick');
+    }
+
+    function toggleZeroSnap() {
+      resetRulerPositions();
+    }
+
+    function updateRulerElements() {
+      const hRuler = document.getElementById('horizontal-ruler');
+      const vRuler = document.getElementById('vertical-ruler');
+      hRuler.style.left = `${rulerPos.h.x}px`;
+      hRuler.style.top = `${rulerPos.h.y}px`;
+      vRuler.style.left = `${rulerPos.v.x}px`;
+      vRuler.style.top = `${rulerPos.v.y}px`;
+    }
+
+    function initStageGeometry() {
+      renderSpecimen();
+      drawRulers();
+      updateRulerElements();
+      initLoupeLens();
+    }
+
+    let activeDrag = null;
+    let dragOffset = { x: 0, y: 0 };
+
+    function makeDraggable(el, type) {
+      el.addEventListener('mousedown', (e) => startDrag(e, type));
+      el.addEventListener('touchstart', (e) => startDrag(e.touches[0], type), { passive: false });
+    }
+
+    function startDrag(e, type) {
+      activeDrag = type;
+      const stage = document.getElementById('interactive-stage').getBoundingClientRect();
+      const pos = type === 'h' ? rulerPos.h : rulerPos.v;
+      dragOffset.x = e.clientX - (stage.left + pos.x);
+      dragOffset.y = e.clientY - (stage.top + pos.y);
+      playSound('tick');
+    }
+
+    window.addEventListener('mousemove', handleDrag);
+    window.addEventListener('touchmove', (e) => {
+      if (activeDrag) {
+        e.preventDefault();
+        handleDrag(e.touches[0]);
+      }
+    }, { passive: false });
+
+    function handleDrag(e) {
+      if (!activeDrag) return;
+      const stage = document.getElementById('interactive-stage').getBoundingClientRect();
+      let newX = e.clientX - stage.left - dragOffset.x;
+      let newY = e.clientY - stage.top - dragOffset.y;
+
+      newX = Math.max(-100, Math.min(stage.width - 40, newX));
+      newY = Math.max(-40, Math.min(stage.height - 40, newY));
+
+      if (activeDrag === 'h') {
+        rulerPos.h = { x: newX, y: newY };
+      } else {
+        rulerPos.v = { x: newX, y: newY };
+      }
+      updateRulerElements();
+    }
+
+    window.addEventListener('mouseup', stopDrag);
+    window.addEventListener('touchend', stopDrag);
+
+    function stopDrag() {
+      if (activeDrag) {
+        activeDrag = null;
+      }
+    }
+
+
+    /* ========================================================== */
+    /* MAGNIFYING FEATURE LENS                                    */
+    /* ========================================================== */
+    const loupeEl = document.getElementById('loupe-lens');
+    const loupeCanvas = document.getElementById('loupe-canvas');
+    const loupeCtx = loupeCanvas.getContext('2d');
+    const ZOOM_FACTOR = 3.0;
+
+    function initLoupeLens() {
+      const stage = document.getElementById('interactive-stage');
+
+      stage.addEventListener('mousemove', (e) => {
+        if (activeDrag) {
+          loupeEl.style.display = 'none';
+          return;
+        }
+
+        const rect = stage.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const loupeSize = 144;
+        let loupeX = mouseX + 25;
+        let loupeY = mouseY - 160;
+
+        if (loupeX + loupeSize > rect.width) loupeX = mouseX - loupeSize - 25;
+        if (loupeY < 0) loupeY = mouseY + 25;
+
+        loupeEl.style.left = `${loupeX}px`;
+        loupeEl.style.top = `${loupeY}px`;
+        loupeEl.style.display = 'block';
+
+        renderLoupeView(mouseX, mouseY);
+      });
+
+      stage.addEventListener('mouseleave', () => {
+        loupeEl.style.display = 'none';
+      });
+    }
+
+    function renderLoupeView(sourceX, sourceY) {
+      loupeCtx.clearRect(0, 0, 144, 144);
+      loupeCtx.save();
+
+      loupeCtx.fillStyle = '#020617';
+      loupeCtx.fillRect(0, 0, 144, 144);
+
+      loupeCtx.translate(72, 72);
+      loupeCtx.scale(ZOOM_FACTOR, ZOOM_FACTOR);
+      loupeCtx.translate(-sourceX, -sourceY);
+
+      const specEl = document.getElementById('specimen-rect');
+      const specL = parseInt(specEl.style.left, 10);
+      const specT = parseInt(specEl.style.top, 10);
+      const specW = parseInt(specEl.style.width, 10);
+      const specH = parseInt(specEl.style.height, 10);
+
+      loupeCtx.fillStyle = 'rgba(245, 158, 11, 0.45)';
+      loupeCtx.fillRect(specL, specT, specW, specH);
+      loupeCtx.strokeStyle = '#f59e0b';
+      loupeCtx.lineWidth = 2;
+      loupeCtx.strokeRect(specL, specT, specW, specH);
+
+      const st = STATIONS[currentStationIndex];
+      const hProps = st.hRuler;
+      const vProps = st.vRuler;
+
+      const hL = rulerPos.h.x;
+      const hT = rulerPos.h.y;
+
+      loupeCtx.fillStyle = hProps.style === 'ruler-steel' ? '#cbd5e1' : '#fde68a';
+      loupeCtx.fillRect(hL, hT, 460, 60);
+
+      for (let cm = 0; cm <= 15; cm += hProps.graduationStep) {
+        const tx = hL + 10 + (cm * PIXELS_PER_CM);
+        loupeCtx.strokeStyle = '#0f172a';
+        loupeCtx.lineWidth = 1.2;
+        loupeCtx.beginPath();
+        loupeCtx.moveTo(tx, hT + 34);
+        loupeCtx.lineTo(tx, hT + 60);
+        loupeCtx.stroke();
+
+        loupeCtx.fillStyle = '#0f172a';
+        loupeCtx.font = 'bold 10px monospace';
+        loupeCtx.fillText(cm.toString(), tx - 3, hT + 26);
+
+        if (hProps.subdivisions > 1 && cm < 15) {
+          for (let s = 1; s < hProps.subdivisions; s++) {
+            const subX = tx + (s * (PIXELS_PER_CM / hProps.subdivisions));
+            const tH = (s === 5) ? 15 : 8;
+            loupeCtx.strokeStyle = '#334155';
+            loupeCtx.lineWidth = 0.8;
+            loupeCtx.beginPath();
+            loupeCtx.moveTo(subX, hT + 60 - tH);
+            loupeCtx.lineTo(subX, hT + 60);
+            loupeCtx.stroke();
+          }
+        }
+      }
+
+      const vL = rulerPos.v.x;
+      const vT = rulerPos.v.y;
+      loupeCtx.fillStyle = vProps.style === 'ruler-steel' ? '#cbd5e1' : '#fde68a';
+      loupeCtx.fillRect(vL, vT, 60, 330);
+
+      for (let cm = 0; cm <= 10; cm += vProps.graduationStep) {
+        const ty = vT + 10 + (cm * PIXELS_PER_CM);
+        loupeCtx.strokeStyle = '#0f172a';
+        loupeCtx.lineWidth = 1.2;
+        loupeCtx.beginPath();
+        loupeCtx.moveTo(vL + 34, ty);
+        loupeCtx.lineTo(vL + 60, ty);
+        loupeCtx.stroke();
+
+        loupeCtx.fillStyle = '#0f172a';
+        loupeCtx.font = 'bold 10px monospace';
+        loupeCtx.fillText(cm.toString(), vL + 18, ty + 3);
+
+        if (vProps.subdivisions > 1 && cm < 10) {
+          for (let s = 1; s < vProps.subdivisions; s++) {
+            const subY = ty + (s * (PIXELS_PER_CM / vProps.subdivisions));
+            const tW = (s === 5) ? 15 : 8;
+            loupeCtx.strokeStyle = '#334155';
+            loupeCtx.lineWidth = 0.8;
+            loupeCtx.beginPath();
+            loupeCtx.moveTo(vL + 60 - tW, subY);
+            loupeCtx.lineTo(vL + 60, subY);
+            loupeCtx.stroke();
+          }
+        }
+      }
+
+      loupeCtx.restore();
+    }
+
+
+    /* ========================================================== */
+    /* WORKSHEET VALIDATION & SIG FIG CALCULATOR                  */
+    /* ========================================================== */
+    function checkWorksheet() {
+      const st = STATIONS[currentStationIndex];
+      const spec = st.currentSpecimen;
+      const trueL = spec.length;
+      const trueW = spec.width;
+
+      const hDec = st.hRuler.decimalPlaces;
+      const vDec = st.vRuler.decimalPlaces;
+
+      const tolL = hDec === 1 ? 0.18 : 0.04;
+      const tolW = vDec === 1 ? 0.18 : 0.04;
+
+      // 1. Length (measured by top / horizontal ruler)
+      const inL_str = document.getElementById('input-length').value.trim();
+      const inL_sd = parseInt(document.getElementById('input-length-sd').value.trim(), 10);
+      const inL_val = parseFloat(inL_str);
+
+      let lengthOk = false;
+      const lFb = document.getElementById('length-feedback');
+      lFb.classList.remove('hidden');
+
+      if (isNaN(inL_val)) {
+        showFeedback(lFb, false, 'Please enter a numeric length in cm.');
+      } else if (Math.abs(inL_val - trueL) > tolL) {
+        showFeedback(lFb, false, 'Length measurement falls outside of acceptable range. Align ruler origin and use the magnifying feature.');
+      } else {
+        const decCount = (inL_str.split('.')[1] || '').length;
+        if (decCount !== hDec) {
+          showFeedback(lFb, false, 'Incorrect precision recorded for the top ruler.');
+        } else {
+          const expectedL_SD = inL_str.replace('.', '').length;
+          if (inL_sd !== expectedL_SD) {
+            showFeedback(lFb, false, 'Incorrect significant digits recorded for your length measurement.');
+          } else {
+            showFeedback(lFb, true, `✓ Length verified: ${inL_str} cm (${inL_sd} Sig Digs).`);
+            lengthOk = true;
+          }
+        }
+      }
+
+      // 2. Width (measured by side / vertical ruler)
+      const inW_str = document.getElementById('input-width').value.trim();
+      const inW_sd = parseInt(document.getElementById('input-width-sd').value.trim(), 10);
+      const inW_val = parseFloat(inW_str);
+
+      let widthOk = false;
+      const wFb = document.getElementById('width-feedback');
+      wFb.classList.remove('hidden');
+
+      if (isNaN(inW_val)) {
+        showFeedback(wFb, false, 'Please enter a numeric width in cm.');
+      } else if (Math.abs(inW_val - trueW) > tolW) {
+        showFeedback(wFb, false, 'Width measurement falls outside of acceptable range. Align ruler origin and use the magnifying feature.');
+      } else {
+        const decCount = (inW_str.split('.')[1] || '').length;
+        if (decCount !== vDec) {
+          showFeedback(wFb, false, 'Incorrect precision recorded for the side ruler.');
+        } else {
+          const expectedW_SD = inW_str.replace('.', '').length;
+          if (inW_sd !== expectedW_SD) {
+            showFeedback(wFb, false, 'Incorrect significant digits recorded for your width measurement.');
+          } else {
+            showFeedback(wFb, true, `✓ Width verified: ${inW_str} cm (${inW_sd} Sig Digs).`);
+            widthOk = true;
+          }
+        }
+      }
+
+      if (!lengthOk || !widthOk) {
+        playSound('wrong');
+        return;
+      }
+
+      // 3. Raw Product
+      const trueRawArea = inL_val * inW_val;
+      const inRaw_str = document.getElementById('input-raw-area').value.trim();
+      const inRaw_val = parseFloat(inRaw_str);
+
+      let rawOk = false;
+      const rawFb = document.getElementById('raw-area-feedback');
+      rawFb.classList.remove('hidden');
+
+      if (isNaN(inRaw_val)) {
+        showFeedback(rawFb, false, 'Please enter the raw unrounded calculator product of L × W.');
+      } else if (Math.abs(inRaw_val - trueRawArea) > 0.05) {
+        showFeedback(rawFb, false, 'Calculation error: Raw product does not match L × W. Please check your multiplication.');
+      } else {
+        showFeedback(rawFb, true, `✓ Raw Product correct: ${inRaw_val} cm²`);
+        rawOk = true;
+      }
+
+      // 4. Final Stated Area (Sig Digs Rule)
+      const minSD = Math.min(inL_sd, inW_sd);
+      const trueRoundedArea = Number(trueRawArea.toPrecision(minSD));
+
+      const inFinal_str = document.getElementById('input-final-area').value.trim();
+      const inFinal_sd = parseInt(document.getElementById('input-final-sd').value.trim(), 10);
+      const inFinal_val = parseFloat(inFinal_str);
+
+      let finalOk = false;
+      const finalFb = document.getElementById('final-area-feedback');
+      finalFb.classList.remove('hidden');
+
+      if (isNaN(inFinal_val)) {
+        showFeedback(finalFb, false, 'Please enter the rounded area according to Physics 20 sig fig rules.');
+      } else if (inFinal_sd !== minSD) {
+        showFeedback(finalFb, false, 'Significant digits rule error: Stated area must have the same number of sig digs as the measurement with the fewest sig digs.');
+      } else if (Math.abs(inFinal_val - trueRoundedArea) > 0.05 && Math.abs(inFinal_val - trueRawArea) > 0.05) {
+        showFeedback(finalFb, false, 'Rounding error: Stated area is not correctly rounded to the required number of significant digits.');
+      } else {
+        showFeedback(finalFb, true, `✓ Mastered! Final Area = ${inFinal_str} cm² (${inFinal_sd} Sig Digs).`);
+        finalOk = true;
+      }
+
+      if (rawOk && finalOk) {
+        finishStationSuccess(st, `
+          <div>• Length (Top Ruler): <span class="text-white">${inL_str} cm</span> (${inL_sd} Sig Digs)</div>
+          <div>• Width (Side Ruler): <span class="text-white">${inW_str} cm</span> (${inW_sd} Sig Digs)</div>
+          <div>• Raw Product: <span class="text-white">${trueRawArea.toFixed(4)} cm²</span></div>
+          <div>• Rule: Round to fewest significant digits: <strong>min(${inL_sd}, ${inW_sd}) = ${minSD} SD</strong></div>
+          <div class="text-emerald-400 font-bold">• Stated Area: ${trueRoundedArea} cm² (${minSD} SD)</div>
+        `);
+      } else {
+        playSound('wrong');
+      }
+    }
+
+    function finishStationSuccess(st, breakdownHtml) {
+      st.completed = true;
+      playSound('correct');
+      confetti({
+        particleCount: 60,
+        spread: 70,
+        origin: { y: 0.7 }
+      });
+
+      document.getElementById('station-status-pill').innerText = 'Completed ✓';
+      document.getElementById('station-status-pill').className = 'text-[11px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-mono font-semibold';
+      
+      const breakdownCard = document.getElementById('solution-breakdown-card');
+      const breakdownText = document.getElementById('solution-breakdown-text');
+      breakdownText.innerHTML = breakdownHtml;
+      breakdownCard.classList.remove('hidden');
+
+      document.getElementById('check-worksheet-btn').classList.add('hidden');
+      if (currentStationIndex < STATIONS.length - 1) {
+        document.getElementById('next-station-btn').classList.remove('hidden');
+      }
+    }
+
+    function showFeedback(el, isSuccess, message) {
+      el.className = `text-[11px] font-semibold mt-1 ${isSuccess ? 'text-emerald-400' : 'text-rose-400'}`;
+      el.innerHTML = message;
+    }
+
+    function hideFeedback(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    }
+
+    function nextStation() {
+      if (currentStationIndex < STATIONS.length - 1) {
+        loadStation(currentStationIndex + 1);
+      }
+    }
+
+
+    /* ========================================================== */
+    /* MODALS: RULES & LAB REPORT EXPORT                         */
+    /* ========================================================== */
+    function openRulesModal() {
+      document.getElementById('rules-modal').classList.remove('hidden');
+      document.getElementById('rules-modal').classList.add('flex');
+    }
+
+    function closeRulesModal() {
+      document.getElementById('rules-modal').classList.add('hidden');
+      document.getElementById('rules-modal').classList.remove('flex');
+    }
+
+    function openReportModal() {
+      const now = new Date();
+      const seedCode = hashString(currentStudentName).toString(16).toUpperCase();
+      document.getElementById('report-date').value = `${now.toLocaleDateString()} (Seed: #${seedCode})`;
+      document.getElementById('report-student-name').value = currentStudentName === 'Physics Student' ? '' : currentStudentName;
+
+      // Part 1: Sig Digs Grid
+      document.getElementById('report-p1-score').innerText = `${solvedCount} / 20 Solved`;
+      if (solvedCount >= 20) {
+        document.getElementById('report-p1-status').innerText = 'Completed ✓';
+        document.getElementById('report-p1-status').className = 'px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800';
+      } else {
+        document.getElementById('report-p1-status').innerText = 'In Progress';
+        document.getElementById('report-p1-status').className = 'px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-800';
+      }
+
+      // Part 2: Operations & Calculations
+      document.getElementById('report-p2-score').innerText = `${calcSolvedCount} / 20 Solved`;
+      if (calcSolvedCount >= 20) {
+        document.getElementById('report-p2-status').innerText = 'Completed ✓';
+        document.getElementById('report-p2-status').className = 'px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800';
+      } else {
+        document.getElementById('report-p2-status').innerText = 'In Progress';
+        document.getElementById('report-p2-status').className = 'px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-800';
+      }
+
+      // Part 3: Stations 1-4
+      const sIds = ['s1', 's2', 's3', 's4'];
+      sIds.forEach((sid, idx) => {
+        const st = STATIONS[idx];
+        const statusEl = document.getElementById(`report-${sid}-status`);
+        const scoreEl = document.getElementById(`report-${sid}-score`);
+        if (st.completed) {
+          statusEl.innerText = 'Completed ✓';
+          statusEl.className = 'px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800';
+          scoreEl.innerText = 'Mastered';
+        } else {
+          statusEl.innerText = 'Pending';
+          statusEl.className = 'px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600';
+          scoreEl.innerText = '—';
+        }
+      });
+
+      document.getElementById('report-modal').classList.remove('hidden');
+      document.getElementById('report-modal').classList.add('flex');
+    }
+
+    function closeReportModal() {
+      document.getElementById('report-modal').classList.add('hidden');
+      document.getElementById('report-modal').classList.remove('flex');
+    }
+
+
+    /* ========================================================== */
+    /* INITIALIZATION                                             */
+    /* ========================================================== */
+    function initializeAll() {
+      initQuiz();
+      initCalcQuiz();
+      const hRuler = document.getElementById('horizontal-ruler');
+      const vRuler = document.getElementById('vertical-ruler');
+      if (hRuler) makeDraggable(hRuler, 'h');
+      if (vRuler) makeDraggable(vRuler, 'v');
+      loadStation(0);
+
+      const nameInput = document.getElementById('welcome-name-input');
+      if (nameInput) setTimeout(() => nameInput.focus(), 150);
+    }
+
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', initializeAll);
+    } else {
+      initializeAll();
+    }
+
+    window.addEventListener('load', () => {
+      const grid = document.getElementById('cards-grid');
+      if (grid && grid.children.length === 0) {
+        initQuiz();
+      }
+      const calcGrid = document.getElementById('calc-cards-grid');
+      if (calcGrid && calcGrid.children.length === 0) {
+        initCalcQuiz();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (!document.getElementById('section-ruler').classList.contains('hidden')) {
+        renderSpecimen();
+      }
+    });
+  </script>
+</body>
+</html>

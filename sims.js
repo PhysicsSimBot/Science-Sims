@@ -13,14 +13,11 @@
    Filenames and image paths are CASE-SENSITIVE on GitHub Pages —
    match them exactly (Projectiles.png and projectiles.png are different).
 
-   TO ADD A SIMULATION: copy the example line below, paste it inside the
-   [ ] brackets, and change the fields. Keep the comma at the end of each line.
-
-   Example of a real entry (delete the // to use it as a starting point):
-   // { course:"phys20", title:"Projectile Motion", desc:"Set the angle and speed, then watch the arc.", file:"sims/physics20/projectiles.html" },
+   TO ADD A SIMULATION: copy an existing line, paste it inside the [ ] brackets,
+   and change the fields. Keep the comma at the end of each line.
    ===================================================================== */
 const SIMS = [
 
-  // Your simulations go here. The list is empty for now — add lines above this comment.
+  { course:"phys20", title:"Significant Digits", desc:"Practice reading and rounding to the correct number of significant figures.", file:"sims/physics20/sigdig.html" },
 
 ];
