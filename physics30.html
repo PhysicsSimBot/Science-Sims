@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics 30 — Simulations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-phys30">
+
+  <header class="topbar">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+      <ellipse cx="16" cy="16" rx="14" ry="6"/>
+      <ellipse cx="16" cy="16" rx="14" ry="6" transform="rotate(60 16 16)"/>
+      <ellipse cx="16" cy="16" rx="14" ry="6" transform="rotate(120 16 16)"/>
+      <circle class="nucleus" cx="16" cy="16" r="2.6"/>
+    </svg>
+    <div class="brand">Science &amp; Physics <span>Simulations</span></div>
+    <a class="back" href="index.html">
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8H4M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      All courses
+    </a>
+  </header>
+
+  <section class="course-header">
+    <div class="rule"></div>
+    <h1>Physics 30</h1>
+    <p>Momentum, fields, light, and the atom — from collisions to the quantum world.</p>
+  </section>
+
+  <div class="search">
+    <div class="search-wrap">
+      <svg class="search-ic" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.8"/><path d="M14 14l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input id="search" type="search" placeholder="Search Physics 30 simulations…" aria-label="Search Physics 30 simulations">
+    </div>
+  </div>
+
+  <main class="wrap"><div class="tiles" id="tiles"></div></main>
+
+  <footer>
+    <div class="wrap">
+      <div>Physics 30 · Alberta Program of Studies</div>
+      <div><a href="index.html">Back to all courses</a></div>
+    </div>
+  </footer>
+
+<script src="sims.js"></script>
+<script src="app.js"></script>
+<script>
+/* Show only this course's simulations, filtered live by the search box. */
+(function(){
+  var mine = SIMS.filter(function(s){ return s.course === "phys30"; });
+  wireSearch(document.getElementById("search"), document.getElementById("tiles"), mine);
+})();
+</script>
+</body>
+</html>

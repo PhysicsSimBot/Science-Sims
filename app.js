@@ -1,0 +1,65 @@
+/* =====================================================================
+   Shared plumbing for every page. You shouldn't need to edit this.
+   It builds simulation tiles and handles search filtering.
+   ===================================================================== */
+
+var ARROW = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+/* map a course id to its accent colour variable */
+function accentVar(course){
+  if(course === "sci10")  return "var(--sci10)";
+  if(course === "phys20") return "var(--phys20)";
+  if(course === "phys30") return "var(--phys30)";
+  return "var(--muted)";
+}
+
+/* thumbnail: real image if provided, otherwise a course-coloured placeholder */
+function thumbHTML(s){
+  if(s.img){
+    return '<div class="thumb"><img src="' + s.img + '" alt="" loading="lazy"></div>';
+  }
+  var letter = (s.title || "?").trim().charAt(0).toUpperCase();
+  return '<div class="thumb placeholder"><span class="monogram">' + letter + '</span></div>';
+}
+
+/* build one tile element for a simulation */
+function makeTile(s){
+  var live = !!s.file;
+  var el = document.createElement(live ? "a" : "div");
+  el.className = "tile" + (live ? "" : " soon");
+  el.style.setProperty("--accent", accentVar(s.course));
+  if(live) el.href = s.file;
+
+  var body = '<div class="tile-body"><h3>' + s.title + '</h3><p>' + s.desc + '</p>' +
+    (live
+      ? '<span class="go">Open simulation' + ARROW + '</span>'
+      : "<span class='soon-tag'>Coming soon</span>") +
+    '</div>';
+
+  el.innerHTML = thumbHTML(s) + body;
+  return el;
+}
+
+/* does a simulation match the search text? */
+function matches(s, q){
+  if(!q) return true;
+  q = q.toLowerCase();
+  return (s.title + " " + s.desc).toLowerCase().indexOf(q) > -1;
+}
+
+/* render a list of simulations into a container (with empty-state message) */
+function renderInto(container, list){
+  container.innerHTML = "";
+  if(!list.length){
+    container.innerHTML = '<p class="empty">No simulations match your search.</p>';
+    return;
+  }
+  list.forEach(function(s){ container.appendChild(makeTile(s)); });
+}
+
+/* wire a search box to a container, filtering a given list live */
+function wireSearch(box, container, list){
+  function run(){ renderInto(container, list.filter(function(s){ return matches(s, box.value); })); }
+  box.addEventListener("input", run);
+  run();
+}

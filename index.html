@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Science & Physics Simulations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+      <ellipse cx="16" cy="16" rx="14" ry="6"/>
+      <ellipse cx="16" cy="16" rx="14" ry="6" transform="rotate(60 16 16)"/>
+      <ellipse cx="16" cy="16" rx="14" ry="6" transform="rotate(120 16 16)"/>
+      <circle class="nucleus" cx="16" cy="16" r="2.6"/>
+    </svg>
+    <div class="brand">Science &amp; Physics <span>Simulations</span></div>
+  </header>
+
+  <section class="hero" aria-label="Introduction">
+    <div class="hero-card">
+      <div class="hero-grid">
+        <div>
+          <h1>Play with the physics.</h1>
+          <p class="lede">Interactive simulations for Science 10, Physics 20, and Physics 30. Choose your course to get started — no login, works on any device.</p>
+        </div>
+        <div class="traj-wrap">
+          <svg class="trajectory" viewBox="0 0 400 210" role="img" aria-label="A projectile launching along a curved path">
+            <g class="traj-grid" opacity="0.35">
+              <line x1="0" y1="35" x2="400" y2="35"/><line x1="0" y1="70" x2="400" y2="70"/>
+              <line x1="0" y1="105" x2="400" y2="105"/><line x1="0" y1="140" x2="400" y2="140"/>
+              <line x1="80" y1="0" x2="80" y2="185"/><line x1="160" y1="0" x2="160" y2="185"/>
+              <line x1="240" y1="0" x2="240" y2="185"/><line x1="320" y1="0" x2="320" y2="185"/>
+            </g>
+            <line class="traj-ground" x1="0" y1="185" x2="400" y2="185"/>
+            <path id="trajPath" class="traj-path" pathLength="100" d="M 30 185 Q 200 -70 370 185"/>
+            <circle id="trajGlow" class="traj-ball-glow" r="9" cx="30" cy="185"/>
+            <circle id="trajBall" class="traj-ball" r="5" cx="30" cy="185"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="search">
+    <div class="search-wrap">
+      <svg class="search-ic" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.8"/><path d="M14 14l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input id="search" type="search" placeholder="Search all simulations…" aria-label="Search all simulations">
+    </div>
+  </div>
+
+  <section class="doors" id="doors" aria-label="Courses">
+    <h2>Choose your course</h2>
+    <div class="card-grid">
+
+      <a class="course-card" style="--accent:var(--sci10)" href="science10.html">
+        <h3>Science 10</h3>
+        <p>Energy, matter, and how they move through chemical, technological, and global systems.</p>
+        <div class="tags"><span class="tag">Energy</span><span class="tag">Heat</span><span class="tag">Global systems</span></div>
+        <span class="enter">Open course
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </a>
+
+      <a class="course-card" style="--accent:var(--phys20)" href="physics20.html">
+        <h3>Physics 20</h3>
+        <p>Motion, forces, energy, and waves — the mechanics behind how things move.</p>
+        <div class="tags"><span class="tag">Kinematics</span><span class="tag">Dynamics</span><span class="tag">Waves</span></div>
+        <span class="enter">Open course
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </a>
+
+      <a class="course-card" style="--accent:var(--phys30)" href="physics30.html">
+        <h3>Physics 30</h3>
+        <p>Momentum, fields, light, and the atom — from collisions to the quantum world.</p>
+        <div class="tags"><span class="tag">Momentum</span><span class="tag">Fields</span><span class="tag">Atomic</span></div>
+        <span class="enter">Open course
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </a>
+
+    </div>
+  </section>
+
+  <section class="results" id="results" aria-label="Search results">
+    <h2>Matching simulations</h2>
+    <div class="tiles" id="resultsGrid"></div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div>Built for Alberta Science 10, Physics 20 &amp; 30. Works on any modern browser — phone, tablet, or Chromebook.</div>
+      <div><!-- optional: your name / contact --></div>
+    </div>
+  </footer>
+
+<script src="sims.js"></script>
+<script src="app.js"></script>
+<script>
+/* Hero launch animation — one run on load, respects reduced motion. */
+(function(){
+  var path=document.getElementById("trajPath"),
+      ball=document.getElementById("trajBall"),
+      glow=document.getElementById("trajGlow"),
+      len=path.getTotalLength(),
+      reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function place(t){var p=path.getPointAtLength(t*len);
+    ball.setAttribute("cx",p.x);ball.setAttribute("cy",p.y);
+    glow.setAttribute("cx",p.x);glow.setAttribute("cy",p.y);}
+  if(reduce){place(1);return;}
+  var dur=1500,start=null;
+  function step(ts){if(!start)start=ts;var t=Math.min((ts-start)/dur,1);
+    place(1-Math.pow(1-t,2));if(t<1)requestAnimationFrame(step);}
+  requestAnimationFrame(step);
+})();
+
+/* Cross-course search: empty box shows the three course cards;
+   typing hides them and shows matching sims from every course. */
+(function(){
+  var box=document.getElementById("search"),
+      doors=document.getElementById("doors"),
+      results=document.getElementById("results"),
+      grid=document.getElementById("resultsGrid");
+  function run(){
+    var q=box.value.trim();
+    if(!q){ doors.style.display=""; results.style.display="none"; return; }
+    doors.style.display="none"; results.style.display="block";
+    renderInto(grid, SIMS.filter(function(s){ return matches(s,q); }));
+  }
+  box.addEventListener("input", run);
+  run();
+})();
+</script>
+</body>
+</html>
