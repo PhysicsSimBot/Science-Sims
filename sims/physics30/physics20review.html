@@ -1,0 +1,3288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Physics 20 Review | Alberta Physics 30</title>
+  <style>
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --bg-accent: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border-color: #e2e8f0;
+      
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #dbeafe;
+      
+      --kinematics-color: #6366f1;
+      --kinematics-bg: #eef2ff;
+      --vectors-color: #0d9488;
+      --vectors-bg: #ccfbf1;
+      --dynamics-color: #ea580c;
+      --dynamics-bg: #ffedd5;
+      --energy-color: #0284c7;
+      --energy-bg: #e0f2fe;
+
+      --success: #16a34a;
+      --success-bg: #dcfce7;
+      --warning: #d97706;
+      --warning-bg: #fef3c7;
+      --danger: #dc2626;
+      --danger-bg: #fee2e2;
+      
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-card: #1e293b;
+      --bg-accent: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --primary-light: #1e3a8a;
+
+      --kinematics-color: #818cf8;
+      --kinematics-bg: #312e81;
+      --vectors-color: #2dd4bf;
+      --vectors-bg: #134e4a;
+      --dynamics-color: #fb923c;
+      --dynamics-bg: #7c2d12;
+      --energy-color: #38bdf8;
+      --energy-bg: #0c4a6e;
+
+      --success: #22c55e;
+      --success-bg: #14532d;
+      --warning: #fbbf24;
+      --warning-bg: #78350f;
+      --danger: #ef4444;
+      --danger-bg: #7f1d1d;
+
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* Top Navigation Header */
+    header {
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 1.15rem;
+      cursor: pointer;
+    }
+
+    .brand-icon {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-nav {
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background-color: var(--bg-accent);
+      border-color: var(--primary);
+    }
+
+    .theme-toggle-btn {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+    }
+
+    /* View Sections */
+    .view-section {
+      display: none;
+    }
+
+    .view-section.active {
+      display: block;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Landing Page Styles */
+    .hero-banner {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: white;
+      padding: 2.25rem 2rem;
+      border-radius: var(--radius-lg);
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::after {
+      content: "g = 9.81 m/s²";
+      position: absolute;
+      right: 1.5rem;
+      bottom: 1rem;
+      font-family: monospace;
+      font-size: 3rem;
+      font-weight: 900;
+      opacity: 0.05;
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: rgba(59, 130, 246, 0.25);
+      border: 1px solid rgba(59, 130, 246, 0.5);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+      color: #93c5fd;
+    }
+
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      color: #cbd5e1;
+      max-width: 720px;
+    }
+
+    .selection-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .section-heading {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .badge-count {
+      background-color: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.8rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .btn-group-sm {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-link {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-link:hover {
+      background-color: var(--bg-accent);
+      text-decoration: underline;
+    }
+
+    /* Unit Grid Cards */
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .topic-card {
+      background-color: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    .topic-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary);
+    }
+
+    .topic-card.selected {
+      border-color: var(--primary);
+      background-color: var(--bg-surface);
+      box-shadow: 0 0 0 2px var(--primary-light), var(--shadow-md);
+    }
+
+    .topic-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .topic-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    .topic-card[data-unit="kinematics"] .topic-icon-wrap {
+      background-color: var(--kinematics-bg);
+      color: var(--kinematics-color);
+    }
+    .topic-card[data-unit="vectors"] .topic-icon-wrap {
+      background-color: var(--vectors-bg);
+      color: var(--vectors-color);
+    }
+    .topic-card[data-unit="dynamics"] .topic-icon-wrap {
+      background-color: var(--dynamics-bg);
+      color: var(--dynamics-color);
+    }
+    .topic-card[data-unit="energy"] .topic-icon-wrap {
+      background-color: var(--energy-bg);
+      color: var(--energy-color);
+    }
+
+    .custom-checkbox {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      background-color: var(--bg-surface);
+    }
+
+    .topic-card.selected .custom-checkbox {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    .topic-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      color: var(--text-main);
+    }
+
+    .topic-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      flex: 1;
+      margin-bottom: 0.75rem;
+    }
+
+    .topic-meta {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.6rem;
+    }
+
+    /* Start Settings Card */
+    .launch-panel {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .setting-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .select-input {
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-launch {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: var(--radius-md);
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-launch:hover:not(:disabled) {
+      background: linear-gradient(135deg, #1d4ed8, #1e40af);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-launch:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Practice & Problem View */
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background-color: var(--bg-accent);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #8b5cf6);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .unit-pill {
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .unit-pill.kinematics { background-color: var(--kinematics-bg); color: var(--kinematics-color); }
+    .unit-pill.vectors { background-color: var(--vectors-bg); color: var(--vectors-color); }
+    .unit-pill.dynamics { background-color: var(--dynamics-bg); color: var(--dynamics-color); }
+    .unit-pill.energy { background-color: var(--energy-bg); color: var(--energy-color); }
+
+    .quiz-stats {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .stat-pill {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Question Card */
+    .question-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.5rem;
+    }
+
+    .q-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .q-number {
+      color: var(--primary);
+    }
+
+    .q-text {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+      color: var(--text-main);
+    }
+
+    .q-given-badge {
+      display: inline-block;
+      background-color: var(--bg-accent);
+      border-left: 3px solid var(--primary);
+      padding: 0.5rem 0.85rem;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 0.85rem;
+      font-family: monospace;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Answer Input Area */
+    .input-form-container {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    .input-group {
+      display: flex;
+      align-items: stretch;
+      max-width: 420px;
+    }
+
+    .math-input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      font-family: monospace;
+      border: 2px solid var(--border-color);
+      border-right: none;
+      border-radius: var(--radius-md) 0 0 var(--radius-md);
+      background-color: var(--bg-surface);
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .math-input:focus {
+      border-color: var(--primary);
+    }
+
+    .unit-addon {
+      background-color: var(--bg-accent);
+      border: 2px solid var(--border-color);
+      border-left: 1px solid var(--border-color);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 1rem;
+      min-width: 60px;
+    }
+
+    .input-helper-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+    }
+
+    /* Action Buttons Row */
+    .action-buttons-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn-action {
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn-submit {
+      background-color: var(--primary);
+      color: white;
+    }
+    .btn-submit:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-hint {
+      background-color: var(--bg-surface);
+      border-color: var(--border-color);
+      color: var(--warning);
+    }
+    .btn-hint:hover {
+      background-color: var(--warning-bg);
+      border-color: var(--warning);
+    }
+
+    .btn-solution {
+      background-color: var(--bg-surface);
+      border-color: var(--border-color);
+      color: var(--text-muted);
+    }
+    .btn-solution:hover {
+      background-color: var(--bg-accent);
+      color: var(--text-main);
+    }
+
+    .btn-next {
+      background-color: var(--text-main);
+      color: var(--bg-surface);
+      margin-left: auto;
+    }
+    .btn-next:hover {
+      opacity: 0.9;
+    }
+
+    /* Feedback Banners */
+    .feedback-banner {
+      display: none;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      margin-top: 1.25rem;
+      animation: slideDown 0.25s ease-out;
+      line-height: 1.5;
+    }
+
+    .feedback-banner.active {
+      display: block;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .feedback-correct {
+      background-color: var(--success-bg);
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+
+    .feedback-sigfig {
+      background-color: var(--warning-bg);
+      border: 2px solid var(--warning);
+      color: #92400e;
+    }
+    [data-theme="dark"] .feedback-sigfig {
+      color: #fef3c7;
+    }
+
+    .feedback-incorrect {
+      background-color: var(--danger-bg);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+    }
+
+    .feedback-header {
+      font-weight: 800;
+      font-size: 1.05rem;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Hint and Solution Drawers */
+    .expandable-panel {
+      display: none;
+      margin-top: 1.25rem;
+      padding: 1.25rem;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-accent);
+      border: 1px solid var(--border-color);
+      animation: fadeIn 0.2s ease;
+    }
+
+    .expandable-panel.active {
+      display: block;
+    }
+
+    .panel-heading {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .solution-step-box {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+      margin-top: 0.6rem;
+      font-size: 0.9rem;
+    }
+
+    .solution-step-title {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.3rem;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    /* Modal Sheet: Formula Sheet */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.65);
+      z-index: 100;
+      backdrop-filter: blur(3px);
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-dialog {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      padding: 1.75rem;
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-close-modal:hover {
+      background-color: var(--bg-accent);
+      color: var(--text-main);
+    }
+
+    .formula-section-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 1rem;
+    }
+
+    .formula-card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+    }
+
+    .formula-card-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--primary);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.4rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .formula-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .formula-table td {
+      padding: 0.35rem 0.25rem;
+      vertical-align: top;
+    }
+
+    .formula-math {
+      font-family: "Cambria Math", "Times New Roman", serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* Summary / Results View */
+    .results-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      max-width: 650px;
+      margin: 1rem auto 2rem;
+    }
+
+    .results-score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), #8b5cf6);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .results-percentage {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .results-score-text {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    .breakdown-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .breakdown-table th, .breakdown-table td {
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .breakdown-table th {
+      background-color: var(--bg-accent);
+      font-weight: 700;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      margin-top: auto;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .hero-title { font-size: 1.5rem; }
+      .question-card { padding: 1.25rem; }
+      .formula-section-grid { grid-template-columns: 1fr; }
+      .input-group { max-width: 100%; }
+      .action-buttons-row { flex-direction: column; align-items: stretch; }
+      .btn-next { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="nav-container">
+      <div class="brand" onclick="app.showLanding()">
+        <div class="brand-icon">Φ</div>
+        <div>
+          <div>Physics 20 Review</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">Alberta Physics 30 Prerequisite Skills</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="btn-nav" onclick="app.toggleFormulaModal()">
+          <span>📐</span> Formula Sheet
+        </button>
+        <button class="btn-nav theme-toggle-btn" id="themeToggle" onclick="app.toggleTheme()" title="Toggle Dark/Light Mode">
+          🌓
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- 1. LANDING & TOPIC SELECTION VIEW -->
+    <section id="landingView" class="view-section active">
+      <div class="hero-banner">
+        <span class="hero-tag">Diploma Foundations</span>
+        <h1 class="hero-title">Physics 20 Review Practice</h1>
+        <p class="hero-desc">
+          Master the foundational skills required for Physics 30. Select one or more units below to generate an interactive practice session with automated Alberta significant digits validation, multi-level hints, and complete step-by-step worked solutions.
+        </p>
+      </div>
+
+      <div class="selection-controls">
+        <div class="section-heading">
+          Select Review Topics
+          <span class="badge-count" id="selectedTopicsCount">4 Selected</span>
+        </div>
+        <div class="btn-group-sm">
+          <button class="btn-link" onclick="app.selectAllTopics()">Select All</button>
+          <span style="color: var(--border-color)">|</span>
+          <button class="btn-link" onclick="app.clearAllTopics()">Clear Selection</button>
+        </div>
+      </div>
+
+      <div class="topics-grid">
+        <!-- Topic 1: Kinematics -->
+        <div class="topic-card selected" data-unit="kinematics" onclick="app.toggleTopicCard('kinematics')">
+          <div class="topic-header">
+            <div class="topic-icon-wrap">🚀</div>
+            <div class="custom-checkbox">✓</div>
+          </div>
+          <div class="topic-title">1. Kinematics</div>
+          <div class="topic-desc">
+            Uniform & accelerated motion, vertical free fall, cliff tosses, multi-stage motion, and kinematic equations.
+          </div>
+          <div class="topic-meta">
+            <span>Unit 1</span>
+            <span>16 Questions</span>
+          </div>
+        </div>
+
+        <!-- Topic 2: Vectors -->
+        <div class="topic-card selected" data-unit="vectors" onclick="app.toggleTopicCard('vectors')">
+          <div class="topic-header">
+            <div class="topic-icon-wrap">🧭</div>
+            <div class="custom-checkbox">✓</div>
+          </div>
+          <div class="topic-title">2. Vectors</div>
+          <div class="topic-desc">
+            Bearings, compass headings, RCS, resolving perpendicular components, 2D addition, displacement & velocity.
+          </div>
+          <div class="topic-meta">
+            <span>Unit 2</span>
+            <span>16 Questions</span>
+          </div>
+        </div>
+
+        <!-- Topic 3: Dynamics (Forces) -->
+        <div class="topic-card selected" data-unit="dynamics" onclick="app.toggleTopicCard('dynamics')">
+          <div class="topic-header">
+            <div class="topic-icon-wrap">⚖️</div>
+            <div class="custom-checkbox">✓</div>
+          </div>
+          <div class="topic-title">3. Dynamics (Forces)</div>
+          <div class="topic-desc">
+            Newton's Laws, net force, friction coefficient (μ), inclined planes, connected multi-body systems, and tension.
+          </div>
+          <div class="topic-meta">
+            <span>Unit 3</span>
+            <span>16 Questions</span>
+          </div>
+        </div>
+
+        <!-- Topic 4: Work and Energy -->
+        <div class="topic-card selected" data-unit="energy" onclick="app.toggleTopicCard('energy')">
+          <div class="topic-header">
+            <div class="topic-icon-wrap">⚡</div>
+            <div class="custom-checkbox">✓</div>
+          </div>
+          <div class="topic-title">4. Work & Energy</div>
+          <div class="topic-desc">
+            Work (W = Fd cos θ), Ep, Ek, Es, conservation of mechanical energy, roller coasters, and non-isolated work loss.
+          </div>
+          <div class="topic-meta">
+            <span>Unit 4</span>
+            <span>16 Questions</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Launch Panel -->
+      <div class="launch-panel">
+        <div class="settings-row">
+          <div class="setting-item">
+            <span>Questions in Session:</span>
+            <select id="sessionLengthSelect" class="select-input">
+              <option value="10">10 Questions (Quick Review)</option>
+              <option value="15">15 Questions (Standard Practice)</option>
+              <option value="20" selected>20 Questions (Recommended)</option>
+              <option value="30">30 Questions (Deep Dive)</option>
+              <option value="all">All Available in Selected Units</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <span>Question Delivery:</span>
+            <span style="font-weight: 700; color: var(--primary);">🔀 Complete Random Shuffle</span>
+          </div>
+        </div>
+
+        <button class="btn-launch" id="btnStartQuiz" onclick="app.startQuiz()">
+          <span>Start Review Session</span> ➔
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. QUIZ / PROBLEM SOLVING VIEW -->
+    <section id="quizView" class="view-section">
+      <div class="quiz-header">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <button class="btn-nav" onclick="app.confirmExitQuiz()">← Exit to Menu</button>
+          <span id="quizUnitPill" class="unit-pill kinematics">Kinematics</span>
+        </div>
+        <div class="quiz-stats">
+          <div class="stat-pill" title="Current Score">
+            <span>🎯</span> <span id="quizScoreDisplay">Score: 0/0 (0%)</span>
+          </div>
+          <div class="stat-pill" title="Consecutive Correct Streak">
+            <span>🔥</span> <span id="quizStreakDisplay">0 streak</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="progress-bar-container">
+        <div id="quizProgressBar" class="progress-bar-fill"></div>
+      </div>
+
+      <!-- Question Card -->
+      <div class="question-card">
+        <div class="q-title">
+          <span class="q-number" id="qNumberDisplay">Question 1 of 20</span>
+          <span style="color: var(--text-muted);">•</span>
+          <span id="qTitleDisplay">Trampoline Jump</span>
+        </div>
+
+        <div class="q-text" id="qTextDisplay">
+          Loading question text...
+        </div>
+
+        <div class="q-given-badge" id="qGivenDisplay">
+          Given: v_i = 5.42 m/s, t = 1.10 s
+        </div>
+
+        <!-- Input Form -->
+        <div class="input-form-container">
+          <div class="input-label-row">
+            <span>Enter Your Final Calculated Answer:</span>
+            <span style="font-size: 0.8rem; color: var(--primary);">Supports scientific notation (e.g. 1.8e3 or 1.8x10^3)</span>
+          </div>
+          <div class="input-group">
+            <input 
+              type="text" 
+              id="studentAnswerInput" 
+              class="math-input" 
+              placeholder="e.g. 15 or 1.5e1" 
+              autocomplete="off" 
+              spellcheck="false"
+              onkeydown="if(event.key==='Enter') app.checkAnswer()"
+            >
+            <div class="unit-addon" id="qUnitDisplay">m</div>
+          </div>
+          <div class="input-helper-text">
+            💡 Pay strict attention to significant digits based on the numbers in the question.
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons-row">
+          <button class="btn-action btn-submit" id="btnSubmitAnswer" onclick="app.checkAnswer()">
+            <span>✓</span> Check Answer
+          </button>
+          <button class="btn-action btn-hint" id="btnToggleHint" onclick="app.toggleHint()">
+            <span>💡</span> Hint
+          </button>
+          <button class="btn-action btn-solution" id="btnToggleSolution" onclick="app.toggleSolution()">
+            <span>📖</span> Worked Solution
+          </button>
+          <button class="btn-action btn-next" id="btnNextQuestion" onclick="app.nextQuestion()">
+            <span>Next Question ➔</span>
+          </button>
+        </div>
+
+        <!-- Feedback Alert Box -->
+        <div id="feedbackBanner" class="feedback-banner">
+          <div class="feedback-header" id="feedbackHeader">Feedback</div>
+          <div id="feedbackMessage">Message details</div>
+        </div>
+
+        <!-- Progressive Hint Drawer -->
+        <div id="hintPanel" class="expandable-panel">
+          <div class="panel-heading" style="color: var(--warning);">
+            <span>💡</span> Step-by-Step Hint:
+          </div>
+          <div id="hintContent">Hint details...</div>
+        </div>
+
+        <!-- Worked Solution Drawer -->
+        <div id="solutionPanel" class="expandable-panel">
+          <div class="panel-heading" style="color: var(--primary);">
+            <span>📖</span> Complete Step-by-Step Solution:
+          </div>
+          <div class="solution-step-box">
+            <div class="solution-step-title">1. Given Quantities & Significant Digits</div>
+            <div id="solGiven"></div>
+          </div>
+          <div class="solution-step-box">
+            <div class="solution-step-title">2. Governing Formulas</div>
+            <div id="solFormula" style="font-family: 'Cambria Math', monospace;"></div>
+          </div>
+          <div class="solution-step-box">
+            <div class="solution-step-title">3. Substitution & Calculation</div>
+            <div id="solSteps"></div>
+          </div>
+          <div class="solution-step-box" style="border-left: 3px solid var(--success); background-color: var(--success-bg);">
+            <div class="solution-step-title" style="color: var(--success);">4. Final Answer & Sig Dig Justification</div>
+            <div id="solFinal" style="font-weight: 700;"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. SESSION RESULTS / SUMMARY VIEW -->
+    <section id="resultsView" class="view-section">
+      <div class="results-card">
+        <div class="results-score-circle">
+          <div class="results-percentage" id="finalPercentage">100%</div>
+          <div class="results-score-text" id="finalScoreFraction">20 / 20 Correct</div>
+        </div>
+
+        <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem;" id="resultsGreeting">
+          Outstanding Work!
+        </h2>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;" id="resultsSubtext">
+          You've completed your Physics 20 review practice session.
+        </p>
+
+        <table class="breakdown-table">
+          <thead>
+            <tr>
+              <th>Topic / Unit</th>
+              <th>Attempted</th>
+              <th>First-Try Accuracy</th>
+              <th>Sig-Dig Accuracy</th>
+            </tr>
+          </thead>
+          <tbody id="breakdownTableBody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <button class="btn-launch" style="width: auto; padding: 0.75rem 1.75rem;" onclick="app.showLanding()">
+            <span>🔄 Practice Again</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FORMULA SHEET MODAL -->
+  <div id="formulaModal" class="modal-overlay" onclick="if(event.target===this) app.toggleFormulaModal()">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>📐</span> Alberta Physics 20/30 Formula & Data Sheet
+        </div>
+        <button class="btn-close-modal" onclick="app.toggleFormulaModal()">✕</button>
+      </div>
+
+      <!-- Formula Grid -->
+      <div class="formula-section-grid">
+        
+        <!-- Constants -->
+        <div class="formula-card">
+          <div class="formula-card-title">Physics Constants & Conversions</div>
+          <table class="formula-table">
+            <tr>
+              <td>Acceleration due to gravity (Earth):</td>
+              <td><span class="formula-math">g = 9.81 m/s²</span></td>
+            </tr>
+            <tr>
+              <td>Newton definition:</td>
+              <td><span class="formula-math">1 N = 1 kg·m/s²</span></td>
+            </tr>
+            <tr>
+              <td>Joule definition:</td>
+              <td><span class="formula-math">1 J = 1 N·m = 1 kg·m²/s²</span></td>
+            </tr>
+            <tr>
+              <td>Speed conversion:</td>
+              <td><span class="formula-math">1 km/h = 1 / 3.6 m/s</span></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Kinematics -->
+        <div class="formula-card">
+          <div class="formula-card-title">1. Kinematics Formulas</div>
+          <table class="formula-table">
+            <tr>
+              <td>Uniform velocity:</td>
+              <td><span class="formula-math">v_ave = Δd / Δt</span></td>
+            </tr>
+            <tr>
+              <td>Uniform acceleration:</td>
+              <td><span class="formula-math">a = (v_f - v_i) / t</span></td>
+            </tr>
+            <tr>
+              <td>Displacement (with a):</td>
+              <td><span class="formula-math">d = v_i t + ½ a t²</span></td>
+            </tr>
+            <tr>
+              <td>Displacement (with v_f):</td>
+              <td><span class="formula-math">d = v_f t - ½ a t²</span></td>
+            </tr>
+            <tr>
+              <td>Displacement (average v):</td>
+              <td><span class="formula-math">d = [(v_i + v_f) / 2] t</span></td>
+            </tr>
+            <tr>
+              <td>Timeless kinematic:</td>
+              <td><span class="formula-math">v_f² = v_i² + 2 a d</span></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Vectors & Trig -->
+        <div class="formula-card">
+          <div class="formula-card-title">2. Vectors & Trigonometry</div>
+          <table class="formula-table">
+            <tr>
+              <td>Horizontal component:</td>
+              <td><span class="formula-math">R_x = R cos θ</span></td>
+            </tr>
+            <tr>
+              <td>Vertical component:</td>
+              <td><span class="formula-math">R_y = R sin θ</span></td>
+            </tr>
+            <tr>
+              <td>Pythagorean magnitude:</td>
+              <td><span class="formula-math">R = √(R_x² + R_y²)</span></td>
+            </tr>
+            <tr>
+              <td>Resultant angle:</td>
+              <td><span class="formula-math">tan θ = R_y / R_x</span></td>
+            </tr>
+            <tr>
+              <td>Sine Law:</td>
+              <td><span class="formula-math">a / sin A = b / sin B = c / sin C</span></td>
+            </tr>
+            <tr>
+              <td>Cosine Law:</td>
+              <td><span class="formula-math">c² = a² + b² - 2ab cos C</span></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Dynamics -->
+        <div class="formula-card">
+          <div class="formula-card-title">3. Dynamics (Forces) Formulas</div>
+          <table class="formula-table">
+            <tr>
+              <td>Newton's Second Law:</td>
+              <td><span class="formula-math">F_net = m a = Σ F</span></td>
+            </tr>
+            <tr>
+              <td>Gravitational Force (Weight):</td>
+              <td><span class="formula-math">F_g = m g</span></td>
+            </tr>
+            <tr>
+              <td>Friction force:</td>
+              <td><span class="formula-math">F_f = μ F_N</span></td>
+            </tr>
+            <tr>
+              <td>Incline parallel force:</td>
+              <td><span class="formula-math">F_|| = mg sin θ</span></td>
+            </tr>
+            <tr>
+              <td>Incline normal force:</td>
+              <td><span class="formula-math">F_N = mg cos θ</span></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Work and Energy -->
+        <div class="formula-card" style="grid-column: 1 / -1;">
+          <div class="formula-card-title">4. Work & Energy Formulas</div>
+          <table class="formula-table">
+            <tr>
+              <td>Work: <span class="formula-math">W = F d cos θ = ΔE</span></td>
+              <td>Gravitational Potential: <span class="formula-math">E_p = m g h</span></td>
+            </tr>
+            <tr>
+              <td>Kinetic Energy: <span class="formula-math">E_k = ½ m v²</span></td>
+              <td>Elastic Potential Energy: <span class="formula-math">E_s = ½ k x²</span></td>
+            </tr>
+            <tr>
+              <td>Total Mechanical Energy: <span class="formula-math">E_m = E_p + E_k + E_s</span></td>
+              <td>Conservation / Non-isolated: <span class="formula-math">E_{m,i} - W_f = E_{m,f}</span></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Alberta Sig Fig Rules Reference -->
+        <div class="formula-card" style="grid-column: 1 / -1; background-color: var(--bg-accent);">
+          <div class="formula-card-title" style="color: var(--warning);">Alberta Diploma Significant Digits Rules</div>
+          <p style="font-size: 0.85rem; line-height: 1.5; color: var(--text-muted);">
+            • <strong>Multiplication / Division:</strong> Round your final answer to the least number of significant digits in the given values.<br>
+            • <strong>Leading zeros</strong> (e.g. 0.0050) are <em>not</em> significant (0.0050 has 2 sig figs).<br>
+            • <strong>Trailing zeros with a decimal point</strong> (e.g. 50.0 or 50.) <em>are</em> significant (50.0 has 3 sig figs, 50. has 2 sig figs).<br>
+            • <strong>Scientific Notation:</strong> Format numbers like <code>1.8e3</code> or <code>1.8x10^3</code> (mantissa dictates significant digits).
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    Alberta Physics 30 • Prerequisite Physics 20 Review System • Comprehensive Multi-Unit Problem Bank
+  </footer>
+
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script>
+    // Embed question bank JSON data
+    const QUESTION_BANK = [
+  {
+    "id": "k1",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Trampoline Jump - Maximum Height",
+    "text": "A student jumps vertically upwards on a trampoline with an initial velocity of <strong>5.42 m/s</strong> and lands back on the trampoline <strong>1.10 s</strong> later. Assuming air resistance is negligible, what was the maximum height reached by the student above the trampoline surface?",
+    "given": "v_i = 5.42 m/s [up] (3 sig digs), t_{total} = 1.10 s (3 sig digs), a = -9.81 m/s\u00b2",
+    "targetUnit": "m",
+    "ans": 1.5,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "At maximum height, the vertical velocity of the jumper is momentarily zero (v_f = 0 m/s).",
+      "Use the kinematic equation v_f\u00b2 = v_i\u00b2 + 2ad with a = -9.81 m/s\u00b2, and solve for the displacement d."
+    ],
+    "solution": {
+      "given": "\u2022 v_i = 5.42 m/s [up] (3 sig digs)<br>\u2022 v_f = 0 m/s at maximum height<br>\u2022 a = -9.81 m/s\u00b2 [down] (3 sig digs)",
+      "formula": "v_f\u00b2 = v_i\u00b2 + 2ad \\implies d = \\frac{v_f\u00b2 - v_i\u00b2}{2a}",
+      "steps": "1. Substitute known values:<br>&nbsp;&nbsp;&nbsp;d = (0\u00b2 - 5.42\u00b2) / (2 \u00d7 -9.81)<br>&nbsp;&nbsp;&nbsp;d = -29.3764 / -19.62 = 1.49727... m<br>2. Alternatively using time to peak t = 1.10 s / 2 = 0.550 s:<br>&nbsp;&nbsp;&nbsp;d = (5.42)(0.550) + 0.5(-9.81)(0.550)\u00b2 = 2.981 - 1.4838 = 1.497... m",
+      "final": "1.50 m (rounded to 3 significant digits)"
+    }
+  },
+  {
+    "id": "k2",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Trampoline Jump - Landing Velocity",
+    "text": "A student jumps vertically upwards on a trampoline with an initial velocity of <strong>5.42 m/s [up]</strong> and returns to the exact same launch level <strong>1.10 s</strong> later. What is the magnitude of the velocity (speed) with which the student lands back on the trampoline?",
+    "given": "v_i = 5.42 m/s (3 sig digs), t = 1.10 s (3 sig digs)",
+    "targetUnit": "m/s",
+    "ans": 5.42,
+    "sigFigs": 3,
+    "tolerance": 0.015,
+    "hints": [
+      "In symmetrical vertical projectile motion (where launch height equals landing height in the absence of air resistance), consider how the landing speed compares to the launch speed.",
+      "Alternatively, use the kinematic relation v_f = v_i + at using the total time in the air."
+    ],
+    "solution": {
+      "given": "\u2022 v_i = +5.42 m/s<br>\u2022 a = -9.81 m/s\u00b2<br>\u2022 t = 1.10 s",
+      "formula": "v_f = v_i + at",
+      "steps": "v_f = 5.42 + (-9.81)(1.10) = 5.42 - 10.791 = -5.371 m/s (or theoretically -5.42 m/s assuming exact symmetry with theoretical time 1.105 s).<br>Magnitude = 5.42 m/s.",
+      "final": "5.42 m/s (3 significant digits)"
+    }
+  },
+  {
+    "id": "k3",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Soccer Ball Pass & Kick Acceleration",
+    "text": "A soccer ball is kicked by Player A at a velocity of <strong>16 m/s [W]</strong> towards Player B. Once the ball reaches Player B, they kick it back toward Player A at a velocity of <strong>12 m/s [E]</strong>. If the ball was in contact with Player B's foot for <strong>0.18 s</strong>, calculate the magnitude of the acceleration of the ball during the kick.",
+    "given": "v_i = -16 m/s (2 sig digs), v_f = +12 m/s (2 sig digs), \\Delta t = 0.18 s (2 sig digs)",
+    "targetUnit": "m/s\u00b2",
+    "ans": 160,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "Velocity is a vector quantity. Assign a positive direction (e.g. East as positive, West as negative).",
+      "Determine the change in velocity: \u0394v = v_f - v_i.",
+      "Use the acceleration definition: a = \u0394v / \u0394t."
+    ],
+    "solution": {
+      "given": "\u2022 Let East be positive (+), West be negative (-)<br>\u2022 v_i = -16 m/s<br>\u2022 v_f = +12 m/s<br>\u2022 \\Delta t = 0.18 s (2 sig digs)",
+      "formula": "a = \\frac{v_f - v_i}{\\Delta t}",
+      "steps": "1. \\Delta v = 12 - (-16) = +28 m/s<br>2. a = 28 / 0.18 = 155.555... m/s\u00b2 [E]<br>3. Round to 2 significant digits: 160 m/s\u00b2 (or 1.6 \\times 10\u00b2 m/s\u00b2).",
+      "final": "160 m/s\u00b2 (or 1.6 \u00d7 10\u00b2 m/s\u00b2, 2 significant digits)"
+    }
+  },
+  {
+    "id": "k4",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Vertical Toss Caught on Way Down",
+    "text": "An object is shot straight upwards from the ground at an initial speed of <strong>24.0 m/s</strong>. If the object is caught on its way back down at a height of <strong>5.4 m</strong> above the ground, how fast is it travelling when caught?",
+    "given": "v_i = 24.0 m/s (3 sig digs), d = +5.4 m (2 sig digs), a = -9.81 m/s\u00b2",
+    "targetUnit": "m/s",
+    "ans": 22,
+    "sigFigs": 2,
+    "tolerance": 0.025,
+    "hints": [
+      "Identify the given variables: initial velocity v_i, vertical displacement d, and acceleration a = -g.",
+      "Use the timeless kinematic equation: v_f\u00b2 = v_i\u00b2 + 2ad and solve for v_f."
+    ],
+    "solution": {
+      "given": "\u2022 v_i = 24.0 m/s [up]<br>\u2022 d = +5.4 m<br>\u2022 a = -9.81 m/s\u00b2",
+      "formula": "v_f\u00b2 = v_i\u00b2 + 2ad",
+      "steps": "1. v_f\u00b2 = (24.0)\u00b2 + 2(-9.81)(5.4)<br>&nbsp;&nbsp;&nbsp;v_f\u00b2 = 576 - 105.948 = 470.052 m\u00b2/s\u00b2<br>2. v_f = \\sqrt{470.052} = 21.68 m/s<br>3. Round to 2 significant digits (limited by 5.4 m): 22 m/s.",
+      "final": "22 m/s (2 significant digits)"
+    }
+  },
+  {
+    "id": "k5",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Ferris Wheel Phone Drop",
+    "text": "While on a Ferris wheel, you are travelling vertically upwards at a speed of <strong>11.0 m/s</strong> when you accidentally drop your phone out the side. If you were <strong>5.0 m</strong> above the ground at the moment of release, how fast was the phone travelling when it struck the ground?",
+    "given": "v_i = +11.0 m/s (3 sig digs), d = -5.0 m (2 sig digs), a = -9.81 m/s\u00b2",
+    "targetUnit": "m/s",
+    "ans": 15,
+    "sigFigs": 2,
+    "tolerance": 0.025,
+    "hints": [
+      "The phone begins with an upward initial velocity (+v_i) equal to the speed of the Ferris wheel.",
+      "Since the ground is below the release point, the vertical displacement d is negative.",
+      "Use the kinematic equation v_f\u00b2 = v_i\u00b2 + 2ad and solve for speed v_f."
+    ],
+    "solution": {
+      "given": "\u2022 v_i = +11.0 m/s<br>\u2022 d = -5.0 m<br>\u2022 a = -9.81 m/s\u00b2",
+      "formula": "v_f\u00b2 = v_i\u00b2 + 2ad",
+      "steps": "1. v_f\u00b2 = (11.0)\u00b2 + 2(-9.81)(-5.0)<br>&nbsp;&nbsp;&nbsp;v_f\u00b2 = 121 + 98.1 = 219.1 m\u00b2/s\u00b2<br>2. v_f = \\sqrt{219.1} = 14.802... m/s<br>3. Round to 2 significant digits (limited by 5.0 m): 15 m/s.",
+      "final": "15 m/s (2 significant digits)"
+    }
+  },
+  {
+    "id": "k6",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Train Track Crossing Acceleration",
+    "text": "You are driving towards a train crossing that crosses the road perpendicularly in front of you. A train is approximately <strong>150 m</strong> away from the crossing and travelling at a constant speed of <strong>14 m/s</strong>. If you are <strong>550 m</strong> away and driving at <strong>22.5 m/s</strong>, what is the minimum magnitude of constant acceleration you will need to cross the tracks before the train arrives?",
+    "given": "Train: d_t = 150 m, v_t = 14 m/s. Car: d_c = 550 m, v_i = 22.5 m/s.",
+    "targetUnit": "m/s\u00b2",
+    "ans": 5.4,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "Find the time it takes the train to reach the crossing using uniform motion: t = d / v.",
+      "Use the car's kinematic formula: d = v_i t + \u00bd a t\u00b2.",
+      "Substitute the required time and distance, then isolate and solve for acceleration a."
+    ],
+    "solution": {
+      "given": "\u2022 Train: d = 150 m, v = 14 m/s \\implies t = 150 / 14 = 10.714 s<br>\u2022 Car: d = 550 m, v_i = 22.5 m/s, t = 10.714 s",
+      "formula": "d = v_i t + \\frac{1}{2} a t\u00b2 \\implies a = \\frac{2(d - v_i t)}{t\u00b2}",
+      "steps": "1. Distance car covers at initial velocity: v_i t = (22.5)(10.714) = 241.07 m<br>2. Remaining distance required from acceleration: 550 - 241.07 = 308.93 m<br>3. a = 2(308.93) / (10.714)\u00b2 = 617.86 / 114.796 = 5.382 m/s\u00b2<br>4. Round to 2 significant digits: 5.4 m/s\u00b2.",
+      "final": "5.4 m/s\u00b2 (2 significant digits)"
+    }
+  },
+  {
+    "id": "k7",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Forensic Skid Distance Investigation",
+    "text": "During a forensic accident investigation, police determined that a car that was attempting to stop left a skidding distance of <strong>18.2 m</strong>. Given the road conditions, investigators calculate the acceleration of the vehicle was <strong>-8.9 m/s\u00b2</strong> as it came to a complete stop. Calculate how fast the car was travelling when it first began skidding.",
+    "given": "d = 18.2 m (3 sig digs), a = -8.9 m/s\u00b2 (2 sig digs), v_f = 0 m/s",
+    "targetUnit": "m/s",
+    "ans": 18,
+    "sigFigs": 2,
+    "tolerance": 0.025,
+    "hints": [
+      "The car comes to a complete stop, meaning the final velocity v_f = 0 m/s.",
+      "Use the kinematic equation v_f\u00b2 = v_i\u00b2 + 2ad.",
+      "Rearrange to solve for the initial velocity v_i."
+    ],
+    "solution": {
+      "given": "\u2022 d = 18.2 m<br>\u2022 a = -8.9 m/s\u00b2<br>\u2022 v_f = 0 m/s",
+      "formula": "v_f\u00b2 = v_i\u00b2 + 2ad \\implies v_i = \\sqrt{v_f\u00b2 - 2ad}",
+      "steps": "1. v_i\u00b2 = 0 - 2(-8.9)(18.2) = +323.96 m\u00b2/s\u00b2<br>2. v_i = \\sqrt{323.96} = 17.9988... m/s<br>3. Round to 2 significant digits (limited by -8.9 m/s\u00b2): 18 m/s.",
+      "final": "18 m/s (2 significant digits)"
+    }
+  },
+  {
+    "id": "k8",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Decelerating Object - Initial Velocity",
+    "text": "An object decelerates uniformly at <strong>-0.68 m/s\u00b2</strong> over a distance of <strong>22.5 m</strong> to reach a final velocity of <strong>2.87 m/s</strong>. What was the initial velocity of the object before it began decelerating?",
+    "given": "v_f = 2.87 m/s (3 sig digs), a = -0.68 m/s\u00b2 (2 sig digs), d = 22.5 m (3 sig digs)",
+    "targetUnit": "m/s",
+    "ans": 6.2,
+    "sigFigs": 2,
+    "tolerance": 0.025,
+    "hints": [
+      "List the given parameters: final velocity v_f, acceleration a, and displacement d.",
+      "Use the kinematic equation v_f\u00b2 = v_i\u00b2 + 2ad and isolate v_i."
+    ],
+    "solution": {
+      "given": "\u2022 v_f = 2.87 m/s<br>\u2022 a = -0.68 m/s\u00b2<br>\u2022 d = 22.5 m",
+      "formula": "v_i = \\sqrt{v_f\u00b2 - 2ad}",
+      "steps": "1. v_i\u00b2 = (2.87)\u00b2 - 2(-0.68)(22.5)<br>&nbsp;&nbsp;&nbsp;v_i\u00b2 = 8.2369 + 30.6 = 38.8369 m\u00b2/s\u00b2<br>2. v_i = \\sqrt{38.8369} = 6.2319 m/s<br>3. Round to 2 significant digits (limited by -0.68 m/s\u00b2): 6.2 m/s.",
+      "final": "6.2 m/s (2 significant digits)"
+    }
+  },
+  {
+    "id": "k9",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Basketball Referee Toss - Max Height",
+    "text": "At the start of a basketball game, a referee throws a basketball vertically upward with an initial speed of <strong>5.0 m/s</strong>. Determine the maximum height reached by the basketball <em>above the floor</em> if it was released from an initial height of <strong>1.50 m</strong>.",
+    "given": "v_i = 5.0 m/s (2 sig digs), h_0 = 1.50 m (3 sig digs), a = -9.81 m/s\u00b2",
+    "targetUnit": "m",
+    "ans": 2.8,
+    "sigFigs": 2,
+    "tolerance": 0.025,
+    "hints": [
+      "At maximum height, the vertical velocity is zero (v_f = 0 m/s).",
+      "Use v_f\u00b2 = v_i\u00b2 + 2a\u0394d to find the rise height above the referee's hand.",
+      "Add the initial release height to the rise height to find the total height above the floor."
+    ],
+    "solution": {
+      "given": "\u2022 v_i = 5.0 m/s<br>\u2022 v_f = 0 m/s<br>\u2022 a = -9.81 m/s\u00b2<br>\u2022 h_0 = 1.50 m",
+      "formula": "\\Delta d = \\frac{-v_i\u00b2}{2a}, \\quad h_{max} = h_0 + \\Delta d",
+      "steps": "1. \\Delta d = -(5.0)\u00b2 / (2 \u00d7 -9.81) = 25 / 19.62 = 1.2742 m<br>2. Total height above floor: h_{max} = 1.50 + 1.2742 = 2.7742 m<br>3. Round to 2 significant digits (limited by 5.0 m/s): 2.8 m.",
+      "final": "2.8 m (2 significant digits)"
+    }
+  },
+  {
+    "id": "k10",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Basketball Air Time to the Floor",
+    "text": "A basketball is thrown vertically upward with an initial velocity of <strong>5.0 m/s</strong> from an initial height of <strong>1.50 m</strong> above the floor. Calculate the total time the ball remains in the air before hitting the floor.",
+    "given": "v_i = +5.0 m/s (2 sig digs), d = -1.50 m (3 sig digs), a = -9.81 m/s\u00b2",
+    "targetUnit": "s",
+    "ans": 1.3,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "The displacement from release height to the floor is negative (d = -h_0).",
+      "Use the kinematic equation d = v_i t + \u00bd a t\u00b2.",
+      "Rearrange into standard quadratic form At\u00b2 + Bt + C = 0 and solve for the positive time t."
+    ],
+    "solution": {
+      "given": "\u2022 v_i = +5.0 m/s<br>\u2022 d = -1.50 m<br>\u2022 a = -9.81 m/s\u00b2",
+      "formula": "d = v_i t + \\frac{1}{2}at\u00b2 \\implies 4.905t\u00b2 - 5.0t - 1.50 = 0",
+      "steps": "1. Using quadratic formula t = [-b \u00b1 \\sqrt{b\u00b2 - 4ac}] / (2a):<br>&nbsp;&nbsp;&nbsp;t = [5.0 \u00b1 \\sqrt{(-5.0)\u00b2 - 4(4.905)(-1.50)}] / (2 \u00d7 4.905)<br>&nbsp;&nbsp;&nbsp;t = [5.0 \u00b1 \\sqrt{25 + 29.43}] / 9.81 = [5.0 + \\sqrt{54.43}] / 9.81<br>&nbsp;&nbsp;&nbsp;t = [5.0 + 7.3777] / 9.81 = 12.3777 / 9.81 = 1.2617 s<br>2. Round to 2 significant digits: 1.3 s.",
+      "final": "1.3 s (2 significant digits)"
+    }
+  },
+  {
+    "id": "k11",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Spring Marble Launcher Acceleration",
+    "text": "A marble is compressed <strong>40.0 cm (0.400 m)</strong> downward on a vertical spring launcher and then released from rest. What average upward acceleration must the marble experience while in contact with the spring so that it reaches a maximum height of <strong>3.2 m</strong> above the spring's uncompressed position?",
+    "given": "x = 0.400 m (3 sig digs), h = 3.2 m (2 sig digs), g = 9.81 m/s\u00b2",
+    "targetUnit": "m/s\u00b2",
+    "ans": 78,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "First determine the launch velocity needed to reach the peak height in free fall using v\u00b2 = 2gh.",
+      "Then use the kinematic equation v_f\u00b2 = v_i\u00b2 + 2ad during the spring extension distance (from rest, v_i = 0) to solve for acceleration a."
+    ],
+    "solution": {
+      "given": "\u2022 Free fall phase: h = 3.2 m, v_{top} = 0, a = -9.81 m/s\u00b2<br>\u2022 Launch phase: v_i = 0, d = 0.400 m",
+      "formula": "v\u00b2 = 2gh \\quad \\text{and} \\quad v\u00b2 = 2ad \\implies a = \\frac{gh}{d}",
+      "steps": "1. Launch speed needed: v\u00b2 = 2(9.81)(3.2) = 62.784 m\u00b2/s\u00b2<br>2. Acceleration during spring extension: a = v\u00b2 / (2d) = 62.784 / (2 \u00d7 0.400) = 62.784 / 0.800 = 78.48 m/s\u00b2<br>3. Round to 2 significant digits (limited by 3.2 m): 78 m/s\u00b2.",
+      "final": "78 m/s\u00b2 (2 significant digits)"
+    }
+  },
+  {
+    "id": "k12",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Multi-Stage Rocket - Powered Acceleration",
+    "text": "A sounding rocket launched vertically upward from rest accelerates uniformly for <strong>50. s</strong> until it reaches a burnout velocity of <strong>200. m/s [up]</strong>. Calculate the rocket's acceleration during this powered phase.",
+    "given": "v_i = 0 m/s, v_f = 200. m/s (3 sig digs), t = 50. s (2 sig digs)",
+    "targetUnit": "m/s\u00b2",
+    "ans": 4.0,
+    "sigFigs": 2,
+    "tolerance": 0.015,
+    "hints": [
+      "The rocket starts from rest (v_i = 0 m/s).",
+      "Use the standard definition of uniform acceleration: a = \u0394v / \u0394t."
+    ],
+    "solution": {
+      "given": "\u2022 v_i = 0 m/s<br>\u2022 v_f = 200. m/s<br>\u2022 t = 50. s",
+      "formula": "a = \\frac{v_f - v_i}{t}",
+      "steps": "a = (200. - 0) / 50. = 4.0 m/s\u00b2.",
+      "final": "4.0 m/s\u00b2 (2 significant digits)"
+    }
+  },
+  {
+    "id": "k13",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Multi-Stage Rocket - Burnout Altitude",
+    "text": "A rocket launched vertically upward from rest accelerates uniformly at <strong>4.0 m/s\u00b2</strong> for <strong>50. s</strong> until its fuel runs out (reaching 200. m/s). Calculate the altitude of the rocket above the launch pad at the exact instant its fuel runs out.",
+    "given": "v_i = 0 m/s, a = 4.0 m/s\u00b2 (2 sig digs), t = 50. s (2 sig digs)",
+    "targetUnit": "m",
+    "ans": 5000,
+    "sigFigs": 2,
+    "tolerance": 0.02,
+    "hints": [
+      "The rocket starts from rest and accelerates uniformly during the powered burn.",
+      "Use the displacement kinematic formula: d = v_i t + \u00bd a t\u00b2 (or d = [(v_i + v_f)/2] t)."
+    ],
+    "solution": {
+      "given": "\u2022 v_i = 0 m/s<br>\u2022 a = 4.0 m/s\u00b2<br>\u2022 t = 50. s",
+      "formula": "d = \\frac{1}{2}at\u00b2 = \\frac{1}{2}(4.0)(50.)\u00b2",
+      "steps": "d = 0.5 \u00d7 4.0 \u00d7 2500 = 5000 m = 5.0 \u00d7 10\u00b3 m.",
+      "final": "5.0 \u00d7 10\u00b3 m (or 5000 m, 2 significant digits)"
+    }
+  },
+  {
+    "id": "k14",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Multi-Stage Rocket - Maximum Altitude",
+    "text": "A rocket reaches a height of <strong>5.0 \u00d7 10\u00b3 m</strong> and an upward speed of <strong>200. m/s</strong> when its fuel runs out. It then coasts upward freely under gravity (a = -9.81 m/s\u00b2) until reaching peak altitude. Calculate the total maximum height of the rocket above the ground.",
+    "given": "h_1 = 5000 m, v_1 = 200. m/s (3 sig digs), a = -9.81 m/s\u00b2",
+    "targetUnit": "m",
+    "ans": 7000,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "The rocket's flight has two phases: powered acceleration and unpowered coasting under gravity (a = -g).",
+      "For the coasting phase, use v_f\u00b2 = v_i\u00b2 + 2a\u0394d (where v_f = 0 at the peak) to find the coasting height.",
+      "Add the burnout height to the coasting height to find the total maximum altitude."
+    ],
+    "solution": {
+      "given": "\u2022 h_1 = 5000 m (2 sig digs)<br>\u2022 v_1 = 200. m/s (3 sig digs)<br>\u2022 a = -9.81 m/s\u00b2",
+      "formula": "\\Delta d_{coast} = \\frac{-v_1\u00b2}{2a}, \\quad h_{total} = h_1 + \\Delta d_{coast}",
+      "steps": "1. \\Delta d_{coast} = -(200.)\u00b2 / (2 \u00d7 -9.81) = 40000 / 19.62 = 2038.7 m<br>2. h_{total} = 5000 + 2038.7 = 7038.7 m<br>3. Round to 2 significant digits: 7.0 \u00d7 10\u00b3 m (or 7000 m).",
+      "final": "7.0 \u00d7 10\u00b3 m (or 7000 m, 2 significant digits)"
+    }
+  },
+  {
+    "id": "k15",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Car Braking Distance",
+    "text": "A car is travelling at a constant velocity of <strong>32.0 m/s [E]</strong> when the driver lightly applies the brakes. After <strong>4.15 s</strong>, the car is travelling at a velocity of <strong>12.5 m/s [E]</strong>. What distance did the car travel while braking during this 4.15 s time interval?",
+    "given": "v_i = 32.0 m/s (3 sig digs), v_f = 12.5 m/s (3 sig digs), t = 4.15 s (3 sig digs)",
+    "targetUnit": "m",
+    "ans": 92.3,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Identify the given parameters: initial velocity v_i, final velocity v_f, and time interval t.",
+      "Use the average velocity kinematic equation: d = [(v_i + v_f) / 2] t."
+    ],
+    "solution": {
+      "given": "\u2022 v_i = 32.0 m/s<br>\u2022 v_f = 12.5 m/s<br>\u2022 t = 4.15 s",
+      "formula": "d = \\left(\\frac{v_i + v_f}{2}\\right) t",
+      "steps": "1. v_{ave} = (32.0 + 12.5) / 2 = 44.5 / 2 = 22.25 m/s<br>2. d = 22.25 \u00d7 4.15 = 92.3375 m<br>3. Round to 3 significant digits: 92.3 m.",
+      "final": "92.3 m (3 significant digits)"
+    }
+  },
+  {
+    "id": "k16",
+    "unit": "kinematics",
+    "unitName": "Kinematics",
+    "title": "Police Speeder Pursuit",
+    "text": "A police car spots a speeder travelling at a constant speed of <strong>135 km/h</strong> and begins chasing them. The police car drives at a constant speed of <strong>148 km/h</strong> and starts <strong>125 m</strong> behind the speeder. How many seconds will it take for the police car to be within <strong>12 m</strong> of the speeding car?",
+    "given": "v_s = 135 km/h, v_p = 148 km/h, d_{init} = 125 m, d_{target} = 12 m",
+    "targetUnit": "s",
+    "ans": 31,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "Convert both speeds from km/h to m/s (divide by 3.6).",
+      "Find the relative speed of closure between the police car and speeder: v_{rel} = v_{police} - v_{speeder}.",
+      "Determine the net distance to close (\u0394d = d_{initial} - d_{target}) and solve for time: t = \u0394d / v_{rel}."
+    ],
+    "solution": {
+      "given": "\u2022 v_s = 135 km/h = 37.5 m/s<br>\u2022 v_p = 148 km/h = 41.111 m/s<br>\u2022 \\Delta d = 125 - 12 = 113 m",
+      "formula": "t = \\frac{\\Delta d}{v_p - v_s}",
+      "steps": "1. Relative speed: v_{rel} = (148 - 135) km/h = 13 km/h = 13 / 3.6 = 3.6111 m/s<br>2. t = 113 / 3.6111 = 31.29 s<br>3. Round to 2 significant digits (limited by 12 m): 31 s.",
+      "final": "31 s (2 significant digits)"
+    }
+  },
+  {
+    "id": "v1",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Angle Conversion: Compass Heading to Bearing 1",
+    "text": "In navigation, angles can be expressed as compass headings or bearings. Convert the compass heading <strong>25\u00b0 W of S</strong> (25 degrees West of South) into a standard 3-digit Bearing angle (measured clockwise from True North = 000\u00b0).",
+    "given": "Compass Heading = 25\u00b0 W of S",
+    "targetUnit": "\u00b0",
+    "ans": 205,
+    "sigFigs": 3,
+    "tolerance": 0.01,
+    "hints": [
+      "Recall cardinal bearings: North = 000\u00b0, East = 090\u00b0, South = 180\u00b0, West = 270\u00b0.",
+      "Start at South (180\u00b0) and rotate clockwise towards West by the specified angle."
+    ],
+    "solution": {
+      "given": "\u2022 South = 180\u00b0<br>\u2022 Heading is 25\u00b0 West of South",
+      "formula": "\\text{Bearing} = 180\u00b0 + 25\u00b0",
+      "steps": "Bearing = 180\u00b0 + 25\u00b0 = 205\u00b0.",
+      "final": "205\u00b0 (3 significant digits)"
+    }
+  },
+  {
+    "id": "v2",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Angle Conversion: Compass Heading to Bearing 2",
+    "text": "Convert the compass heading <strong>72\u00b0 N of E</strong> (72 degrees North of East) into a standard 3-digit Bearing angle (measured clockwise from North = 000\u00b0).",
+    "given": "Compass Heading = 72\u00b0 N of E",
+    "targetUnit": "\u00b0",
+    "ans": 18,
+    "sigFigs": 2,
+    "tolerance": 0.01,
+    "hints": [
+      "East is located at 090\u00b0 bearing.",
+      "North of East means rotating counterclockwise (back toward North) from East by the specified angle: Bearing = 90\u00b0 - \u03b8."
+    ],
+    "solution": {
+      "given": "\u2022 East = 090\u00b0<br>\u2022 Heading = 72\u00b0 North of East",
+      "formula": "\\text{Bearing} = 90\u00b0 - 72\u00b0",
+      "steps": "Bearing = 90\u00b0 - 72\u00b0 = 18\u00b0 (or 018\u00b0).",
+      "final": "18\u00b0 (or 018\u00b0, 2 significant digits)"
+    }
+  },
+  {
+    "id": "v3",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Angle Conversion: Compass Heading to Bearing 3",
+    "text": "Convert the compass heading <strong>48\u00b0 E of S</strong> (48 degrees East of South) into a standard 3-digit Bearing angle (measured clockwise from North = 000\u00b0).",
+    "given": "Compass Heading = 48\u00b0 E of S",
+    "targetUnit": "\u00b0",
+    "ans": 132,
+    "sigFigs": 3,
+    "tolerance": 0.01,
+    "hints": [
+      "South is located at 180\u00b0 bearing.",
+      "East of South means rotating counterclockwise (back toward East) from South by the specified angle: Bearing = 180\u00b0 - \u03b8."
+    ],
+    "solution": {
+      "given": "\u2022 South = 180\u00b0<br>\u2022 Heading = 48\u00b0 East of South",
+      "formula": "\\text{Bearing} = 180\u00b0 - 48\u00b0",
+      "steps": "Bearing = 180\u00b0 - 48\u00b0 = 132\u00b0.",
+      "final": "132\u00b0 (3 significant digits)"
+    }
+  },
+  {
+    "id": "v4",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Angle Conversion: Bearing to Compass Heading",
+    "text": "A navigator records a heading at a bearing of <strong>255\u00b0</strong>. Express this heading as a compass angle in degrees <strong>West of South [\u00b0 W of S]</strong>. Enter just the numerical angle in degrees.",
+    "given": "Bearing = 255\u00b0",
+    "targetUnit": "\u00b0",
+    "ans": 75,
+    "sigFigs": 2,
+    "tolerance": 0.01,
+    "hints": [
+      "A bearing of 255\u00b0 lies in the southwest quadrant between South (180\u00b0) and West (270\u00b0).",
+      "Find the angle West of South by subtracting the South reference angle (180\u00b0) from the bearing."
+    ],
+    "solution": {
+      "given": "\u2022 Bearing = 255\u00b0<br>\u2022 South = 180\u00b0",
+      "formula": "\\theta = 255\u00b0 - 180\u00b0",
+      "steps": "\\theta = 255\u00b0 - 180\u00b0 = 75\u00b0 W of S.",
+      "final": "75\u00b0 (2 significant digits)"
+    }
+  },
+  {
+    "id": "v5",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Hiker 2D Resultant Displacement Magnitude",
+    "text": "A hiker walks <strong>10.0 km</strong> due East and then <strong>5.00 km</strong> due North. What is the magnitude of the hiker's resultant displacement from the starting point?",
+    "given": "d_x = 10.0 km [E], d_y = 5.00 km [N]",
+    "targetUnit": "km",
+    "ans": 11.2,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "East and North are perpendicular directions forming a right-angled triangle.",
+      "Use the Pythagorean theorem to calculate the resultant displacement: R = \u221a(d_x\u00b2 + d_y\u00b2)."
+    ],
+    "solution": {
+      "given": "\u2022 d_x = 10.0 km<br>\u2022 d_y = 5.00 km",
+      "formula": "R = \\sqrt{d_x\u00b2 + d_y\u00b2}",
+      "steps": "1. R = \\sqrt{(10.0)\u00b2 + (5.00)\u00b2} = \\sqrt{100 + 25} = \\sqrt{125}<br>2. R = 11.1803... km<br>3. Round to 3 significant digits: 11.2 km.",
+      "final": "11.2 km (3 significant digits)"
+    }
+  },
+  {
+    "id": "v6",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Hiker Resultant Direction Angle",
+    "text": "A hiker walks <strong>10.0 km</strong> due East and then <strong>5.00 km</strong> due North. What is the direction angle of their resultant displacement measured in degrees <strong>North of East [\u00b0 N of E]</strong>?",
+    "given": "d_x = 10.0 km [E], d_y = 5.00 km [N]",
+    "targetUnit": "\u00b0",
+    "ans": 26.6,
+    "sigFigs": 3,
+    "tolerance": 0.015,
+    "hints": [
+      "Set up the right-angle triangle with East as the adjacent side and North as the opposite side.",
+      "Use the tangent ratio: \u03b8 = arctan(opposite / adjacent) = arctan(North / East)."
+    ],
+    "solution": {
+      "given": "\u2022 Opposite (North) = 5.00 km<br>\u2022 Adjacent (East) = 10.0 km",
+      "formula": "\\theta = \\arctan\\left(\\frac{5.00}{10.0}\\right)",
+      "steps": "1. \\theta = \\arctan(0.500) = 26.565...\u00b0<br>2. Round to 3 significant digits: 26.6\u00b0 N of E.",
+      "final": "26.6\u00b0 (3 significant digits)"
+    }
+  },
+  {
+    "id": "v7",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Sailboat Displacement Magnitude",
+    "text": "A sailboat sails <strong>50.0 km</strong> South and then <strong>40.0 km</strong> West. How far (the magnitude of displacement) is the boat from its starting point?",
+    "given": "d_y = 50.0 km [S], d_x = 40.0 km [W]",
+    "targetUnit": "km",
+    "ans": 64.0,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "South and West represent perpendicular displacement vectors.",
+      "Use the Pythagorean theorem: d = \u221a(d_S\u00b2 + d_W\u00b2)."
+    ],
+    "solution": {
+      "given": "\u2022 d_S = 50.0 km<br>\u2022 d_W = 40.0 km",
+      "formula": "d = \\sqrt{d_S\u00b2 + d_W\u00b2}",
+      "steps": "1. d = \\sqrt{(50.0)\u00b2 + (40.0)\u00b2} = \\sqrt{2500 + 1600} = \\sqrt{4100}<br>2. d = 64.0312... km<br>3. Round to 3 significant digits: 64.0 km.",
+      "final": "64.0 km (3 significant digits)"
+    }
+  },
+  {
+    "id": "v8",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Sailboat Average Velocity Magnitude",
+    "text": "A sailboat sails <strong>50.0 km</strong> South and then <strong>40.0 km</strong> West with an average speed of <strong>21.0 km/h</strong>. Find the magnitude of the boat's average velocity for the entire trip.",
+    "given": "d_total = 90.0 km, speed = 21.0 km/h, displacement = 64.03 km",
+    "targetUnit": "km/h",
+    "ans": 14.9,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Find the total travel time by dividing total distance travelled by speed: t = d_{total} / speed.",
+      "Calculate total displacement magnitude using the Pythagorean theorem.",
+      "Calculate average velocity magnitude: v_{ave} = Displacement / Total Time."
+    ],
+    "solution": {
+      "given": "\u2022 Total distance = 50.0 + 40.0 = 90.0 km<br>\u2022 Speed = 21.0 km/h \\implies t = 90.0 / 21.0 = 4.2857 h<br>\u2022 Total displacement = \\sqrt{50.0\u00b2 + 40.0\u00b2} = 64.031 km",
+      "formula": "v_{ave} = \\frac{\\text{Displacement}}{\\text{Total Time}}",
+      "steps": "1. v_{ave} = 64.0312 / 4.2857 = 14.940... km/h<br>2. Round to 3 significant digits: 14.9 km/h.",
+      "final": "14.9 km/h (3 significant digits)"
+    }
+  },
+  {
+    "id": "v9",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Resolving Velocity - Vertical Component",
+    "text": "An ATV travels with a velocity of <strong>18.4 km/h</strong> at a heading of <strong>215\u00b0</strong> (RCS / Bearing, which is 35.0\u00b0 West of South). Calculate the magnitude of the South (vertical) component of its velocity.",
+    "given": "v = 18.4 km/h (3 sig digs), \\theta = 35.0\u00b0 W of S",
+    "targetUnit": "km/h",
+    "ans": 15.1,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Identify the angle relative to the South axis.",
+      "Use trigonometry to find the vertical component adjacent to the angle: v_S = v cos \u03b8."
+    ],
+    "solution": {
+      "given": "\u2022 v = 18.4 km/h<br>\u2022 Angle from South towards West = 215\u00b0 - 180\u00b0 = 35.0\u00b0",
+      "formula": "v_S = v \\cos(35.0\u00b0)",
+      "steps": "1. v_S = 18.4 \u00d7 \\cos(35.0\u00b0) = 18.4 \u00d7 0.81915 = 15.072 km/h<br>2. Round to 3 significant digits: 15.1 km/h.",
+      "final": "15.1 km/h (3 significant digits)"
+    }
+  },
+  {
+    "id": "v10",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Resolving Velocity - Horizontal Component",
+    "text": "An ATV travels with a velocity of <strong>18.4 km/h</strong> at a heading of <strong>215\u00b0</strong> (35.0\u00b0 West of South). Calculate the magnitude of the West (horizontal) component of its velocity.",
+    "given": "v = 18.4 km/h (3 sig digs), \\theta = 35.0\u00b0 W of S",
+    "targetUnit": "km/h",
+    "ans": 10.6,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Identify the angle relative to the South axis.",
+      "Use trigonometry to find the horizontal (West) component opposite to the angle: v_W = v sin \u03b8."
+    ],
+    "solution": {
+      "given": "\u2022 v = 18.4 km/h<br>\u2022 Angle = 35.0\u00b0 W of S",
+      "formula": "v_W = v \\sin(35.0\u00b0)",
+      "steps": "1. v_W = 18.4 \u00d7 \\sin(35.0\u00b0) = 18.4 \u00d7 0.57358 = 10.5538 km/h<br>2. Round to 3 significant digits: 10.6 km/h.",
+      "final": "10.6 km/h (3 significant digits)"
+    }
+  },
+  {
+    "id": "v11",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Drone Flight - Horizontal Displacement",
+    "text": "A drone flies on a straight path for 24 minutes, achieving a resultant displacement of <strong>48.5 km, 23.0\u00b0 N of E</strong>. Calculate the horizontal (East) component of the drone's displacement.",
+    "given": "d = 48.5 km (3 sig digs), \\theta = 23.0\u00b0 N of E",
+    "targetUnit": "km",
+    "ans": 44.6,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "The horizontal (East) component is adjacent to the angle measured North of East.",
+      "Use the cosine trigonometric relationship: d_x = d cos \u03b8."
+    ],
+    "solution": {
+      "given": "\u2022 d = 48.5 km<br>\u2022 \\theta = 23.0\u00b0 N of E",
+      "formula": "d_x = d \\cos(23.0\u00b0)",
+      "steps": "1. d_x = 48.5 \u00d7 \\cos(23.0\u00b0) = 48.5 \u00d7 0.92050 = 44.644... km<br>2. Round to 3 significant digits: 44.6 km.",
+      "final": "44.6 km (3 significant digits)"
+    }
+  },
+  {
+    "id": "v12",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Drone Flight - Vertical Displacement",
+    "text": "A drone flies on a straight path achieving a resultant displacement of <strong>48.5 km, 23.0\u00b0 N of E</strong>. Calculate the vertical (North) component of the drone's displacement.",
+    "given": "d = 48.5 km (3 sig digs), \\theta = 23.0\u00b0 N of E",
+    "targetUnit": "km",
+    "ans": 19.0,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "The vertical (North) component is opposite to the angle measured North of East.",
+      "Use the sine trigonometric relationship: d_y = d sin \u03b8."
+    ],
+    "solution": {
+      "given": "\u2022 d = 48.5 km<br>\u2022 \\theta = 23.0\u00b0 N of E",
+      "formula": "d_y = d \\sin(23.0\u00b0)",
+      "steps": "1. d_y = 48.5 \u00d7 \\sin(23.0\u00b0) = 48.5 \u00d7 0.39073 = 18.950... km<br>2. Round to 3 significant digits: 19.0 km.",
+      "final": "19.0 km (3 significant digits)"
+    }
+  },
+  {
+    "id": "v13",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Dirt Biking Trip Return Time",
+    "text": "A rider leaves a campsite heading <strong>14 km West</strong> and then <strong>8.0 km North</strong> at a constant speed, taking <strong>0.48 h</strong> in total. On the way back, they decide to take the direct straight-line path back to the campsite at the same constant speed. How long (in hours) will it take them to return?",
+    "given": "d_out = 14 km + 8.0 km = 22 km, t_{out} = 0.48 h, direct path = \\sqrt{14\u00b2 + 8.0\u00b2}",
+    "targetUnit": "h",
+    "ans": 0.35,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "Calculate constant travel speed from outward distance and outward time: v = d_{out} / t_{out}.",
+      "Use the Pythagorean theorem to find the direct straight-line return distance.",
+      "Calculate return time: t = d_{return} / v."
+    ],
+    "solution": {
+      "given": "\u2022 Outward distance = 14 + 8.0 = 22 km<br>\u2022 Outward time = 0.48 h \\implies Speed v = 22 / 0.48 = 45.833 km/h<br>\u2022 Return distance = \\sqrt{14\u00b2 + 8.0\u00b2} = \\sqrt{196 + 64} = \\sqrt{260} = 16.1245 km",
+      "formula": "t_{return} = \\frac{d_{return}}{v}",
+      "steps": "1. t_{return} = 16.1245 / 45.833 = 0.3518 h<br>2. Round to 2 significant digits (limited by 8.0 km / 0.48 h): 0.35 h.",
+      "final": "0.35 h (2 significant digits)"
+    }
+  },
+  {
+    "id": "v14",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Hammel's Multi-Leg Road & Field Trip",
+    "text": "Mr. Hammel leaves Medicine Hat and drives <strong>154 km, 35\u00b0 N of W</strong>. Once at this location, he hops onto a dirt bike and rides <strong>28.2 km, 43\u00b0 N of E</strong> across a field. What is the magnitude of Mr. Hammel's final displacement from Medicine Hat?",
+    "given": "d_1 = 154 km at 35\u00b0 N of W, d_2 = 28.2 km at 43\u00b0 N of E",
+    "targetUnit": "km",
+    "ans": 151,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Resolve both displacement vectors into horizontal (x) and vertical (y) components using sine and cosine.",
+      "Sum the x-components and sum the y-components taking directions (signs) into account.",
+      "Use the Pythagorean theorem on the resultant components: R = \u221a(x_{net}\u00b2 + y_{net}\u00b2)."
+    ],
+    "solution": {
+      "given": "\u2022 Vector 1: 154 km, 35\u00b0 N of W \\implies x_1 = -154 \\cos(35\u00b0) = -126.15 km, y_1 = 154 \\sin(35\u00b0) = +88.33 km<br>\u2022 Vector 2: 28.2 km, 43\u00b0 N of E \\implies x_2 = +28.2 \\cos(43\u00b0) = +20.62 km, y_2 = 28.2 \\sin(43\u00b0) = +19.23 km",
+      "formula": "R = \\sqrt{(x_1 + x_2)\u00b2 + (y_1 + y_2)\u00b2}",
+      "steps": "1. x_{total} = -126.15 + 20.62 = -105.53 km<br>2. y_{total} = +88.33 + 19.23 = +107.56 km<br>3. R = \\sqrt{(-105.53)\u00b2 + (107.56)\u00b2} = \\sqrt{11136.6 + 11569.2} = \\sqrt{22705.8} = 150.68 km<br>4. Round to 3 significant digits: 151 km.",
+      "final": "151 km (3 significant digits)"
+    }
+  },
+  {
+    "id": "v15",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Football Receiver Route Displacement",
+    "text": "A football player runs a pass route requiring them to run <strong>13 m at a bearing of 75\u00b0</strong>, followed immediately by <strong>6.5 m at a bearing of 195\u00b0</strong>. What is the magnitude of the football player's resultant displacement at the end of the route?",
+    "given": "d_1 = 13 m at 75\u00b0 bearing, d_2 = 6.5 m at 195\u00b0 bearing",
+    "targetUnit": "m",
+    "ans": 11,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "Resolve each bearing leg into East/West (x = d sin \u03b8) and North/South (y = d cos \u03b8) components.",
+      "Sum the components to find total x and total y.",
+      "Calculate resultant displacement magnitude using the Pythagorean theorem: R = \u221a(x_{net}\u00b2 + y_{net}\u00b2)."
+    ],
+    "solution": {
+      "given": "\u2022 Leg 1: x_1 = 13 \\sin(75\u00b0) = 12.557 m, y_1 = 13 \\cos(75\u00b0) = 3.365 m<br>\u2022 Leg 2: x_2 = 6.5 \\sin(195\u00b0) = -1.682 m, y_2 = 6.5 \\cos(195\u00b0) = -6.279 m",
+      "formula": "R = \\sqrt{(x_1 + x_2)\u00b2 + (y_1 + y_2)\u00b2}",
+      "steps": "1. x_{total} = 12.557 - 1.682 = 10.875 m<br>2. y_{total} = 3.365 - 6.279 = -2.914 m<br>3. R = \\sqrt{(10.875)\u00b2 + (-2.914)\u00b2} = \\sqrt{118.27 + 8.49} = \\sqrt{126.76} = 11.258... m<br>4. Round to 2 significant digits: 11 m.",
+      "final": "11 m (2 significant digits)"
+    }
+  },
+  {
+    "id": "v16",
+    "unit": "vectors",
+    "unitName": "Vectors",
+    "title": "Amazon Delivery Drone Speed",
+    "text": "A delivery drone flies direct from Calgary to Medicine Hat in <strong>75 minutes (1.25 h)</strong>. On the map, Calgary is located <strong>273 km West</strong> and <strong>111 km North</strong> of Medicine Hat. What average speed (in km/h) must the drone maintain for the flight?",
+    "given": "d_x = 273 km, d_y = 111 km, t = 75 min = 1.25 h",
+    "targetUnit": "km/h",
+    "ans": 236,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Find the straight-line displacement distance between the two locations using the Pythagorean theorem: d = \u221a(d_x\u00b2 + d_y\u00b2).",
+      "Convert flight time to hours, then calculate average speed: v = d / t."
+    ],
+    "solution": {
+      "given": "\u2022 d_x = 273 km<br>\u2022 d_y = 111 km<br>\u2022 t = 75 min = 1.25 h",
+      "formula": "v = \\frac{\\sqrt{d_x\u00b2 + d_y\u00b2}}{t}",
+      "steps": "1. d = \\sqrt{(273)\u00b2 + (111)\u00b2} = \\sqrt{74529 + 12321} = \\sqrt{86850} = 294.703 km<br>2. v = 294.703 / 1.25 = 235.76... km/h<br>3. Round to 3 significant digits: 236 km/h.",
+      "final": "236 km/h (3 significant digits)"
+    }
+  },
+  {
+    "id": "d1",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Friction on Accelerated Box",
+    "text": "A <strong>20.0 kg</strong> box is pulled horizontally along a flat surface with an applied force of <strong>27.0 N [E]</strong>. If the box accelerates at a rate of <strong>0.80 m/s\u00b2 [E]</strong>, what is the magnitude of the force of friction acting on the box?",
+    "given": "m = 20.0 kg (3 sig digs), F_{app} = 27.0 N (3 sig digs), a = 0.80 m/s\u00b2 (2 sig digs)",
+    "targetUnit": "N",
+    "ans": 11,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "Apply Newton's Second Law to determine the net force: F_{net} = ma.",
+      "Set up the net force statement: F_{net} = F_{app} - F_f, and solve for friction F_f."
+    ],
+    "solution": {
+      "given": "\u2022 m = 20.0 kg<br>\u2022 F_{app} = 27.0 N<br>\u2022 a = 0.80 m/s\u00b2",
+      "formula": "F_{net} = F_{app} - F_f = ma \\implies F_f = F_{app} - ma",
+      "steps": "1. F_{net} = (20.0 kg)(0.80 m/s\u00b2) = 16.0 N<br>2. F_f = 27.0 N - 16.0 N = 11.0 N<br>3. Round to 2 significant digits (limited by 0.80 m/s\u00b2): 11 N.",
+      "final": "11 N (2 significant digits)"
+    }
+  },
+  {
+    "id": "d2",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Jet Plane Takeoff Runway Distance",
+    "text": "A commercial cargo aircraft has a mass of <strong>2.75 \u00d7 10\u2075 kg</strong>. If its jet engines produce a total constant thrust of <strong>7.7 \u00d7 10\u2075 N</strong>, determine the runway length needed to achieve a takeoff speed of <strong>310 km/h</strong> from rest.",
+    "given": "m = 2.75 \u00d7 10\u2075 kg (3 sig digs), F = 7.7 \u00d7 10\u2075 N (2 sig digs), v_f = 310 km/h (2 sig digs)",
+    "targetUnit": "m",
+    "ans": 1300,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "Convert the takeoff speed from km/h to m/s (divide by 3.6).",
+      "Use Newton's Second Law (a = F / m) to determine the aircraft's acceleration.",
+      "Use the timeless kinematic equation v_f\u00b2 = v_i\u00b2 + 2ad (with v_i = 0) to solve for runway distance d."
+    ],
+    "solution": {
+      "given": "\u2022 m = 2.75 \u00d7 10\u2075 kg<br>\u2022 F = 7.7 \u00d7 10\u2075 N<br>\u2022 v_f = 310 km/h = 86.111 m/s<br>\u2022 v_i = 0",
+      "formula": "a = \\frac{F}{m}, \\quad d = \\frac{v_f\u00b2}{2a}",
+      "steps": "1. a = (7.7 \u00d7 10\u2075) / (2.75 \u00d7 10\u2075) = 2.80 m/s\u00b2<br>2. d = (86.111)\u00b2 / (2 \u00d7 2.80) = 7415.1 / 5.60 = 1324.1 m<br>3. Round to 2 significant digits: 1.3 \u00d7 10\u00b3 m (or 1300 m).",
+      "final": "1.3 \u00d7 10\u00b3 m (or 1300 m, 2 significant digits)"
+    }
+  },
+  {
+    "id": "d3",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Astronaut Deep Space Recoil",
+    "text": "An astronaut (mass = <strong>217 kg</strong> with suit) is at rest in deep space next to their spacecraft (mass = <strong>1325 kg</strong>). The astronaut pushes on the spaceship for 0.65 s, imparting a forward velocity of <strong>0.73 m/s</strong> to the spaceship. What is the magnitude of the astronaut's recoil velocity?",
+    "given": "m_1 = 217 kg (3 sig digs), m_2 = 1325 kg (4 sig digs), v_2 = 0.73 m/s (2 sig digs)",
+    "targetUnit": "m/s",
+    "ans": 4.5,
+    "sigFigs": 2,
+    "tolerance": 0.025,
+    "hints": [
+      "Apply Newton's Third Law / Conservation of Momentum in an isolated system.",
+      "Equate the momentum of the astronaut to the momentum of the spacecraft: m_1 v_1 = m_2 v_2, and solve for v_1."
+    ],
+    "solution": {
+      "given": "\u2022 m_1 (astronaut) = 217 kg<br>\u2022 m_2 (ship) = 1325 kg<br>\u2022 v_2 = 0.73 m/s",
+      "formula": "m_1 v_1 = m_2 v_2 \\implies v_1 = \\frac{m_2 v_2}{m_1}",
+      "steps": "1. v_1 = (1325 \u00d7 0.73) / 217 = 967.25 / 217 = 4.4573 m/s<br>2. Round to 2 significant digits (limited by 0.73 m/s): 4.5 m/s.",
+      "final": "4.5 m/s (2 significant digits)"
+    }
+  },
+  {
+    "id": "d4",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Baseball Bat Force & Impulse",
+    "text": "A <strong>145 g (0.145 kg)</strong> baseball is pitched towards a batter at <strong>43.8 m/s</strong> and leaves the bat travelling in the opposite direction at <strong>38.9 m/s</strong>. If the bat and ball were in contact for <strong>0.000700 s (7.00 \u00d7 10\u207b\u2074 s)</strong>, what average magnitude of force was exerted on the ball?",
+    "given": "m = 0.145 kg (3 sig digs), v_i = -43.8 m/s, v_f = +38.9 m/s, \\Delta t = 0.000700 s",
+    "targetUnit": "N",
+    "ans": 17100,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Remember velocity is a vector. Choose a positive direction and determine the change in velocity: \u0394v = v_f - v_i.",
+      "Use Newton's Second Law expressed in terms of impulse and momentum: F = m \u0394v / \u0394t."
+    ],
+    "solution": {
+      "given": "\u2022 m = 0.145 kg<br>\u2022 \\Delta v = 38.9 - (-43.8) = 82.7 m/s<br>\u2022 \\Delta t = 0.000700 s",
+      "formula": "F = \\frac{m \\Delta v}{\\Delta t}",
+      "steps": "1. F = (0.145 kg \u00d7 82.7 m/s) / 0.000700 s = 11.9915 / 0.000700 = 17130.7 N<br>2. Round to 3 significant digits: 1.71 \u00d7 10\u2074 N (or 17100 N).",
+      "final": "1.71 \u00d7 10\u2074 N (or 17100 N, 3 significant digits)"
+    }
+  },
+  {
+    "id": "d5",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Connected Boxes - System Acceleration",
+    "text": "Box A (mass = <strong>6.5 kg</strong>) and Box B (mass = <strong>9.2 kg</strong>) rest on a frictionless horizontal table connected by a light rope. If Box B is pulled horizontally to the right with an applied force of <strong>135 N</strong>, what is the acceleration of the two-box system?",
+    "given": "m_A = 6.5 kg (2 sig digs), m_B = 9.2 kg (2 sig digs), F_{app} = 135 N (3 sig digs)",
+    "targetUnit": "m/s\u00b2",
+    "ans": 8.6,
+    "sigFigs": 2,
+    "tolerance": 0.02,
+    "hints": [
+      "Treat both connected boxes together as a single system of total mass: m_{total} = m_A + m_B.",
+      "Apply Newton's Second Law to the combined system: a = F_{app} / m_{total}."
+    ],
+    "solution": {
+      "given": "\u2022 m_A = 6.5 kg<br>\u2022 m_B = 9.2 kg \\implies m_{total} = 15.7 kg<br>\u2022 F_{app} = 135 N",
+      "formula": "a = \\frac{F_{app}}{m_A + m_B}",
+      "steps": "1. a = 135 / (6.5 + 9.2) = 135 / 15.7 = 8.5987... m/s\u00b2<br>2. Round to 2 significant digits: 8.6 m/s\u00b2.",
+      "final": "8.6 m/s\u00b2 (2 significant digits)"
+    }
+  },
+  {
+    "id": "d6",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Connected Boxes - Rope Tension",
+    "text": "Box A (<strong>6.5 kg</strong>) and Box B (<strong>9.2 kg</strong>) are connected by a light rope on a frictionless surface. Box B is pulled to the right with a 135 N force, causing the system to accelerate at <strong>8.60 m/s\u00b2</strong>. What is the tension force exerted on Box A by the connecting rope?",
+    "given": "m_A = 6.5 kg (2 sig digs), a = 8.599 m/s\u00b2",
+    "targetUnit": "N",
+    "ans": 56,
+    "sigFigs": 2,
+    "tolerance": 0.025,
+    "hints": [
+      "Isolate Box A in a free-body diagram. The only horizontal force acting on Box A is the rope tension T.",
+      "Apply Newton's Second Law to Box A alone: T = m_A a."
+    ],
+    "solution": {
+      "given": "\u2022 m_A = 6.5 kg<br>\u2022 a = 8.5987 m/s\u00b2",
+      "formula": "T = m_A a",
+      "steps": "1. T = (6.5 kg)(8.5987 m/s\u00b2) = 55.89 N<br>2. Round to 2 significant digits: 56 N.",
+      "final": "56 N (2 significant digits)"
+    }
+  },
+  {
+    "id": "d7",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Perseverance Rover Weight on Earth",
+    "text": "On Mars, where the gravitational field strength is <strong>g_{mars} = 3.71 m/s\u00b2</strong>, the Perseverance rover has a weight of <strong>3802 N</strong>. What is the weight (gravitational force F_g) of the Perseverance rover on Earth where g = 9.81 m/s\u00b2?",
+    "given": "g_{mars} = 3.71 m/s\u00b2 (3 sig digs), W_{mars} = 3802 N (4 sig digs), g_{earth} = 9.81 m/s\u00b2 (3 sig digs)",
+    "targetUnit": "N",
+    "ans": 10100,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "First calculate the invariant mass of the rover using its Mars weight: m = W_{mars} / g_{mars}.",
+      "Then calculate its weight on Earth using Earth's gravitational acceleration: W_{earth} = m g_{earth}."
+    ],
+    "solution": {
+      "given": "\u2022 W_{mars} = 3802 N<br>\u2022 g_{mars} = 3.71 m/s\u00b2<br>\u2022 g_{earth} = 9.81 m/s\u00b2",
+      "formula": "m = \\frac{W_{mars}}{g_{mars}}, \\quad W_{earth} = m g_{earth}",
+      "steps": "1. Mass m = 3802 / 3.71 = 1024.798 kg<br>2. W_{earth} = 1024.798 \u00d7 9.81 = 10053.27 N<br>3. Round to 3 significant digits: 1.01 \u00d7 10\u2074 N (or 10100 N).",
+      "final": "1.01 \u00d7 10\u2074 N (or 10100 N, 3 significant digits)"
+    }
+  },
+  {
+    "id": "d8",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Shopping Cart Accelerating Against Friction",
+    "text": "You push your friend in a shopping cart (combined mass = <strong>72 kg</strong>) along a flat sidewalk. You accelerate the cart from rest over a distance of <strong>30. m</strong> until it reaches a speed of <strong>15 km/h (4.167 m/s)</strong>. If the opposing force of friction is <strong>475 N</strong>, how much force must you apply to the cart?",
+    "given": "m = 72 kg (2 sig digs), d = 30. m (2 sig digs), v_f = 4.167 m/s (2 sig digs), F_f = 475 N",
+    "targetUnit": "N",
+    "ans": 500,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "Find acceleration from initial velocity, final velocity, and distance using v_f\u00b2 = 2ad.",
+      "Determine the net force required: F_{net} = ma.",
+      "Set up the horizontal force statement: F_{app} = F_{net} + F_f."
+    ],
+    "solution": {
+      "given": "\u2022 m = 72 kg<br>\u2022 v_f = 15 km/h = 4.167 m/s<br>\u2022 d = 30. m<br>\u2022 F_f = 475 N",
+      "formula": "a = \\frac{v_f\u00b2}{2d}, \\quad F_{app} = ma + F_f",
+      "steps": "1. a = (4.167)\u00b2 / (2 \u00d7 30) = 17.361 / 60 = 0.28935 m/s\u00b2<br>2. F_{net} = 72 \u00d7 0.28935 = 20.83 N<br>3. F_{app} = 20.83 + 475 = 495.83 N<br>4. Round to 2 significant digits: 5.0 \u00d7 10\u00b2 N (or 500 N).",
+      "final": "5.0 \u00d7 10\u00b2 N (or 500 N, 2 significant digits)"
+    }
+  },
+  {
+    "id": "d9",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Shopping Cart Pushed Up 12.0\u00b0 Incline",
+    "text": "You push your friend in the shopping cart (mass = <strong>72 kg</strong>) up a hill inclined at <strong>12.0\u00b0</strong> to the horizontal. If the coefficient of friction is <strong>\\mu = 0.67</strong>, what applied force parallel to the incline is required to maintain an upward acceleration of <strong>0.50 m/s\u00b2</strong>?",
+    "given": "m = 72 kg (2 sig digs), \\theta = 12.0\u00b0, \\mu = 0.67 (2 sig digs), a = 0.50 m/s\u00b2 (2 sig digs)",
+    "targetUnit": "N",
+    "ans": 650,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "Find the parallel component of gravity (F_{||} = mg sin \u03b8) and normal force (F_N = mg cos \u03b8).",
+      "Calculate kinetic friction: F_f = \u03bc F_N.",
+      "Apply Newton's Second Law up the incline: F_{app} - F_{||} - F_f = ma, and solve for F_{app}."
+    ],
+    "solution": {
+      "given": "\u2022 m = 72 kg<br>\u2022 \\theta = 12.0\u00b0<br>\u2022 \\mu = 0.67<br>\u2022 a = 0.50 m/s\u00b2",
+      "formula": "F_{app} = ma + mg\\sin\\theta + \\mu mg\\cos\\theta",
+      "steps": "1. F_{net} = ma = (72)(0.50) = 36.0 N<br>2. F_{||} = 72 \u00d7 9.81 \u00d7 \\sin(12.0\u00b0) = 706.32 \u00d7 0.20791 = 146.85 N<br>3. F_N = 72 \u00d7 9.81 \u00d7 \\cos(12.0\u00b0) = 706.32 \u00d7 0.97815 = 690.89 N<br>4. F_f = 0.67 \u00d7 690.89 = 462.90 N<br>5. F_{app} = 36.0 + 146.85 + 462.90 = 645.75 N<br>6. Round to 2 significant digits: 6.5 \u00d7 10\u00b2 N (or 650 N).",
+      "final": "6.5 \u00d7 10\u00b2 N (or 650 N, 2 significant digits)"
+    }
+  },
+  {
+    "id": "d10",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Snow Tube Sliding Down Hill Friction",
+    "text": "A <strong>32.0 kg</strong> rider on a snow tube accelerates down a <strong>20.0\u00b0</strong> snowy hill at a rate of <strong>1.42 m/s\u00b2</strong>. Calculate the magnitude of the frictional force acting on the snow tube.",
+    "given": "m = 32.0 kg (3 sig digs), \\theta = 20.0\u00b0 (3 sig digs), a = 1.42 m/s\u00b2 (3 sig digs)",
+    "targetUnit": "N",
+    "ans": 61.9,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Calculate the downhill parallel component of gravity: F_{||} = mg sin \u03b8.",
+      "Calculate the net force: F_{net} = ma.",
+      "Use the net force statement down the hill: F_{net} = F_{||} - F_f, and solve for friction force F_f."
+    ],
+    "solution": {
+      "given": "\u2022 m = 32.0 kg<br>\u2022 \\theta = 20.0\u00b0<br>\u2022 a = 1.42 m/s\u00b2",
+      "formula": "F_f = mg\\sin\\theta - ma",
+      "steps": "1. F_{||} = 32.0 \u00d7 9.81 \u00d7 \\sin(20.0\u00b0) = 313.92 \u00d7 0.34202 = 107.37 N<br>2. F_{net} = ma = (32.0)(1.42) = 45.44 N<br>3. F_f = 107.37 - 45.44 = 61.93 N<br>4. Round to 3 significant digits: 61.9 N.",
+      "final": "61.9 N (3 significant digits)"
+    }
+  },
+  {
+    "id": "d11",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Car Parked on Hill Minimum Friction Coefficient",
+    "text": "An 1850 kg car is parked on a road inclined at an angle of <strong>18.0\u00b0</strong> to the horizontal. What is the minimum coefficient of static friction (\\mu) between the tires and the road required to prevent the vehicle from sliding down the hill?",
+    "given": "m = 1850 kg, \\theta = 18.0\u00b0 (3 sig digs)",
+    "targetUnit": "",
+    "ans": 0.325,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "For an object stationary on an incline, maximum static friction balances the downhill component of gravity: F_f = F_{||}.",
+      "Substitute F_f = \u03bc mg cos \u03b8 and F_{||} = mg sin \u03b8, and solve for \u03bc = tan \u03b8."
+    ],
+    "solution": {
+      "given": "\u2022 \\theta = 18.0\u00b0",
+      "formula": "\\mu = \\tan\\theta",
+      "steps": "1. \\mu = \\tan(18.0\u00b0) = 0.324919...<br>2. Round to 3 significant digits: 0.325 (unitless).",
+      "final": "0.325 (3 significant digits)"
+    }
+  },
+  {
+    "id": "d12",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Kid Sliding Down Incline Acceleration",
+    "text": "A child slides down a playground slide inclined at <strong>40.0\u00b0</strong> to the horizontal. If the coefficient of kinetic friction between the child's clothes and the slide is <strong>\\mu = 0.15</strong>, calculate the child's acceleration down the slide.",
+    "given": "\\theta = 40.0\u00b0 (3 sig digs), \\mu = 0.15 (2 sig digs), g = 9.81 m/s\u00b2",
+    "targetUnit": "m/s\u00b2",
+    "ans": 5.2,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "Set up the net force equation down the incline: F_{net} = mg sin \u03b8 - \u03bc mg cos \u03b8.",
+      "Divide by mass m to find acceleration: a = g(sin \u03b8 - \u03bc cos \u03b8)."
+    ],
+    "solution": {
+      "given": "\u2022 \\theta = 40.0\u00b0<br>\u2022 \\mu = 0.15<br>\u2022 g = 9.81 m/s\u00b2",
+      "formula": "a = g(\\sin\\theta - \\mu\\cos\\theta)",
+      "steps": "1. \\sin(40.0\u00b0) = 0.64279<br>2. \\cos(40.0\u00b0) = 0.76604 \\implies \\mu \\cos(40.0\u00b0) = 0.15 \u00d7 0.76604 = 0.11491<br>3. a = 9.81 \u00d7 (0.64279 - 0.11491) = 9.81 \u00d7 0.52788 = 5.1785 m/s\u00b2<br>4. Round to 2 significant digits (limited by 0.15): 5.2 m/s\u00b2.",
+      "final": "5.2 m/s\u00b2 (2 significant digits)"
+    }
+  },
+  {
+    "id": "d13",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Three-Way Tug of War Resultant Force",
+    "text": "In a 3-way tug of war on a central ring, three teams pull horizontally:<br>\u2022 Team 1: <strong>872 N at 30.0\u00b0 N of E</strong><br>\u2022 Team 2: <strong>675 N due South</strong><br>\u2022 Team 3: <strong>728 N due West</strong><br>Calculate the magnitude of the net horizontal force acting on the central ring.",
+    "given": "F_1 = 872 N at 30.0\u00b0 N of E, F_2 = 675 N [S], F_3 = 728 N [W]",
+    "targetUnit": "N",
+    "ans": 241,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Resolve all force vectors into horizontal (x) and vertical (y) components.",
+      "Calculate net horizontal force \u03a3F_x and net vertical force \u03a3F_y.",
+      "Find the magnitude of the net force using the Pythagorean theorem: F_{net} = \u221a((\u03a3F_x)\u00b2 + (\u03a3F_y)\u00b2)."
+    ],
+    "solution": {
+      "given": "\u2022 F_1: x_1 = +872 \\cos(30.0\u00b0) = +755.17 N, y_1 = +872 \\sin(30.0\u00b0) = +436.0 N<br>\u2022 F_2: x_2 = 0, y_2 = -675 N<br>\u2022 F_3: x_3 = -728 N, y_3 = 0",
+      "formula": "F_{net} = \\sqrt{(\\sum F_x)\u00b2 + (\\sum F_y)\u00b2}",
+      "steps": "1. F_x = 755.17 - 728 = +27.17 N<br>2. F_y = 436.0 - 675 = -239.0 N<br>3. F_{net} = \\sqrt{(27.17)\u00b2 + (-239.0)\u00b2} = \\sqrt{738.2 + 57121} = \\sqrt{57859.2} = 240.54 N<br>4. Round to 3 significant digits: 241 N.",
+      "final": "241 N (3 significant digits)"
+    }
+  },
+  {
+    "id": "d14",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Apparent Weight in Upward Accelerating Elevator",
+    "text": "A <strong>65.0 kg</strong> student stands on a bathroom scale inside an elevator. If the elevator accelerates upward at <strong>1.80 m/s\u00b2</strong>, what normal force (apparent weight in Newtons) does the scale read?",
+    "given": "m = 65.0 kg (3 sig digs), a = +1.80 m/s\u00b2 (3 sig digs), g = 9.81 m/s\u00b2",
+    "targetUnit": "N",
+    "ans": 755,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Draw a free-body diagram: upward normal force F_N from the scale and downward gravity mg.",
+      "Write Newton's Second Law: F_N - mg = ma, and solve for apparent weight F_N = m(g + a)."
+    ],
+    "solution": {
+      "given": "\u2022 m = 65.0 kg<br>\u2022 a = +1.80 m/s\u00b2<br>\u2022 g = 9.81 m/s\u00b2",
+      "formula": "F_N = m(g + a)",
+      "steps": "1. F_N = 65.0 \u00d7 (9.81 + 1.80) = 65.0 \u00d7 11.61 = 754.65 N<br>2. Round to 3 significant digits: 755 N.",
+      "final": "755 N (3 significant digits)"
+    }
+  },
+  {
+    "id": "d15",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Atwood Machine Acceleration",
+    "text": "An Atwood machine consists of two hanging masses, <strong>m\u2081 = 3.20 kg</strong> and <strong>m\u2082 = 4.80 kg</strong>, connected by a massless string over a frictionless pulley. What is the magnitude of the acceleration of the masses when released from rest?",
+    "given": "m_1 = 3.20 kg (3 sig digs), m_2 = 4.80 kg (3 sig digs), g = 9.81 m/s\u00b2",
+    "targetUnit": "m/s\u00b2",
+    "ans": 1.96,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Identify the net driving force: the difference between the gravitational forces of the two masses, (m_2 - m_1)g.",
+      "Identify the total accelerated mass: (m_1 + m_2).",
+      "Apply Newton's Second Law: a = [(m_2 - m_1) / (m_1 + m_2)] g."
+    ],
+    "solution": {
+      "given": "\u2022 m_1 = 3.20 kg<br>\u2022 m_2 = 4.80 kg<br>\u2022 g = 9.81 m/s\u00b2",
+      "formula": "a = \\left(\\frac{m_2 - m_1}{m_1 + m_2}\\right) g",
+      "steps": "1. a = [(4.80 - 3.20) / (3.20 + 4.80)] \u00d7 9.81 = (1.60 / 8.00) \u00d7 9.81 = 0.200 \u00d7 9.81<br>2. a = 1.962 m/s\u00b2<br>3. Round to 3 significant digits: 1.96 m/s\u00b2.",
+      "final": "1.96 m/s\u00b2 (3 significant digits)"
+    }
+  },
+  {
+    "id": "d16",
+    "unit": "dynamics",
+    "unitName": "Dynamics (Forces)",
+    "title": "Angled Pull on Sled Friction Coefficient",
+    "text": "A <strong>25.0 kg</strong> sled is pulled across a level snowfield at a <em>constant velocity</em> by a rope exerting a force of <strong>80.0 N</strong> at an angle of <strong>35.0\u00b0</strong> above the horizontal. Calculate the coefficient of kinetic friction (\\mu) between the sled and snow.",
+    "given": "m = 25.0 kg (3 sig digs), F_{app} = 80.0 N (3 sig digs), \\theta = 35.0\u00b0 (3 sig digs)",
+    "targetUnit": "",
+    "ans": 0.329,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "At constant velocity (a = 0), horizontal forces balance: F_f = F cos \u03b8.",
+      "Vertical forces balance: F_N + F sin \u03b8 = mg, which gives F_N = mg - F sin \u03b8.",
+      "Calculate the coefficient of friction: \u03bc = F_f / F_N."
+    ],
+    "solution": {
+      "given": "\u2022 m = 25.0 kg<br>\u2022 F = 80.0 N<br>\u2022 \\theta = 35.0\u00b0",
+      "formula": "\\mu = \\frac{F\\cos\\theta}{mg - F\\sin\\theta}",
+      "steps": "1. F_f = 80.0 \u00d7 \\cos(35.0\u00b0) = 80.0 \u00d7 0.81915 = 65.532 N<br>2. F_N = (25.0 \u00d7 9.81) - (80.0 \u00d7 \\sin(35.0\u00b0)) = 245.25 - 45.886 = 199.364 N<br>3. \\mu = 65.532 / 199.364 = 0.3287...<br>4. Round to 3 significant digits: 0.329.",
+      "final": "0.329 (3 significant digits)"
+    }
+  },
+  {
+    "id": "w1",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Lifting Box at Constant Velocity",
+    "text": "How much mechanical work is done to lift a <strong>15.0 kg</strong> equipment box vertically to a storage shelf at a height of <strong>1.50 m</strong> at a constant velocity?",
+    "given": "m = 15.0 kg (3 sig digs), h = 1.50 m (3 sig digs), g = 9.81 m/s\u00b2",
+    "targetUnit": "J",
+    "ans": 221,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Lifting at constant velocity requires an upward lifting force equal to the box's weight: F = mg.",
+      "Use the mechanical work formula: W = Fd = mgh."
+    ],
+    "solution": {
+      "given": "\u2022 m = 15.0 kg<br>\u2022 h = 1.50 m<br>\u2022 g = 9.81 m/s\u00b2",
+      "formula": "W = mgh",
+      "steps": "1. W = 15.0 kg \u00d7 9.81 m/s\u00b2 \u00d7 1.50 m = 220.725 J<br>2. Round to 3 significant digits: 221 J.",
+      "final": "221 J (3 significant digits)"
+    }
+  },
+  {
+    "id": "w2",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Pulling Wagon with Angled Handle",
+    "text": "A student pulls a <strong>50.0 kg</strong> wagon a distance of <strong>11.0 m</strong> along a horizontal sidewalk using a handle that makes an angle of <strong>35.0\u00b0</strong> to the ground. If the applied tension force along the handle is <strong>90.0 N</strong>, how much work is done by the tension force on the wagon?",
+    "given": "F = 90.0 N (3 sig digs), d = 11.0 m (3 sig digs), \\theta = 35.0\u00b0 (3 sig digs)",
+    "targetUnit": "J",
+    "ans": 811,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Only the component of force parallel to displacement does mechanical work.",
+      "Use the work formula: W = F d cos \u03b8."
+    ],
+    "solution": {
+      "given": "\u2022 F = 90.0 N<br>\u2022 d = 11.0 m<br>\u2022 \\theta = 35.0\u00b0",
+      "formula": "W = F d \\cos\\theta",
+      "steps": "1. W = (90.0 N)(11.0 m)\\cos(35.0\u00b0) = 990.0 \u00d7 0.81915 = 810.96 J<br>2. Round to 3 significant digits: 811 J.",
+      "final": "811 J (3 significant digits)"
+    }
+  },
+  {
+    "id": "w3",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Skateboarder Ramp Height from Potential Energy",
+    "text": "How tall of a ramp does a <strong>68.0 kg</strong> skateboarder need to stand on top of to have a gravitational potential energy of <strong>875 J</strong> relative to the ground?",
+    "given": "m = 68.0 kg (3 sig digs), E_p = 875 J (3 sig digs), g = 9.81 m/s\u00b2",
+    "targetUnit": "m",
+    "ans": 1.31,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Use the gravitational potential energy formula: E_p = mgh.",
+      "Rearrange to solve for height: h = E_p / (mg)."
+    ],
+    "solution": {
+      "given": "\u2022 m = 68.0 kg<br>\u2022 E_p = 875 J<br>\u2022 g = 9.81 m/s\u00b2",
+      "formula": "h = \\frac{E_p}{mg}",
+      "steps": "1. h = 875 / (68.0 \u00d7 9.81) = 875 / 667.08 = 1.31168... m<br>2. Round to 3 significant digits: 1.31 m.",
+      "final": "1.31 m (3 significant digits)"
+    }
+  },
+  {
+    "id": "w4",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Golf Ball Kinetic Energy Speed",
+    "text": "How fast must a <strong>48.8 g (0.0488 kg)</strong> golf ball be travelling to have a kinetic energy of <strong>1910 J</strong>?",
+    "given": "m = 0.0488 kg (3 sig digs), E_k = 1910 J (3 or 4 sig digs)",
+    "targetUnit": "m/s",
+    "ans": 280,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Convert mass from grams to kilograms (1 kg = 1000 g).",
+      "Use the kinetic energy formula: E_k = \u00bd m v\u00b2 and isolate v = \u221a(2 E_k / m)."
+    ],
+    "solution": {
+      "given": "\u2022 m = 0.0488 kg<br>\u2022 E_k = 1910 J",
+      "formula": "v = \\sqrt{\\frac{2E_k}{m}}",
+      "steps": "1. v = \\sqrt{2(1910) / 0.0488} = \\sqrt{3820 / 0.0488} = \\sqrt{78278.69} = 279.78 m/s<br>2. Round to 3 significant digits: 280. m/s (or 2.80 \u00d7 10\u00b2 m/s).",
+      "final": "280 m/s (or 2.80 \u00d7 10\u00b2 m/s, 3 significant digits)"
+    }
+  },
+  {
+    "id": "w5",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Frictionless Incline Slide Speed",
+    "text": "A <strong>355 kg</strong> sphere starts from rest at the top of a frictionless inclined ramp that has a vertical height of <strong>4.1 m</strong>. How fast is the sphere rolling when it reaches the bottom of the ramp?",
+    "given": "h = 4.1 m (2 sig digs), g = 9.81 m/s\u00b2",
+    "targetUnit": "m/s",
+    "ans": 9.0,
+    "sigFigs": 2,
+    "tolerance": 0.025,
+    "hints": [
+      "In an isolated frictionless system, initial potential energy converts completely into kinetic energy: mgh = \u00bd m v\u00b2.",
+      "Notice that mass cancels out: v = \u221a(2gh)."
+    ],
+    "solution": {
+      "given": "\u2022 h = 4.1 m<br>\u2022 g = 9.81 m/s\u00b2",
+      "formula": "v = \\sqrt{2gh}",
+      "steps": "1. v = \\sqrt{2(9.81)(4.1)} = \\sqrt{80.442} = 8.9689... m/s<br>2. Round to 2 significant digits (limited by 4.1 m): 9.0 m/s.",
+      "final": "9.0 m/s (2 significant digits)"
+    }
+  },
+  {
+    "id": "w6",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Shopping Cart Downhill Energy Loss to Friction",
+    "text": "A student rides a shopping cart (combined mass = <strong>120 kg</strong>) starting from rest at the top of a hill of vertical height <strong>20.0 m</strong>. If their actual speed at the bottom of the hill is measured to be <strong>16.0 m/s</strong>, how much mechanical energy was lost as work done against friction?",
+    "given": "m = 120 kg (3 sig digs), h = 20.0 m (3 sig digs), v_f = 16.0 m/s (3 sig digs)",
+    "targetUnit": "J",
+    "ans": 8180,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Calculate the initial gravitational potential energy at the top of the hill: E_i = mgh.",
+      "Calculate the final kinetic energy at the bottom: E_f = \u00bd m v\u00b2.",
+      "Work done by friction is the loss in mechanical energy: W_f = E_i - E_f."
+    ],
+    "solution": {
+      "given": "\u2022 m = 120 kg<br>\u2022 h = 20.0 m<br>\u2022 v_f = 16.0 m/s",
+      "formula": "W_f = mgh - \\frac{1}{2}m v_f\u00b2",
+      "steps": "1. E_i = (120 kg)(9.81 m/s\u00b2)(20.0 m) = 23544 J<br>2. E_f = 0.5(120 kg)(16.0 m/s)\u00b2 = 0.5(120)(256) = 15360 J<br>3. W_f = 23544 - 15360 = 8184 J<br>4. Round to 3 significant digits: 8.18 \u00d7 10\u00b3 J (or 8180 J).",
+      "final": "8.18 \u00d7 10\u00b3 J (or 8180 J, 3 significant digits)"
+    }
+  },
+  {
+    "id": "w7",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Roller Coaster Average Track Friction",
+    "text": "A <strong>2000. kg</strong> roller coaster train starts from rest at the top of a hill with a vertical drop of <strong>59.3 m</strong>. The train's actual speed at the bottom is measured to be <strong>32.2 m/s</strong>. If the length of track travelled down the drop is <strong>125 m</strong>, what is the average frictional force acting on the train?",
+    "given": "m = 2000. kg (4 sig digs), h = 59.3 m (3 sig digs), v_f = 32.2 m/s (3 sig digs), d = 125 m (3 sig digs)",
+    "targetUnit": "N",
+    "ans": 1010,
+    "sigFigs": 3,
+    "tolerance": 0.025,
+    "hints": [
+      "Find initial potential energy (E_p = mgh) and final kinetic energy (E_k = \u00bd m v\u00b2).",
+      "Determine the energy lost to friction: W_f = E_p - E_k.",
+      "Use W_f = F_f \u00d7 d to solve for the average frictional force: F_f = W_f / d."
+    ],
+    "solution": {
+      "given": "\u2022 m = 2000. kg<br>\u2022 h = 59.3 m<br>\u2022 v_f = 32.2 m/s<br>\u2022 d = 125 m",
+      "formula": "F_f = \\frac{mgh - \\frac{1}{2}m v_f\u00b2}{d}",
+      "steps": "1. E_p = 2000. \u00d7 9.81 \u00d7 59.3 = 1163466 J<br>2. E_k = 0.5 \u00d7 2000. \u00d7 (32.2)\u00b2 = 1036840 J<br>3. W_f = 1163466 - 1036840 = 126626 J<br>4. F_f = 126626 / 125 = 1013.0 N<br>5. Round to 3 significant digits: 1.01 \u00d7 10\u00b3 N (or 1010 N).",
+      "final": "1.01 \u00d7 10\u00b3 N (or 1010 N, 3 significant digits)"
+    }
+  },
+  {
+    "id": "w8",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Rock Dropped into Lake Speed",
+    "text": "A <strong>1.50 kg</strong> rock is dropped from rest over the edge of a cliff, <strong>30.0 m</strong> above the surface of a calm lake. Neglecting air resistance, what is the speed of the rock just before it strikes the surface of the water?",
+    "given": "h = 30.0 m (3 sig digs), g = 9.81 m/s\u00b2",
+    "targetUnit": "m/s",
+    "ans": 24.3,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Apply conservation of mechanical energy for an object falling from rest: mgh = \u00bd m v\u00b2.",
+      "Solve for impact speed: v = \u221a(2gh)."
+    ],
+    "solution": {
+      "given": "\u2022 h = 30.0 m<br>\u2022 g = 9.81 m/s\u00b2",
+      "formula": "v = \\sqrt{2gh}",
+      "steps": "1. v = \\sqrt{2 \u00d7 9.81 \u00d7 30.0} = \\sqrt{588.6} = 24.261 m/s<br>2. Round to 3 significant digits: 24.3 m/s.",
+      "final": "24.3 m/s (3 significant digits)"
+    }
+  },
+  {
+    "id": "w9",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Cliff Diver Intermediate Speed",
+    "text": "A <strong>72 kg</strong> cliff diver stands at the top of a <strong>7.5 m</strong> cliff above the ocean. What is the diver's speed when they are <strong>3.0 m</strong> above the water (before entry)?",
+    "given": "h_1 = 7.5 m (2 sig digs), h_2 = 3.0 m (2 sig digs), g = 9.81 m/s\u00b2",
+    "targetUnit": "m/s",
+    "ans": 9.4,
+    "sigFigs": 2,
+    "tolerance": 0.025,
+    "hints": [
+      "Determine the vertical distance fallen: \u0394h = h_{initial} - h_{final}.",
+      "Convert the lost potential energy into kinetic energy: v = \u221a(2g \u0394h)."
+    ],
+    "solution": {
+      "given": "\u2022 \\Delta h = 7.5 - 3.0 = 4.5 m<br>\u2022 g = 9.81 m/s\u00b2",
+      "formula": "v = \\sqrt{2g\\Delta h}",
+      "steps": "1. v = \\sqrt{2 \u00d7 9.81 \u00d7 4.5} = \\sqrt{88.29} = 9.396... m/s<br>2. Round to 2 significant digits: 9.4 m/s.",
+      "final": "9.4 m/s (2 significant digits)"
+    }
+  },
+  {
+    "id": "w10",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Roller Coaster Crest Speed",
+    "text": "A roller coaster car starts at Point A at a height of <strong>100. m</strong> with an initial speed v_A. At Point E on the track at a height of <strong>20.0 m</strong>, the coaster is clocked travelling at a speed of <strong>39.8 m/s</strong>. Assuming no energy loss to friction, how fast was the coaster travelling at Point A?",
+    "given": "h_A = 100. m (3 sig digs), h_E = 20.0 m (3 sig digs), v_E = 39.8 m/s (3 sig digs)",
+    "targetUnit": "m/s",
+    "ans": 3.8,
+    "sigFigs": 3,
+    "tolerance": 0.03,
+    "hints": [
+      "Apply conservation of mechanical energy between the two points: mgh_A + \u00bd m v_A\u00b2 = mgh_E + \u00bd m v_E\u00b2.",
+      "Cancel mass m and isolate v_A = \u221a(v_E\u00b2 + 2g(h_E - h_A))."
+    ],
+    "solution": {
+      "given": "\u2022 h_A = 100. m<br>\u2022 h_E = 20.0 m<br>\u2022 v_E = 39.8 m/s",
+      "formula": "v_A = \\sqrt{v_E\u00b2 + 2g(h_E - h_A)}",
+      "steps": "1. v_A\u00b2 = (39.8)\u00b2 + 2(9.81)(20.0 - 100.)<br>&nbsp;&nbsp;&nbsp;v_A\u00b2 = 1584.04 + 2(9.81)(-80.0) = 1584.04 - 1569.6 = 14.44 m\u00b2/s\u00b2<br>2. v_A = \\sqrt{14.44} = 3.80 m/s<br>3. Round to 3 significant digits: 3.80 m/s.",
+      "final": "3.80 m/s (3 significant digits)"
+    }
+  },
+  {
+    "id": "w11",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Box on Rough Ramp Friction Force",
+    "text": "A <strong>35.0 kg</strong> box starts from rest at the top of a ramp of vertical height <strong>5.0 m</strong>. The box slides down the <strong>10. m</strong> length of the ramp and reaches the bottom with a speed of <strong>7.52 m/s</strong>. What average force of friction acted on the box along the ramp?",
+    "given": "m = 35.0 kg (3 sig digs), h = 5.0 m (2 sig digs), d = 10. m (2 sig digs), v_f = 7.52 m/s (3 sig digs)",
+    "targetUnit": "N",
+    "ans": 73,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "Find initial potential energy (E_i = mgh) and final kinetic energy (E_f = \u00bd m v\u00b2).",
+      "Find energy lost to friction: W_f = E_i - E_f.",
+      "Solve for the average friction force along the ramp length: F_f = W_f / d."
+    ],
+    "solution": {
+      "given": "\u2022 m = 35.0 kg<br>\u2022 h = 5.0 m<br>\u2022 d = 10. m<br>\u2022 v_f = 7.52 m/s",
+      "formula": "F_f = \\frac{mgh - \\frac{1}{2}m v_f\u00b2}{d}",
+      "steps": "1. E_i = 35.0 \u00d7 9.81 \u00d7 5.0 = 1716.75 J<br>2. E_f = 0.5 \u00d7 35.0 \u00d7 (7.52)\u00b2 = 0.5 \u00d7 35.0 \u00d7 56.5504 = 989.632 J<br>3. W_f = 1716.75 - 989.632 = 727.118 J<br>4. F_f = 727.118 / 10. = 72.71 N<br>5. Round to 2 significant digits: 73 N.",
+      "final": "73 N (2 significant digits)"
+    }
+  },
+  {
+    "id": "w12",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Drop Tower Ride Cable Tension",
+    "text": "A theme park drop tower ride (mass = <strong>1850 kg</strong> including riders) drops from rest at a height of <strong>45.0 m</strong>. As it falls through 35.0 m, the braking cables exert upward tension so that at <strong>10.0 m</strong> above the ground, the ride is travelling at <strong>23.5 m/s</strong>. How much tension force was exerted by the braking cables?",
+    "given": "m = 1850 kg (3 sig digs), h_i = 45.0 m, h_f = 10.0 m (\\Delta d = 35.0 m), v_f = 23.5 m/s (3 sig digs)",
+    "targetUnit": "N",
+    "ans": 3550,
+    "sigFigs": 3,
+    "tolerance": 0.025,
+    "hints": [
+      "Apply the work-energy theorem: E_{initial} - W_{tension} = E_{final}.",
+      "Express as mg \u0394h - T \u0394d = \u00bd m v\u00b2 and solve for cable tension T."
+    ],
+    "solution": {
+      "given": "\u2022 m = 1850 kg<br>\u2022 \\Delta h = 45.0 - 10.0 = 35.0 m<br>\u2022 v_f = 23.5 m/s",
+      "formula": "T = \\frac{mg\\Delta h - \\frac{1}{2}m v_f\u00b2}{\\Delta h}",
+      "steps": "1. \\Delta E_p = 1850 \u00d7 9.81 \u00d7 35.0 = 635197.5 J<br>2. E_k = 0.5 \u00d7 1850 \u00d7 (23.5)\u00b2 = 510831.25 J<br>3. Work by tension = 635197.5 - 510831.25 = 124366.25 J<br>4. Tension T = 124366.25 / 35.0 = 3553.3 N<br>5. Round to 3 significant digits: 3.55 \u00d7 10\u00b3 N (or 3550 N).",
+      "final": "3.55 \u00d7 10\u00b3 N (or 3550 N, 3 significant digits)"
+    }
+  },
+  {
+    "id": "w13",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Drop Tower Emergency Stopping Force",
+    "text": "The <strong>1850 kg</strong> drop ride is travelling downwards at <strong>23.5 m/s</strong> at a height of <strong>10.0 m</strong> above the ground. How much constant upward stopping force is required to bring the ride completely to rest at a height of <strong>0.500 m</strong> above the ground?",
+    "given": "m = 1850 kg (3 sig digs), v_i = 23.5 m/s, d_{brake} = 9.50 m (3 sig digs)",
+    "targetUnit": "N",
+    "ans": 71900,
+    "sigFigs": 3,
+    "tolerance": 0.02,
+    "hints": [
+      "Identify the kinetic energy to remove: E_k = \u00bd m v_i\u00b2.",
+      "Apply the work-energy principle over the stopping distance: W_{net} = F_{brake} d - mg d = \u00bd m v_i\u00b2.",
+      "Solve for the upward braking force: F_{brake} = (\u00bd m v_i\u00b2 / d) + mg."
+    ],
+    "solution": {
+      "given": "\u2022 m = 1850 kg<br>\u2022 v_i = 23.5 m/s<br>\u2022 d_{stop} = 10.0 - 0.500 = 9.50 m",
+      "formula": "F_{brake} = \\frac{\\frac{1}{2}m v_i\u00b2 + mg d_{stop}}{d_{stop}} = \\frac{\\frac{1}{2}m v_i\u00b2}{d_{stop}} + mg",
+      "steps": "1. Kinetic energy to remove: E_k = 0.5 \u00d7 1850 \u00d7 (23.5)\u00b2 = 510831.25 J<br>2. F_{k,brake} = 510831.25 / 9.50 = 53771.7 N<br>3. Plus support against gravity: mg = 1850 \u00d7 9.81 = 18148.5 N<br>4. Total upward force: F_{brake} = 53771.7 + 18148.5 = 71920.2 N<br>5. Round to 3 significant digits: 7.19 \u00d7 10\u2074 N (or 71900 N).",
+      "final": "7.19 \u00d7 10\u2074 N (or 71900 N, 3 significant digits)"
+    }
+  },
+  {
+    "id": "w14",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Coal Mine Cart Minimum Bottom Speed",
+    "text": "A <strong>152 kg</strong> cart in a coal mine must travel up a frictionless hill of height <strong>6.0 m</strong> so that it arrives at the top crest with a minimum speed of <strong>2.1 m/s</strong>. What minimum speed must the cart have at the bottom of the hill?",
+    "given": "m = 152 kg (3 sig digs), h = 6.0 m (2 sig digs), v_{top} = 2.1 m/s (2 sig digs)",
+    "targetUnit": "m/s",
+    "ans": 11,
+    "sigFigs": 2,
+    "tolerance": 0.025,
+    "hints": [
+      "Apply conservation of mechanical energy: \u00bd m v_{bottom}\u00b2 = mgh + \u00bd m v_{top}\u00b2.",
+      "Cancel mass m and solve for the bottom speed: v_{bottom} = \u221a(v_{top}\u00b2 + 2gh)."
+    ],
+    "solution": {
+      "given": "\u2022 h = 6.0 m<br>\u2022 v_{top} = 2.1 m/s<br>\u2022 g = 9.81 m/s\u00b2",
+      "formula": "v_{bottom} = \\sqrt{v_{top}\u00b2 + 2gh}",
+      "steps": "1. v_{bottom} = \\sqrt{(2.1)\u00b2 + 2(9.81)(6.0)} = \\sqrt{4.41 + 117.72} = \\sqrt{122.13} = 11.051 m/s<br>2. Round to 2 significant digits (limited by 6.0 m): 11 m/s.",
+      "final": "11 m/s (2 significant digits)"
+    }
+  },
+  {
+    "id": "w15",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Industrial Mine Spring Launcher Constant",
+    "text": "The <strong>152 kg</strong> mine cart is launched from rest by compressing a large industrial spring by <strong>4.5 m</strong>. If the cart must reach the top of the <strong>6.0 m</strong> hill with a speed of <strong>2.1 m/s</strong>, what is the minimum spring constant (k) the spring must have?",
+    "given": "m = 152 kg (3 sig digs), x = 4.5 m (2 sig digs), h = 6.0 m (2 sig digs), v = 2.1 m/s (2 sig digs)",
+    "targetUnit": "N/m",
+    "ans": 920,
+    "sigFigs": 2,
+    "tolerance": 0.03,
+    "hints": [
+      "Calculate the total mechanical energy needed at the top of the hill: E_m = mgh + \u00bd m v\u00b2.",
+      "Equate elastic potential energy stored in the spring to the required mechanical energy: \u00bd k x\u00b2 = E_m.",
+      "Solve for the spring constant: k = 2 E_m / x\u00b2."
+    ],
+    "solution": {
+      "given": "\u2022 m = 152 kg<br>\u2022 x = 4.5 m<br>\u2022 h = 6.0 m<br>\u2022 v = 2.1 m/s",
+      "formula": "k = \\frac{2(mgh + \\frac{1}{2}m v\u00b2)}{x\u00b2}",
+      "steps": "1. E_p = (152 kg)(9.81 m/s\u00b2)(6.0 m) = 8946.72 J<br>2. E_k = 0.5(152 kg)(2.1 m/s)\u00b2 = 335.16 J<br>3. Total E_m = 8946.72 + 335.16 = 9281.88 J<br>4. k = 2(9281.88) / (4.5)\u00b2 = 18563.76 / 20.25 = 916.73 N/m<br>5. Round to 2 significant digits: 9.2 \u00d7 10\u00b2 N/m (or 920 N/m).",
+      "final": "9.2 \u00d7 10\u00b2 N/m (or 920 N/m, 2 significant digits)"
+    }
+  },
+  {
+    "id": "w16",
+    "unit": "energy",
+    "unitName": "Work and Energy",
+    "title": "Crate on Steep Slope Final Speed",
+    "text": "A <strong>95.0 kg</strong> crate slides down an inclined plane that makes an angle of <strong>65\u00b0</strong> to the horizontal. If the crate starts from rest at a vertical height of <strong>12.0 m</strong> and experiences a constant frictional force of <strong>14 N</strong> along the ramp, calculate its final speed at the bottom.",
+    "given": "m = 95.0 kg (3 sig digs), \\theta = 65\u00b0 (2 sig digs), h = 12.0 m (3 sig digs), F_f = 14 N (2 sig digs)",
+    "targetUnit": "m/s",
+    "ans": 15,
+    "sigFigs": 2,
+    "tolerance": 0.025,
+    "hints": [
+      "Find the length of the ramp from the vertical height and angle: d = h / sin \u03b8.",
+      "Calculate initial potential energy (E_i = mgh) and work done by friction (W_f = F_f d).",
+      "Find final kinetic energy E_k = E_i - W_f and solve for final speed: v = \u221a(2 E_k / m)."
+    ],
+    "solution": {
+      "given": "\u2022 m = 95.0 kg<br>\u2022 h = 12.0 m<br>\u2022 \\theta = 65\u00b0 \\implies d = 12.0 / \\sin(65\u00b0) = 13.24 m<br>\u2022 F_f = 14 N",
+      "formula": "v = \\sqrt{\\frac{2(mgh - F_f d)}{m}}",
+      "steps": "1. E_i = 95.0 \u00d7 9.81 \u00d7 12.0 = 11183.4 J<br>2. W_f = 14 \u00d7 13.24 = 185.37 J<br>3. E_k = 11183.4 - 185.37 = 10998.03 J<br>4. v = \\sqrt{2(10998.03) / 95.0} = \\sqrt{231.537} = 15.216 m/s<br>5. Round to 2 significant digits (limited by 14 N / 65\u00b0): 15 m/s.",
+      "final": "15 m/s (2 significant digits)"
+    }
+  }
+];
+
+    // Application state
+    const app = {
+      selectedTopics: new Set(['kinematics', 'vectors', 'dynamics', 'energy']),
+      currentQuestions: [],
+      currentIndex: 0,
+      sessionStats: {
+        total: 0,
+        firstTryCorrect: 0,
+        sigFigWarnings: 0,
+        unitBreakdown: {}
+      },
+      currentQuestionAttempted: false,
+      currentQuestionFirstTry: true,
+
+      init() {
+        this.updateThemeFromStorage();
+        this.updateTopicSelectionUI();
+        
+        // Listen for Esc key to close modal
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            document.getElementById('formulaModal').classList.remove('active');
+          }
+        });
+      },
+
+      // Theme Management
+      toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('phy20_theme', next);
+      },
+
+      updateThemeFromStorage() {
+        const saved = localStorage.getItem('phy20_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', saved);
+      },
+
+      // Topic Selection UI
+      toggleTopicCard(unit) {
+        if (this.selectedTopics.has(unit)) {
+          if (this.selectedTopics.size > 1) {
+            this.selectedTopics.delete(unit);
+          }
+        } else {
+          this.selectedTopics.add(unit);
+        }
+        this.updateTopicSelectionUI();
+      },
+
+      selectAllTopics() {
+        this.selectedTopics = new Set(['kinematics', 'vectors', 'dynamics', 'energy']);
+        this.updateTopicSelectionUI();
+      },
+
+      clearAllTopics() {
+        // Keep at least one selected
+        this.selectedTopics = new Set(['kinematics']);
+        this.updateTopicSelectionUI();
+      },
+
+      updateTopicSelectionUI() {
+        const cards = document.querySelectorAll('.topic-card');
+        cards.forEach(card => {
+          const unit = card.getAttribute('data-unit');
+          if (this.selectedTopics.has(unit)) {
+            card.classList.add('selected');
+            card.querySelector('.custom-checkbox').textContent = '✓';
+          } else {
+            card.classList.remove('selected');
+            card.querySelector('.custom-checkbox').textContent = '';
+          }
+        });
+
+        const count = this.selectedTopics.size;
+        document.getElementById('selectedTopicsCount').textContent = count + ' Selected';
+        document.getElementById('btnStartQuiz').disabled = count === 0;
+      },
+
+      // Start Quiz Session
+      startQuiz() {
+        if (this.selectedTopics.size === 0) return;
+
+        // Filter question bank by selected units
+        let pool = QUESTION_BANK.filter(q => this.selectedTopics.has(q.unit));
+
+        // Shuffle pool thoroughly (Fisher-Yates)
+        for (let i = pool.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+
+        // Apply length limit
+        const lengthSetting = document.getElementById('sessionLengthSelect').value;
+        if (lengthSetting !== 'all') {
+          const count = parseInt(lengthSetting, 10);
+          pool = pool.slice(0, Math.min(count, pool.length));
+        }
+
+        this.currentQuestions = pool;
+        this.currentIndex = 0;
+
+        // Reset session statistics
+        this.sessionStats = {
+          total: pool.length,
+          firstTryCorrect: 0,
+          sigFigWarnings: 0,
+          unitBreakdown: {
+            kinematics: { total: 0, correct: 0, sigFigWarnings: 0 },
+            vectors: { total: 0, correct: 0, sigFigWarnings: 0 },
+            dynamics: { total: 0, correct: 0, sigFigWarnings: 0 },
+            energy: { total: 0, correct: 0, sigFigWarnings: 0 }
+          }
+        };
+
+        // Switch to Quiz View
+        document.getElementById('landingView').classList.remove('active');
+        document.getElementById('resultsView').classList.remove('active');
+        document.getElementById('quizView').classList.add('active');
+
+        this.loadQuestion(0);
+      },
+
+      loadQuestion(index) {
+        if (index >= this.currentQuestions.length) {
+          this.showResults();
+          return;
+        }
+
+        this.currentIndex = index;
+        const q = this.currentQuestions[index];
+        this.currentQuestionAttempted = false;
+        this.currentQuestionFirstTry = true;
+
+        // Update progress bar & counters
+        const progressPct = ((index) / this.currentQuestions.length) * 100;
+        document.getElementById('quizProgressBar').style.width = progressPct + '%';
+        document.getElementById('qNumberDisplay').textContent = `Question ${index + 1} of ${this.currentQuestions.length}`;
+        
+        // Update Unit Pill
+        const unitPill = document.getElementById('quizUnitPill');
+        unitPill.className = `unit-pill ${q.unit}`;
+        unitPill.textContent = q.unitName;
+
+        // Title and texts
+        document.getElementById('qTitleDisplay').textContent = q.title;
+        document.getElementById('qTextDisplay').innerHTML = q.text;
+        document.getElementById('qGivenDisplay').innerHTML = `<strong>Given:</strong> ${q.given}`;
+        document.getElementById('qUnitDisplay').textContent = q.targetUnit || 'unitless';
+
+        // Clear input and feedback
+        const input = document.getElementById('studentAnswerInput');
+        input.value = '';
+        input.disabled = false;
+        input.focus();
+
+        this.hideFeedback();
+        this.hideHint();
+        this.hideSolution();
+
+        // Populate solution details for when requested
+        document.getElementById('solGiven').innerHTML = q.solution.given;
+        document.getElementById('solFormula').innerHTML = q.solution.formula;
+        document.getElementById('solSteps').innerHTML = q.solution.steps;
+        document.getElementById('solFinal').innerHTML = q.solution.final;
+
+        // Populate hint
+        document.getElementById('hintContent').innerHTML = q.hints.map((h, i) => `<p style="margin-bottom:0.4rem;"><strong>Step ${i+1}:</strong> ${h}</p>`).join('');
+
+        this.updateStatsDisplay();
+      },
+
+      // Check Student's Answer
+      checkAnswer() {
+        const input = document.getElementById('studentAnswerInput');
+        const rawText = input.value.trim();
+
+        if (!rawText) {
+          this.showFeedback('warning', 'Input Required', 'Please enter your numerical answer before checking.');
+          return;
+        }
+
+        const q = this.currentQuestions[this.currentIndex];
+        const parsedNum = this.parseNumericValue(rawText);
+
+        if (parsedNum === null || isNaN(parsedNum)) {
+          this.showFeedback('incorrect', 'Invalid Number Format', 'Please enter a valid numeric value (e.g. 18.2 or 1.8e3).');
+          return;
+        }
+
+        const studentSigFigs = this.countSigFigs(rawText);
+        const targetVal = q.ans;
+        const targetSigFigs = q.sigFigs;
+        const tolerance = q.tolerance || 0.02; // ±2%
+
+        // Calculate relative difference
+        const relDiff = Math.abs(parsedNum - targetVal) / Math.max(Math.abs(targetVal), 0.001);
+
+        const isMathCorrect = relDiff <= tolerance;
+        const isSigFigCorrect = studentSigFigs === targetSigFigs;
+
+        // Track stats for this unit
+        const uStats = this.sessionStats.unitBreakdown[q.unit];
+        if (!this.currentQuestionAttempted) {
+          uStats.total++;
+          this.currentQuestionAttempted = true;
+        }
+
+        if (isMathCorrect && isSigFigCorrect) {
+          // 100% CORRECT (Calculation + Sig Digs)
+          if (this.currentQuestionFirstTry) {
+            this.sessionStats.firstTryCorrect++;
+            uStats.correct++;
+          }
+          this.showFeedback('correct', '🎉 Excellent! Correct Answer', 
+            `Your calculation of <strong>${rawText} ${q.targetUnit}</strong> is correct with the proper <strong>${targetSigFigs} significant digits</strong>!`);
+          
+          input.disabled = true;
+        } else if (isMathCorrect && !isSigFigCorrect) {
+          // CALCULATION IS CORRECT, BUT SIG FIGS ARE INCORRECT!
+          this.currentQuestionFirstTry = false;
+          this.sessionStats.sigFigWarnings++;
+          uStats.sigFigWarnings++;
+
+          let hintText = `Your calculated value of <code>${rawText}</code> is mathematically correct! However, your significant digits are off.`;
+          hintText += `<br><br><strong>Alberta Sig Dig Requirement:</strong> Based on the given values, this question requires exactly <strong>${targetSigFigs} significant digits</strong>. You provided ${studentSigFigs} sig fig(s).`;
+          
+          if (targetVal >= 1000 && targetSigFigs < 4) {
+            hintText += `<br><em>Tip: For large numbers, use scientific notation (e.g. <code>${targetVal.toExponential(targetSigFigs - 1).replace('e+', 'e')}</code> or <code>${targetVal.toExponential(targetSigFigs - 1).replace('e+', 'x10^')}</code>) to state significant digits unambiguously.</em>`;
+          }
+          hintText += `<br>Please round your answer and re-enter.`;
+
+          this.showFeedback('sigfig', '⚠️ Correct Calculation — Check Significant Digits!', hintText);
+        } else {
+          // NUMERICAL VALUE INCORRECT
+          this.currentQuestionFirstTry = false;
+          this.showFeedback('incorrect', '❌ Incorrect Calculation', 
+            `Your calculated answer is not within the expected value. Double check your formula, units, and arithmetic, or use the <strong>💡 Hint</strong> button for guidance.`);
+        }
+
+        this.updateStatsDisplay();
+      },
+
+      nextQuestion() {
+        this.loadQuestion(this.currentIndex + 1);
+      },
+
+      // Significant Figures Counting Algorithm
+      countSigFigs(s) {
+        s = s.trim().toLowerCase();
+        
+        // Match scientific notation (e.g. 1.23e4, 1.23x10^4, 1.23*10^4)
+        const sciMatch = s.match(/^([+-]?\d*(?:\.\d*)?)(?:[e]|(?:[x\*]10\^?))([+-]?\d+)$/);
+        if (sciMatch) {
+          let mantissa = sciMatch[1].replace(/^[+-]/, '');
+          if (!mantissa) return 0;
+          if (mantissa.includes('.')) {
+            const parts = mantissa.split('.');
+            const intPart = parts[0].replace(/^0+/, '');
+            const fracPart = parts[1];
+            if (intPart.length > 0) {
+              return intPart.length + fracPart.length;
+            } else {
+              const stripped = fracPart.replace(/^0+/, '');
+              return stripped.length > 0 ? stripped.length : 1;
+            }
+          } else {
+            const stripped = mantissa.replace(/^0+/, '');
+            return stripped.length > 0 ? stripped.length : 1;
+          }
+        }
+
+        // Standard decimal notation
+        let clean = s.replace(/^[+-]/, '');
+        if (!clean) return 0;
+
+        if (clean.includes('.')) {
+          const parts = clean.split('.');
+          const intPart = parts[0].replace(/^0+/, '');
+          const fracPart = parts[1];
+          if (intPart.length > 0) {
+            return intPart.length + fracPart.length;
+          } else {
+            const stripped = fracPart.replace(/^0+/, '');
+            return stripped.length > 0 ? stripped.length : 1;
+          }
+        } else {
+          // Integer without decimal point
+          const stripped = clean.replace(/^0+/, '');
+          return stripped.length > 0 ? stripped.length : 1;
+        }
+      },
+
+      // Parse numerical value from various notation styles
+      parseNumericValue(s) {
+        s = s.trim().toLowerCase();
+        // Convert 1.2x10^3 or 1.2*10^3 to standard 1.2e3
+        s = s.replace(/[x\*]10\^?([+-]?\d+)/, 'e$1');
+        const num = parseFloat(s);
+        return isNaN(num) ? null : num;
+      },
+
+      // Feedback helpers
+      showFeedback(type, title, msg) {
+        const banner = document.getElementById('feedbackBanner');
+        banner.className = `feedback-banner active feedback-${type}`;
+        document.getElementById('feedbackHeader').innerHTML = title;
+        document.getElementById('feedbackMessage').innerHTML = msg;
+      },
+
+      hideFeedback() {
+        const banner = document.getElementById('feedbackBanner');
+        banner.className = 'feedback-banner';
+      },
+
+      // Hint & Solution Toggles
+      toggleHint() {
+        const panel = document.getElementById('hintPanel');
+        panel.classList.toggle('active');
+      },
+
+      hideHint() {
+        document.getElementById('hintPanel').classList.remove('active');
+      },
+
+      toggleSolution() {
+        const panel = document.getElementById('solutionPanel');
+        panel.classList.toggle('active');
+      },
+
+      hideSolution() {
+        document.getElementById('solutionPanel').classList.remove('active');
+      },
+
+      toggleFormulaModal() {
+        document.getElementById('formulaModal').classList.toggle('active');
+      },
+
+      updateStatsDisplay() {
+        const attempted = this.currentIndex;
+        const correct = this.sessionStats.firstTryCorrect;
+        const pct = attempted > 0 ? Math.round((correct / attempted) * 100) : 0;
+        document.getElementById('quizScoreDisplay').textContent = `Score: ${correct}/${attempted} (${pct}%)`;
+        document.getElementById('quizStreakDisplay').textContent = `${correct} correct`;
+      },
+
+      confirmExitQuiz() {
+        if (confirm('Are you sure you want to return to the main menu? Your current session progress will be reset.')) {
+          this.showLanding();
+        }
+      },
+
+      showLanding() {
+        document.getElementById('quizView').classList.remove('active');
+        document.getElementById('resultsView').classList.remove('active');
+        document.getElementById('landingView').classList.add('active');
+      },
+
+      showResults() {
+        document.getElementById('quizView').classList.remove('active');
+        document.getElementById('landingView').classList.remove('active');
+        document.getElementById('resultsView').classList.add('active');
+
+        const total = this.currentQuestions.length;
+        const correct = this.sessionStats.firstTryCorrect;
+        const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+        document.getElementById('finalPercentage').textContent = pct + '%';
+        document.getElementById('finalScoreFraction').textContent = `${correct} / ${total} First-Try Correct`;
+
+        if (pct >= 80) {
+          document.getElementById('resultsGreeting').textContent = '🎉 Outstanding Performance!';
+          document.getElementById('resultsSubtext').textContent = 'You have demonstrated a strong mastery of Physics 20 concepts for Physics 30!';
+        } else if (pct >= 60) {
+          document.getElementById('resultsGreeting').textContent = '👍 Solid Review Work!';
+          document.getElementById('resultsSubtext').textContent = 'Good progress. Consider reviewing the units where you had challenges with formulas or sig digs.';
+        } else {
+          document.getElementById('resultsGreeting').textContent = '📚 Keep Practicing!';
+          document.getElementById('resultsSubtext').textContent = 'Use the Formula Sheet and worked solutions to strengthen your foundational skills.';
+        }
+
+        // Build breakdown table
+        const tbody = document.getElementById('breakdownTableBody');
+        tbody.innerHTML = '';
+
+        const units = [
+          { key: 'kinematics', name: '1. Kinematics' },
+          { key: 'vectors', name: '2. Vectors' },
+          { key: 'dynamics', name: '3. Dynamics (Forces)' },
+          { key: 'energy', name: '4. Work & Energy' }
+        ];
+
+        units.forEach(u => {
+          const stats = this.sessionStats.unitBreakdown[u.key];
+          if (stats.total > 0) {
+            const row = document.createElement('tr');
+            const unitPct = Math.round((stats.correct / stats.total) * 100);
+            row.innerHTML = `
+              <td><strong>${u.name}</strong></td>
+              <td>${stats.total}</td>
+              <td><span style="color: ${unitPct >= 70 ? 'var(--success)' : 'var(--warning)'}; font-weight:700;">${stats.correct} / ${stats.total} (${unitPct}%)</span></td>
+              <td>${stats.sigFigWarnings} warning(s) resolved</td>
+            `;
+            tbody.appendChild(row);
+          }
+        });
+      }
+    };
+
+    // Initialize application on DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+      app.init();
+    });
+  </script>
+</body>
+</html>
