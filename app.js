@@ -3,6 +3,22 @@
    It builds simulation tiles and handles search filtering.
    ===================================================================== */
 
+/* ---- Google Analytics (loads on every page that includes app.js) ----
+   To change or remove tracking, edit or delete this one block.
+   Measurement ID: G-PGQ0J12QNB                                        */
+(function(){
+  var GA_ID = "G-PGQ0J12QNB";
+  var s = document.createElement("script");
+  s.async = true;
+  s.src = "https://www.googletagmanager.com/gtag/js?id=" + GA_ID;
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag("js", new Date());
+  gtag("config", GA_ID);
+})();
+
 var ARROW = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 /* map a course id to its accent colour variable */
