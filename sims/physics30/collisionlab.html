@@ -1,0 +1,4723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics 30: 2D Momentum & Collisions Suite</title>
+    
+    
+    
+    <style>
+/* ========== css/main.css ========== */
+/**
+ * Physics 30 2D Collisions Suite - Main Stylesheet
+ * High quality, modern educational UI with responsive layouts, dark/light theme support.
+ */
+
+:root {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --bg-card: rgba(30, 41, 59, 0.85);
+    --border-color: #334155;
+    --border-light: #475569;
+    
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    
+    --accent-blue: #38bdf8;
+    --accent-blue-hover: #0284c7;
+    --accent-indigo: #6366f1;
+    --accent-purple: #a855f7;
+    --accent-green: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-red: #ef4444;
+
+    --obj1-color: #3b82f6;
+    --obj2-color: #ef4444;
+    
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -2px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.45), 0 4px 6px -4px rgba(0, 0, 0, 0.45);
+    --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-main);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* Header & Navbar */
+.app-header {
+    background: linear-gradient(180deg, #1e293b 0%, rgba(15, 23, 42, 0.95) 100%);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.nav-container {
+    max-width: 1760px;
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-section {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.brand-icon {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.35);
+}
+
+.brand-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+.brand-subtitle {
+    font-size: 0.75rem;
+    color: var(--accent-blue);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.nav-tabs-wrapper {
+    display: flex;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    padding: 4px;
+    border-radius: var(--radius-md);
+    gap: 4px;
+}
+
+.nav-tab-btn {
+    padding: 0.5rem 1.2rem;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-tab-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-tab-btn.active {
+    background: var(--accent-blue);
+    color: #0f172a;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Main Content Area */
+.app-main {
+    flex: 1;
+    max-width: 1760px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.view-section {
+    display: none;
+    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.view-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Landing Page Styles */
+.hero-banner {
+    background: radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.15) 0%, rgba(15, 23, 42, 0) 70%),
+                linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 3rem 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+
+.hero-badge {
+    display: inline-block;
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: var(--accent-blue);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.35rem 0.9rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-desc {
+    max-width: 750px;
+    margin: 0 auto 2rem;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.hero-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.landing-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    text-align: left;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.landing-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-blue);
+    box-shadow: var(--shadow-glow), var(--shadow-lg);
+}
+
+.card-top {
+    margin-bottom: 1.5rem;
+}
+
+.card-icon-wrapper {
+    width: 54px;
+    height: 54px;
+    border-radius: var(--radius-md);
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.25rem;
+}
+
+.landing-card.card-practice .card-icon-wrapper {
+    background: rgba(168, 85, 247, 0.12);
+    border-color: rgba(168, 85, 247, 0.3);
+}
+
+.card-heading {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    color: #ffffff;
+}
+
+.card-body-text {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin-bottom: 1.25rem;
+}
+
+.card-features-list {
+    list-style: none;
+    margin-bottom: 1.5rem;
+}
+
+.card-features-list li {
+    font-size: 0.88rem;
+    color: var(--text-main);
+    margin-bottom: 0.45rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-features-list li::before {
+    content: '✓';
+    color: var(--accent-green);
+    font-weight: bold;
+}
+
+/* Quick Reference Section */
+.curriculum-ref-box {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1rem;
+}
+
+.ref-item {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+}
+
+.ref-item-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+}
+
+.ref-item-formula {
+    font-family: 'Cambria Math', 'KaTeX_Math', 'Times New Roman', serif;
+    font-size: 1.05rem;
+    color: #f1f5f9;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.15rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--accent-blue);
+    color: #0f172a;
+}
+.btn-primary:hover {
+    background: #7dd3fc;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+}
+
+.btn-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-main);
+    border-color: var(--border-light);
+}
+.btn-secondary:hover {
+    background: #475569;
+}
+
+.btn-success {
+    background: #059669;
+    color: #ffffff;
+}
+.btn-success:hover {
+    background: #10b981;
+}
+
+.btn-warning {
+    background: #d97706;
+    color: #ffffff;
+}
+.btn-warning:hover {
+    background: #f59e0b;
+}
+
+.btn-danger {
+    background: #dc2626;
+    color: #ffffff;
+}
+.btn-danger:hover {
+    background: #ef4444;
+}
+
+.btn-outline-primary {
+    background: transparent;
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+}
+.btn-outline-primary:hover {
+    background: rgba(56, 189, 248, 0.15);
+}
+
+.btn-sm {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.55rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.badge-primary { background: rgba(56, 189, 248, 0.2); color: var(--accent-blue); border: 1px solid rgba(56, 189, 248, 0.3); }
+.badge-success { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
+.badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+.badge-info { background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); }
+
+/* Modal Reference Dialog */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.modal-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    max-width: 800px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+.modal-close-btn:hover { color: #ffffff; }
+
+/* Utilities */
+.hidden { display: none !important; }
+.font-bold { font-weight: 700; }
+.text-success { color: var(--accent-green) !important; }
+.text-danger { color: var(--accent-red) !important; }
+.text-warning { color: var(--accent-amber) !important; }
+.text-muted { color: var(--text-muted) !important; }
+
+/* Math Formula Typography */
+.formula-display, .math-eq {
+    font-family: 'Cambria Math', 'STIX Two Math', 'Times New Roman', Georgia, serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+}
+
+.formula-display i, .math-eq i, .math-var {
+    font-style: italic;
+    font-family: 'Cambria Math', 'Times New Roman', Times, serif;
+    padding: 0 1px;
+}
+
+.formula-display sub, .math-eq sub, sub {
+    font-size: 0.78em;
+    vertical-align: -0.2em;
+    line-height: 0;
+}
+
+.formula-display sup, .math-eq sup, sup {
+    font-size: 0.78em;
+    vertical-align: 0.35em;
+    line-height: 0;
+}
+
+.math-pill {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: 'Cambria Math', 'Times New Roman', Times, serif;
+    color: #e2e8f0;
+    font-size: 0.95em;
+    display: inline-block;
+}
+
+/* Footer */
+.app-footer {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-top: auto;
+}
+
+/* ========== css/simulation.css ========== */
+/**
+ * Physics 30 2D Simulation & Side-by-Side Lab View Stylesheet
+ */
+
+.simulation-layout {
+    display: grid;
+    grid-template-columns: 310px 1fr 390px;
+    gap: 1.25rem;
+    align-items: start;
+    transition: all 0.25s ease;
+    position: relative;
+}
+
+@media (max-width: 1440px) {
+    .simulation-layout {
+        grid-template-columns: 280px 1fr 350px;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 1100px) {
+    .simulation-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Collapsible state: when controls sidebar is collapsed to the left */
+.simulation-layout.controls-collapsed {
+    grid-template-columns: 46px 1fr 430px;
+}
+
+@media (max-width: 1440px) {
+    .simulation-layout.controls-collapsed {
+        grid-template-columns: 46px 1fr 390px;
+    }
+}
+
+/* When activities sidebar is collapsed to the right */
+.simulation-layout.activities-collapsed {
+    grid-template-columns: 320px 1fr 46px;
+}
+
+/* When both sidebars are collapsed */
+.simulation-layout.controls-collapsed.activities-collapsed {
+    grid-template-columns: 46px 1fr 46px;
+}
+
+/* Sidebar Columns */
+.controls-sidebar,
+.activities-sidebar {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+}
+
+.activities-sidebar {
+    position: sticky;
+    top: 4.5rem;
+    max-height: calc(100vh - 5.5rem);
+}
+
+/* Collapsed Strip (Clickable bar when collapsed) */
+.collapsed-strip {
+    display: none;
+    width: 46px;
+    min-height: 480px;
+    background: #090e17;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.collapsed-strip:hover {
+    background: rgba(56, 189, 248, 0.12);
+}
+
+.btn-expand-strip {
+    background: transparent;
+    border: none;
+    color: var(--accent-blue);
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem 0;
+    width: 100%;
+    height: 100%;
+}
+
+.vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+}
+
+/* When collapsed, toggle visibility */
+.simulation-layout.controls-collapsed #controls-sidebar .sidebar-expanded-content {
+    display: none;
+}
+.simulation-layout.controls-collapsed #controls-sidebar .collapsed-strip {
+    display: flex;
+}
+
+.simulation-layout.activities-collapsed #activities-sidebar .sidebar-expanded-content {
+    display: none;
+}
+.simulation-layout.activities-collapsed #activities-sidebar .collapsed-strip {
+    display: flex;
+}
+
+/* Sidebar Headers */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: #0f172a;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-header-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-toggle-sidebar {
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid var(--border-light);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.55rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-toggle-sidebar:hover {
+    color: #ffffff;
+    border-color: var(--accent-blue);
+    background: var(--bg-tertiary);
+}
+
+.sidebar-expanded-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.sidebar-body-scroll {
+    padding: 0.85rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 10rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+/* Object Control Blocks */
+.panel-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem;
+}
+
+.panel-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.object-control-block {
+    padding: 0.85rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+.obj1-block {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.obj2-block {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.obj-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 0.88rem;
+    margin-bottom: 0.6rem;
+}
+
+.obj-header.obj1-text { color: #60a5fa; }
+.obj-header.obj2-text { color: #f87171; }
+
+.form-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.form-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    min-width: 55px;
+}
+
+.form-control {
+    background: #0f172a;
+    border: 1px solid var(--border-light);
+    color: var(--text-main);
+    padding: 0.35rem 0.55rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    border-color: var(--accent-blue);
+}
+
+.quick-dir-group {
+    display: flex;
+    gap: 4px;
+    margin-top: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.btn-quick-dir {
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+.btn-quick-dir:hover {
+    color: var(--text-main);
+    border-color: var(--accent-blue);
+}
+
+/* Elasticity Selector */
+.elasticity-container {
+    margin-top: 0.4rem;
+}
+
+.range-slider {
+    width: 100%;
+    accent-color: var(--accent-blue);
+    cursor: pointer;
+}
+
+.elasticity-presets {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4px;
+    margin-top: 0.45rem;
+}
+
+/* Simulation Canvas & Display (Center Column) */
+.canvas-wrapper {
+    position: relative;
+    background: #020617;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+#sim-canvas {
+    display: block;
+    width: 100%;
+    height: 480px;
+    background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+}
+
+.canvas-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #0f172a;
+    border-top: 1px solid var(--border-color);
+    padding: 0.65rem 0.85rem;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.playback-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.speed-controls {
+    display: flex;
+    background: #1e293b;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.btn-speed {
+    padding: 0.3rem 0.6rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-speed.active {
+    background: var(--accent-blue);
+    color: #0f172a;
+}
+
+.overlay-toggles {
+    display: flex;
+    gap: 0.85rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+}
+
+/* Data Analytics Table */
+.data-table-container {
+    margin-top: 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    overflow-x: auto;
+}
+
+.sim-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    text-align: left;
+}
+
+.sim-data-table th {
+    background: rgba(15, 23, 42, 0.8);
+    padding: 0.55rem 0.65rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.sim-data-table td {
+    padding: 0.55rem 0.65rem;
+    border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.82rem;
+}
+
+.sim-data-table tr.total-row td {
+    background: rgba(56, 189, 248, 0.08);
+    font-weight: 700;
+    color: #ffffff;
+    border-top: 1px solid var(--accent-blue);
+}
+
+.energy-audit-box {
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.progress-track {
+    width: 100%;
+    height: 16px;
+    background: #0f172a;
+    border-radius: 9999px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    margin: 0.35rem 0;
+}
+
+.progress-bar {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.bg-success { background: #10b981; }
+.bg-info { background: #0ea5e9; }
+.bg-warning { background: #f59e0b; }
+
+/* Activities Panel (Right Column) */
+.worksheet-tabs-nav {
+    display: flex;
+    gap: 0.35rem;
+    background: #0f172a;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    overflow-x: auto;
+}
+
+.btn-tab {
+    padding: 0.4rem 0.75rem;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.btn-tab:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-tab.active {
+    background: var(--accent-blue);
+    color: #0f172a;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+}
+
+.worksheet-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.worksheet-header {
+    margin-bottom: 0.85rem;
+}
+
+.worksheet-header h4 {
+    font-size: 0.98rem;
+    color: #ffffff;
+    margin-bottom: 0.25rem;
+}
+
+.worksheet-header .text-muted {
+    font-size: 0.8rem;
+    margin-bottom: 0.6rem;
+}
+
+.btn-load-scenario {
+    width: 100%;
+    font-size: 0.85rem;
+    padding: 0.45rem;
+    font-weight: 700;
+}
+
+.worksheet-instructions {
+    background: rgba(15, 23, 42, 0.6);
+    border-left: 3px solid var(--accent-blue);
+    padding: 0.65rem 0.85rem;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin-bottom: 1rem;
+    font-size: 0.82rem;
+}
+
+.worksheet-instructions h5 {
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+    color: #e2e8f0;
+}
+
+.worksheet-instructions ol {
+    margin-left: 1.1rem;
+}
+
+.worksheet-instructions li {
+    margin-bottom: 0.25rem;
+    color: var(--text-main);
+}
+
+.question-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem;
+    margin-bottom: 0.85rem;
+}
+
+.question-prompt {
+    font-size: 0.88rem;
+    margin-bottom: 0.65rem;
+    color: #f8fafc;
+}
+
+.choice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.65rem;
+}
+
+.choice-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 0.45rem 0.65rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.82rem;
+    border: 1px solid transparent;
+}
+
+.choice-option:hover {
+    border-color: var(--border-light);
+}
+
+.input-group-row {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    margin-bottom: 0.65rem;
+}
+
+.question-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+}
+
+.q-feedback {
+    font-size: 0.8rem;
+}
+
+.q-explanation {
+    margin-top: 0.65rem;
+    padding: 0.6rem 0.75rem;
+    background: rgba(15, 23, 42, 0.85);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--accent-green);
+    font-size: 0.82rem;
+    line-height: 1.45;
+}
+
+/* ========== css/practice.css ========== */
+/**
+ * Physics 30 Practice Problem Suite Stylesheet
+ */
+
+.practice-container {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+/* Category Toggle Filter Box */
+.category-toggle-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.toggle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.toggle-header-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.preset-btn-group {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.btn-preset {
+    padding: 0.25rem 0.65rem;
+    font-size: 0.78rem;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-preset:hover {
+    color: #ffffff;
+    border-color: var(--accent-purple);
+}
+
+.toggle-chips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.65rem;
+}
+
+.toggle-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    padding: 0.6rem 0.85rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.toggle-chip:hover {
+    border-color: var(--border-light);
+    background: rgba(15, 23, 42, 0.85);
+}
+
+.toggle-chip input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent-purple);
+    cursor: pointer;
+}
+
+.toggle-chip:has(input:checked) {
+    border-color: rgba(168, 85, 247, 0.5);
+    background: rgba(168, 85, 247, 0.12);
+    color: #ffffff;
+}
+
+/* Score Tracker Bar */
+.score-tracker-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.score-stats {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* Practice Problem Card */
+.problem-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.problem-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.problem-category-badge {
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: #d8b4fe;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+}
+
+.problem-prompt {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: #f8fafc;
+    margin-bottom: 1.5rem;
+}
+
+.problem-givens-box {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.givens-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.givens-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-family: 'Consolas', monospace;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+}
+
+/* Answer Submission Area */
+.answer-section {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.answer-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #ffffff;
+}
+
+.answer-inputs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+@media (max-width: 640px) {
+    .answer-inputs-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.input-field-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.input-field-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.input-with-unit {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.compass-direction-selector {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.direction-preview-badge {
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    color: var(--accent-blue);
+}
+
+.answer-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Feedback Box */
+.feedback-box {
+    margin-top: 1.25rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.feedback-box.correct {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+}
+
+.feedback-box.incorrect {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #f87171;
+}
+
+/* Step-by-Step Solution Card */
+.solution-container {
+    margin-top: 1.5rem;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+}
+
+.solution-header {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent-green);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.solution-step {
+    background: var(--bg-secondary);
+    border-left: 3px solid var(--accent-blue);
+    padding: 1rem;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.solution-step:last-child {
+    border-left-color: var(--accent-green);
+}
+
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <div class="nav-container">
+            <div class="brand-section">
+                <div class="brand-icon">⚛️</div>
+                <div>
+                    <h1 class="brand-title">Physics 30: 2D Collisions</h1>
+                    <div class="brand-subtitle">Momentum, Impulse & Energy Suite</div>
+                </div>
+            </div>
+
+            <nav class="nav-tabs-wrapper">
+                <button class="nav-tab-btn active" data-view="landing">
+                    <span>🏠</span> Home
+                </button>
+                <button class="nav-tab-btn" data-view="lab">
+                    <span>🔬</span> Interactive Lab
+                </button>
+                <button class="nav-tab-btn" data-view="practice">
+                    <span>📝</span> Practice Problems
+                </button>
+            </nav>
+
+            <div class="header-actions">
+                <button class="btn btn-secondary btn-sm" id="btn-open-reference">
+                    📖 Reference Sheet
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-main">
+
+        <!-- ==================== VIEW 1: LANDING PAGE ==================== -->
+        <section id="view-landing" class="view-section active">
+            <div class="hero-banner">
+                <span class="hero-badge">Alberta Physics 30 • Unit A Curriculum</span>
+                <h2 class="hero-title">Master 2D Momentum & Collisions</h2>
+                <p class="hero-desc">
+                    Explore momentum conservation, vector component analysis, elasticity, and kinetic energy transformations in 2 dimensions through high-precision simulation and practice problem sets.
+                </p>
+
+                <div class="hero-cards-grid">
+                    <!-- Card 1: Interactive Lab -->
+                    <div class="landing-card" id="card-goto-lab">
+                        <div class="card-top">
+                            <div class="card-icon-wrapper">🔬</div>
+                            <h3 class="card-heading">Structured Lab Activity</h3>
+                            <p class="card-body-text">
+                                Full control over 2 colliding objects: customize mass, velocity, compass headings, impact offset, and coefficient of restitution (elastic, inelastic, and completely inelastic).
+                            </p>
+                            <ul class="card-features-list">
+                                <li>Real-time vector overlays (v, p, px, py)</li>
+                                <li>4 Guided Alberta Physics 30 inquiry worksheets</li>
+                                <li>Live before/after energy and momentum audit</li>
+                                <li>Tip-to-tail vector addition triangle</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">
+                            Launch Lab Simulator ➔
+                        </button>
+                    </div>
+
+                    <!-- Card 2: Practice Problems -->
+                    <div class="landing-card card-practice" id="card-goto-practice">
+                        <div class="card-top">
+                            <div class="card-icon-wrapper">📝</div>
+                            <h3 class="card-heading">Physics 30 Practice Problems</h3>
+                            <p class="card-body-text">
+                                Dynamic problem generator covering all 5 core Physics 30 collision problem types with instant grading and step-by-step vector breakdowns.
+                            </p>
+                            <ul class="card-features-list">
+                                <li>1D Linear & Head-on collisions</li>
+                                <li>Right-angle intersection crashes</li>
+                                <li>Glancing 2D collisions at arbitrary angles</li>
+                                <li>Exploding objects & fragmentation (≤ 3 pieces)</li>
+                                <li>Ballistic pendulums (momentum + energy)</li>
+                                <li>Physics 30 Compass Bearings ([N of E], [W of S])</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">
+                            Start Practice Questions ➔
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Reference Formulas Card -->
+            <div class="curriculum-ref-box">
+                <h3 style="color: #f1f5f9; font-size: 1.1rem; margin-bottom: 0.5rem;">Physics 30 Quick Reference Guide</h3>
+                <div class="ref-grid">
+                    <div class="ref-item">
+                        <div class="ref-item-title">Momentum Vector</div>
+                        <div class="ref-item-formula formula-display"><i>p&#8407;</i> = <i>m</i><i>v&#8407;</i></div>
+                        <small class="text-muted">Conserved in isolated systems: &Sigma;<i>p&#8407;</i><sub>i</sub> = &Sigma;<i>p&#8407;</i><sub>f</sub></small>
+                    </div>
+                    <div class="ref-item">
+                        <div class="ref-item-title">Kinetic Energy</div>
+                        <div class="ref-item-formula formula-display"><i>E</i><sub>k</sub> = &frac12;<i>m</i><i>v</i><sup>2</sup></div>
+                        <small class="text-muted">Conserved ONLY in perfectly elastic collisions (<i>e</i> = 1.0)</small>
+                    </div>
+                    <div class="ref-item">
+                        <div class="ref-item-title">2D Vector Components</div>
+                        <div class="ref-item-formula formula-display"><i>p</i><sub>x</sub> = <i>m</i><i>v</i> cos<i>&theta;</i>, &nbsp; <i>p</i><sub>y</sub> = <i>m</i><i>v</i> sin<i>&theta;</i></div>
+                        <small class="text-muted">Conserved independently: &Sigma;<i>p</i><sub>ix</sub> = &Sigma;<i>p</i><sub>fx</sub>, &Sigma;<i>p</i><sub>iy</sub> = &Sigma;<i>p</i><sub>fy</sub></small>
+                    </div>
+                    <div class="ref-item">
+                        <div class="ref-item-title">Ballistic Pendulum</div>
+                        <div class="ref-item-formula formula-display"><i>m</i><i>v</i><sub>0</sub> = (<i>m</i> + <i>M</i>)<i>V</i>, &nbsp; <i>V</i> = &radic;(2<i>g</i><i>h</i>)</div>
+                        <small class="text-muted">Inelastic collision followed by mechanical energy conservation</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 2: INTERACTIVE LAB ==================== -->
+        <section id="view-lab" class="view-section">
+            <div class="simulation-layout" id="sim-layout-container">
+                
+                <!-- Left Column: Collapsible Controls -->
+                <aside class="controls-sidebar" id="controls-sidebar">
+                    <!-- Collapsed Strip (Visible when collapsed) -->
+                    <div class="collapsed-strip" id="controls-collapsed-strip" title="Click to Expand Controls">
+                        <button class="btn-expand-strip" id="btn-expand-controls">
+                            <span>⚙️</span>
+                            <span class="vertical-text">SHOW SETUP & CONTROLS ▶</span>
+                        </button>
+                    </div>
+
+                    <!-- Expanded Content -->
+                    <div class="sidebar-expanded-content" id="controls-expanded-content">
+                        <div class="sidebar-header">
+                            <span class="sidebar-header-title">⚙️ Lab Setup</span>
+                            <button class="btn-toggle-sidebar" id="btn-toggle-controls" title="Collapse Controls to the left">
+                                ◀ Collapse
+                            </button>
+                        </div>
+
+                        <div class="sidebar-body-scroll">
+                            <!-- Object 1 Controls -->
+                            <div class="panel-card object-control-block obj1-block">
+                                <div class="obj-header obj1-text">
+                                    <span>🔵 Object 1 (Blue)</span>
+                                    <span class="badge badge-primary" id="a1-compass-badge">due East</span>
+                                </div>
+                                <div class="form-row">
+                                    <span class="form-label">Mass (m₁):</span>
+                                    <input type="number" id="m1-input" class="form-control" value="3.0" min="0.1" max="50" step="0.5">
+                                    <span style="font-size: 0.8rem;">kg</span>
+                                </div>
+                                <div class="form-row">
+                                    <span class="form-label">Speed (v₁):</span>
+                                    <input type="number" id="v1-input" class="form-control" value="12.0" min="0" max="40" step="1.0">
+                                    <span style="font-size: 0.8rem;">m/s</span>
+                                </div>
+                                <div class="form-row">
+                                    <span class="form-label">Direction:</span>
+                                    <input type="number" id="a1-input" class="form-control" value="0.0" min="0" max="90" step="1.0" style="max-width: 60px;">
+                                    <select id="a1-dir" class="form-control">
+                                        <option value="N of E">° N of E</option>
+                                        <option value="E of N">° E of N</option>
+                                        <option value="N of W">° N of W</option>
+                                        <option value="W of N">° W of N</option>
+                                        <option value="S of W">° S of W</option>
+                                        <option value="W of S">° W of S</option>
+                                        <option value="S of E">° S of E</option>
+                                        <option value="E of S">° E of S</option>
+                                        <option value="due East" selected>[due East]</option>
+                                        <option value="due North">[due North]</option>
+                                        <option value="due West">[due West]</option>
+                                        <option value="due South">[due South]</option>
+                                    </select>
+                                </div>
+                                <div class="quick-dir-group">
+                                    <button class="btn-quick-dir btn-quick-dir-1" data-angle="0" data-dir="due East">East</button>
+                                    <button class="btn-quick-dir btn-quick-dir-1" data-angle="0" data-dir="due North">North</button>
+                                    <button class="btn-quick-dir btn-quick-dir-1" data-angle="0" data-dir="due West">West</button>
+                                    <button class="btn-quick-dir btn-quick-dir-1" data-angle="0" data-dir="due South">South</button>
+                                </div>
+                            </div>
+
+                            <!-- Object 2 Controls -->
+                            <div class="panel-card object-control-block obj2-block">
+                                <div class="obj-header obj2-text">
+                                    <span>🔴 Object 2 (Red)</span>
+                                    <span class="badge badge-primary" id="a2-compass-badge">due West</span>
+                                </div>
+                                <div class="form-row">
+                                    <span class="form-label">Mass (m₂):</span>
+                                    <input type="number" id="m2-input" class="form-control" value="3.0" min="0.1" max="50" step="0.5">
+                                    <span style="font-size: 0.8rem;">kg</span>
+                                </div>
+                                <div class="form-row">
+                                    <span class="form-label">Speed (v₂):</span>
+                                    <input type="number" id="v2-input" class="form-control" value="0.0" min="0" max="40" step="1.0">
+                                    <span style="font-size: 0.8rem;">m/s</span>
+                                </div>
+                                <div class="form-row">
+                                    <span class="form-label">Direction:</span>
+                                    <input type="number" id="a2-input" class="form-control" value="0.0" min="0" max="90" step="1.0" style="max-width: 60px;">
+                                    <select id="a2-dir" class="form-control">
+                                        <option value="N of E">° N of E</option>
+                                        <option value="E of N">° E of N</option>
+                                        <option value="N of W">° N of W</option>
+                                        <option value="W of N">° W of N</option>
+                                        <option value="S of W">° S of W</option>
+                                        <option value="W of S">° W of S</option>
+                                        <option value="S of E">° S of E</option>
+                                        <option value="E of S">° E of S</option>
+                                        <option value="due East">[due East]</option>
+                                        <option value="due North">[due North]</option>
+                                        <option value="due West" selected>[due West]</option>
+                                        <option value="due South">[due South]</option>
+                                    </select>
+                                </div>
+                                <div class="quick-dir-group">
+                                    <button class="btn-quick-dir btn-quick-dir-2" data-angle="0" data-dir="due East">East</button>
+                                    <button class="btn-quick-dir btn-quick-dir-2" data-angle="0" data-dir="due North">North</button>
+                                    <button class="btn-quick-dir btn-quick-dir-2" data-angle="0" data-dir="due West">West</button>
+                                    <button class="btn-quick-dir btn-quick-dir-2" data-angle="0" data-dir="due South">South</button>
+                                </div>
+                            </div>
+
+                            <!-- Elasticity & Glancing Controls -->
+                            <div class="panel-card">
+                                <div class="panel-title">
+                                    <span>Elasticity (e)</span>
+                                    <span class="badge badge-success" id="elasticity-value-badge" style="font-size: 0.7rem;">100% Elastic</span>
+                                </div>
+                                <div class="elasticity-container">
+                                    <input type="range" id="elasticity-slider" class="range-slider" min="0" max="100" value="100" step="5">
+                                    <div class="elasticity-presets">
+                                        <button class="btn btn-secondary btn-sm" id="btn-elastic-100">100%</button>
+                                        <button class="btn btn-secondary btn-sm" id="btn-elastic-50">50%</button>
+                                        <button class="btn btn-secondary btn-sm" id="btn-elastic-0">0% (Stick)</button>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top: 1rem;">
+                                    <div class="panel-title">
+                                        <span>Glancing Offset</span>
+                                        <span class="badge badge-info" id="offset-value-badge" style="font-size: 0.7rem;">0.0 (Head-on)</span>
+                                    </div>
+                                    <input type="range" id="offset-slider" class="range-slider" min="-1.0" max="1.0" value="0.0" step="0.05">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Center Column: Canvas & Analytics -->
+                <div class="canvas-main-column">
+                    <div class="canvas-wrapper">
+                        <canvas id="sim-canvas" width="800" height="460"></canvas>
+                        
+                        <!-- Toolbar Controls -->
+                        <div class="canvas-toolbar">
+                            <div class="playback-controls">
+                                <button class="btn btn-success" id="btn-play-pause">
+                                    <span class="icon">▶</span> Run Collision
+                                </button>
+                                <button class="btn btn-secondary btn-sm" id="btn-step">
+                                    Step ➔
+                                </button>
+                                <button class="btn btn-danger btn-sm" id="btn-reset">
+                                    Reset ↺
+                                </button>
+                                <span class="badge badge-primary" id="sim-status-badge">Moving Toward Collision</span>
+                            </div>
+
+                            <div class="speed-controls">
+                                <button class="btn-speed" data-speed="0.25">0.25×</button>
+                                <button class="btn-speed" data-speed="0.5">0.5×</button>
+                                <button class="btn-speed active" data-speed="1.0">1.0×</button>
+                                <button class="btn-speed" data-speed="2.0">2.0×</button>
+                            </div>
+
+                            <div class="overlay-toggles">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="toggle-trails" checked> Motion Trails
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Data Analytics Table (Initial vs Final Comparison) -->
+                    <div class="data-table-container">
+                        <div class="panel-title">
+                            <span>Collision Motion & Energy Summary (Before vs. After)</span>
+                        </div>
+                        <table class="sim-data-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="vertical-align: middle;">Object</th>
+                                    <th rowspan="2" style="vertical-align: middle;">Mass</th>
+                                    <th colspan="2" style="text-align: center; border-left: 2px solid var(--border-color); background: rgba(59, 130, 246, 0.15); color: #93c5fd;">Initial (Before Collision)</th>
+                                    <th colspan="2" style="text-align: center; border-left: 2px solid var(--border-color); background: rgba(16, 185, 129, 0.15); color: #6ee7b7;">Final (After Collision)</th>
+                                    <th style="border-left: 2px solid var(--border-color); text-align: center;">Kinetic Energy (Ek)</th>
+                                </tr>
+                                <tr>
+                                    <th style="border-left: 2px solid var(--border-color);">Speed (<i>v</i><sub>i</sub>)</th>
+                                    <th>Direction</th>
+                                    <th style="border-left: 2px solid var(--border-color);">Speed (<i>v</i><sub>f</sub>)</th>
+                                    <th>Direction</th>
+                                    <th style="border-left: 2px solid var(--border-color);">Initial ➔ Final</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="color: #60a5fa; font-weight: 600;">🔵 Object 1</td>
+                                    <td id="dt-m1">3.0 kg</td>
+                                    <td id="dt-v1-init" style="border-left: 2px solid var(--border-color);">12.00 m/s</td>
+                                    <td id="dt-a1-init">due East</td>
+                                    <td id="dt-v1-final" style="border-left: 2px solid var(--border-color); color: #93c5fd;">— (Pending)</td>
+                                    <td id="dt-a1-final" style="color: #93c5fd;">—</td>
+                                    <td id="dt-ek1-change" style="border-left: 2px solid var(--border-color);">216.0 J ➔ ...</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #f87171; font-weight: 600;">🔴 Object 2</td>
+                                    <td id="dt-m2">3.0 kg</td>
+                                    <td id="dt-v2-init" style="border-left: 2px solid var(--border-color);">0.00 m/s</td>
+                                    <td id="dt-a2-init">due West</td>
+                                    <td id="dt-v2-final" style="border-left: 2px solid var(--border-color); color: #fca5a5;">— (Pending)</td>
+                                    <td id="dt-a2-final" style="color: #fca5a5;">—</td>
+                                    <td id="dt-ek2-change" style="border-left: 2px solid var(--border-color);">0.0 J ➔ ...</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td colspan="2"><b>System Total</b></td>
+                                    <td colspan="2" id="dt-ptot-init" style="border-left: 2px solid var(--border-color);">p_initial: 36.0 kg·m/s [due East]</td>
+                                    <td colspan="2" id="dt-ptot-final" style="border-left: 2px solid var(--border-color); color: #6ee7b7;">p_final: — (Pending)</td>
+                                    <td id="dt-ek-tot-change" style="border-left: 2px solid var(--border-color);">216.0 J ➔ ...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Kinetic Energy Audit Bar -->
+                        <div class="energy-audit-box">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 600;">
+                                <span>Kinetic Energy Retention</span>
+                                <span id="energy-retained-text">100.0% Retained (216.0 J / 216.0 J)</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-bar bg-success" id="energy-bar-fill" style="width: 100%;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted);">
+                                <span>Elastic (100% conserved)</span>
+                                <span id="energy-lost-text" class="text-warning">0.0% (0.0 J Lost)</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Right Column: Guided Lab Activities Panel (Side-by-side with simulation) -->
+                <aside class="activities-sidebar" id="activities-sidebar">
+                    <!-- Collapsed Strip (Visible when collapsed) -->
+                    <div class="collapsed-strip" id="activities-collapsed-strip" title="Click to Expand Activities">
+                        <button class="btn-expand-strip" id="btn-expand-activities">
+                            <span>📋</span>
+                            <span class="vertical-text">◀ SHOW LAB ACTIVITIES</span>
+                        </button>
+                    </div>
+
+                    <!-- Expanded Activities Content -->
+                    <div class="sidebar-expanded-content" id="activities-expanded-content">
+                        <div class="sidebar-header">
+                            <span class="sidebar-header-title">📋 Lab Activities</span>
+                            <button class="btn-toggle-sidebar" id="btn-toggle-activities" title="Collapse Activities to the right">
+                                Collapse ▶
+                            </button>
+                        </div>
+
+                        <!-- Activity Tabs & Scrollable Content -->
+                        <div class="worksheet-tabs-nav" id="worksheet-tabs"></div>
+                        <div class="sidebar-body-scroll" id="worksheet-content"></div>
+                    </div>
+                </aside>
+
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 3: PRACTICE PROBLEMS ==================== -->
+        <section id="view-practice" class="view-section">
+            <div class="practice-container">
+                
+                <!-- Category Toggle Card -->
+                <div class="category-toggle-container">
+                    <div class="toggle-header">
+                        <div class="toggle-header-title">
+                            <span>🎯 Question Types to Include:</span>
+                            <span class="badge badge-info" id="active-cat-count">5 selected</span>
+                        </div>
+                        <div class="preset-btn-group">
+                            <button class="btn-preset" id="btn-preset-all">All Types</button>
+                            <button class="btn-preset" id="btn-preset-2d">2D Vectors Only</button>
+                            <button class="btn-preset" id="btn-preset-linear-ballistic">1D & Pendulums</button>
+                        </div>
+                    </div>
+
+                    <div class="toggle-chips-grid">
+                        <label class="toggle-chip">
+                            <input type="checkbox" class="cat-toggle-checkbox" value="linear" checked>
+                            <span>1D Linear Head-On</span>
+                        </label>
+                        <label class="toggle-chip">
+                            <input type="checkbox" class="cat-toggle-checkbox" value="right_angle" checked>
+                            <span>Right-Angle (90°)</span>
+                        </label>
+                        <label class="toggle-chip">
+                            <input type="checkbox" class="cat-toggle-checkbox" value="glancing" checked>
+                            <span>Glancing 2D Oblique</span>
+                        </label>
+                        <label class="toggle-chip">
+                            <input type="checkbox" class="cat-toggle-checkbox" value="explosion" checked>
+                            <span>Exploding Objects (≤ 3)</span>
+                        </label>
+                        <label class="toggle-chip">
+                            <input type="checkbox" class="cat-toggle-checkbox" value="ballistic" checked>
+                            <span>Ballistic Pendulums</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Score Tracker Card -->
+                <div class="score-tracker-card">
+                    <div class="score-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Correct</span>
+                            <span class="stat-value text-success" id="score-correct">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Attempted</span>
+                            <span class="stat-value" id="score-total">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Accuracy</span>
+                            <span class="stat-value text-info" id="score-accuracy">0%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Streak</span>
+                            <span class="stat-value text-warning" id="score-streak">🔥 0</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary btn-sm" id="btn-next-practice">
+                        Generate New Question ➔
+                    </button>
+                </div>
+
+                <!-- Problem Card -->
+                <div class="problem-card">
+                    <div class="problem-header">
+                        <span class="problem-category-badge" id="practice-prob-cat">Right-Angle Collision</span>
+                        <h3 id="practice-prob-title" style="font-size: 1.15rem; color: #ffffff;">Traffic Intersection Collision</h3>
+                    </div>
+
+                    <div class="problem-prompt" id="practice-prob-prompt">
+                        Loading problem...
+                    </div>
+
+                    <!-- Student Answer Submission Area -->
+                    <div class="answer-section">
+                        <div class="answer-title">Your Answer Submission:</div>
+                        
+                        <div class="answer-inputs-grid">
+                            <div class="input-field-block">
+                                <label class="input-field-label">Final Magnitude / Speed:</label>
+                                <div class="input-with-unit">
+                                    <input type="number" step="0.01" class="form-control" id="practice-mag-input" placeholder="e.g. 14.25">
+                                    <span id="practice-mag-unit" style="font-weight: 600; font-size: 0.9rem;">m/s</span>
+                                </div>
+                            </div>
+
+                            <div class="input-field-block" id="practice-dir-field-block">
+                                <label class="input-field-label">Compass Heading (Physics 30 Angle):</label>
+                                <div class="compass-direction-selector">
+                                    <input type="number" step="0.1" class="form-control" id="practice-angle-input" placeholder="Angle..." style="max-width: 90px;">
+                                    <select class="form-control" id="practice-dir-select">
+                                        <!-- Populated dynamically by compass.js -->
+                                    </select>
+                                </div>
+                                <div class="direction-preview-badge" id="practice-dir-preview">
+                                    Compass: [0.0° N of E] / [90.0° E of N]
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="answer-actions">
+                            <button class="btn btn-primary" id="btn-check-practice">
+                                Check Answer ✓
+                            </button>
+                            <button class="btn btn-outline-primary" id="btn-show-solution">
+                                Show Full Step-by-Step Solution 💡
+                            </button>
+                        </div>
+
+                        <!-- Feedback Alert -->
+                        <div class="feedback-box hidden" id="practice-feedback-box"></div>
+                    </div>
+
+                    <!-- Step-by-Step Vector Solution Box -->
+                    <div class="solution-container hidden" id="practice-solution-box">
+                        <div class="solution-header">
+                            <span>📐 Complete Vector & Component Solution</span>
+                        </div>
+                        <div id="practice-steps-container"></div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Reference Sheet Modal Dialog -->
+    <div class="modal-overlay hidden" id="reference-modal">
+        <div class="modal-card">
+            <button class="modal-close-btn" id="btn-close-reference">&times;</button>
+            <h2 style="margin-bottom: 0.5rem; color: #38bdf8;">Physics 30 Reference & Direction Sheet</h2>
+            <p class="text-muted" style="margin-bottom: 1.5rem;">Unit A: Momentum and Impulse Curriculum Summary</p>
+
+            <div class="ref-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="ref-item">
+                    <div class="ref-item-title">1. Vector Momentum & Impulse</div>
+                    <p style="font-size: 0.9rem; line-height: 1.6;" class="formula-display">
+                        • <i>p&#8407;</i> = <i>m</i><i>v&#8407;</i> (units: kg·m/s or N·s)<br>
+                        • Impulse: <i>J&#8407;</i> = &Delta;<i>p&#8407;</i> = <i>F&#8407;</i><sub>net</sub>&Delta;<i>t</i> = <i>m</i><i>v&#8407;</i><sub>f</sub> &minus; <i>m</i><i>v&#8407;</i><sub>i</sub><br>
+                        • In an isolated system (no external net forces): &Sigma;<i>p&#8407;</i><sub>i</sub> = &Sigma;<i>p&#8407;</i><sub>f</sub>
+                    </p>
+                </div>
+                <div class="ref-item">
+                    <div class="ref-item-title">2. Elasticity & Kinetic Energy</div>
+                    <p style="font-size: 0.9rem; line-height: 1.6;" class="formula-display">
+                        • <i>E</i><sub>k</sub> = &frac12;<i>m</i><i>v</i><sup>2</sup> (scalar, Joules)<br>
+                        • <b>Elastic (<i>e</i> = 1.0)</b>: &Sigma;<i>E</i><sub>ki</sub> = &Sigma;<i>E</i><sub>kf</sub><br>
+                        • <b>Inelastic (0 &lt; <i>e</i> &lt; 1)</b>: &Sigma;<i>E</i><sub>ki</sub> &gt; &Sigma;<i>E</i><sub>kf</sub> (&Delta;<i>E</i><sub>k</sub> converted to thermal/sound)<br>
+                        • <b>Completely Inelastic (<i>e</i> = 0)</b>: Objects stick together (maximum <i>E</i><sub>k</sub> loss)
+                    </p>
+                </div>
+                <div class="ref-item">
+                    <div class="ref-item-title">3. 2D Vector Component Method</div>
+                    <p style="font-size: 0.9rem; line-height: 1.6;" class="formula-display">
+                        • &Sigma;<i>p</i><sub>ix</sub> = &Sigma;<i>p</i><sub>fx</sub> &implies; &Sigma;(<i>m</i><sub>i</sub><i>v</i><sub>ix</sub>) = &Sigma;(<i>m</i><sub>f</sub><i>v</i><sub>fx</sub>)<br>
+                        • &Sigma;<i>p</i><sub>iy</sub> = &Sigma;<i>p</i><sub>fy</sub> &implies; &Sigma;(<i>m</i><sub>i</sub><i>v</i><sub>iy</sub>) = &Sigma;(<i>m</i><sub>f</sub><i>v</i><sub>fy</sub>)<br>
+                        • <i>p</i><sub>total</sub> = &radic;[(&Sigma;<i>p</i><sub>x</sub>)<sup>2</sup> + (&Sigma;<i>p</i><sub>y</sub>)<sup>2</sup>]<br>
+                        • <i>&theta;</i> = tan<sup>&minus;1</sup>(&Sigma;<i>p</i><sub>y</sub> / &Sigma;<i>p</i><sub>x</sub>)
+                    </p>
+                </div>
+                <div class="ref-item">
+                    <div class="ref-item-title">4. Alberta Compass Conventions</div>
+                    <p style="font-size: 0.9rem; line-height: 1.6;" class="formula-display">
+                        • <b>Quadrant 1</b>: [<i>&theta;</i>&deg; N of E] or [(90 &minus; <i>&theta;</i>)&deg; E of N]<br>
+                        • <b>Quadrant 2</b>: [<i>&theta;</i>&deg; N of W] or [(90 &minus; <i>&theta;</i>)&deg; W of N]<br>
+                        • <b>Quadrant 3</b>: [<i>&theta;</i>&deg; S of W] or [(90 &minus; <i>&theta;</i>)&deg; W of S]<br>
+                        • <b>Quadrant 4</b>: [<i>&theta;</i>&deg; S of E] or [(90 &minus; <i>&theta;</i>)&deg; E of S]
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        Alberta Physics 30 Interactive Learning Suite • 2D Collisions, Momentum & Kinetic Energy Simulation
+    </footer>
+
+    <!-- Scripts -->
+    
+    
+    
+    
+    
+    
+    
+    <script>
+// ========== js/compass.js ==========
+/**
+ * Physics 30 Compass Heading Utility
+ * Standard Alberta Physics 30 Direction Conventions:
+ *  - 0° = due East (+x)
+ *  - 90° = due North (+y)
+ *  - 180° = due West (-x)
+ *  - 270° = due South (-y)
+ * 
+ * Quadrant 1 (0° to 90°): [θ° N of E] or [(90-θ)° E of N]
+ * Quadrant 2 (90° to 180°): [(180-θ)° N of W] or [(θ-90)° W of N]
+ * Quadrant 3 (180° to 270°): [(θ-180)° S of W] or [(270-θ)° W of S]
+ * Quadrant 4 (270° to 360°): [(360-θ)° S of E] or [(θ-270)° E of S]
+ */
+
+(function(root, factory) {
+    if (typeof exports === 'object' && typeof module !== 'undefined') {
+        module.exports = factory();
+    } else {
+        root.Compass = factory();
+    }
+}(typeof self !== 'undefined' ? self : this, function() {
+    'use strict';
+
+    // Normalize angle to [0, 360)
+    function normalizeAngle(deg) {
+        let norm = deg % 360;
+        if (norm < 0) norm += 360;
+        return norm;
+    }
+
+    /**
+     * Convert standard Cartesian angle in degrees (0 = East, 90 = North) to Physics 30 Compass Bearing.
+     * @param {number} deg - Cartesian angle in degrees
+     * @param {number} decimals - Precision (default 1)
+     * @returns {Object} { primary, alternate, angle1, dir1, angle2, dir2, cartesian, isCardinal }
+     */
+    function cartesianToCompass(deg, decimals = 1) {
+        const norm = normalizeAngle(deg);
+        const eps = 0.05;
+
+        // Check cardinal directions
+        if (Math.abs(norm - 0) < eps || Math.abs(norm - 360) < eps) {
+            return {
+                primary: 'due East',
+                alternate: '[East]',
+                angle1: 0,
+                dir1: 'due East',
+                angle2: 0,
+                dir2: 'due East',
+                cartesian: 0,
+                isCardinal: true
+            };
+        }
+        if (Math.abs(norm - 90) < eps) {
+            return {
+                primary: 'due North',
+                alternate: '[North]',
+                angle1: 0,
+                dir1: 'due North',
+                angle2: 0,
+                dir2: 'due North',
+                cartesian: 90,
+                isCardinal: true
+            };
+        }
+        if (Math.abs(norm - 180) < eps) {
+            return {
+                primary: 'due West',
+                alternate: '[West]',
+                angle1: 0,
+                dir1: 'due West',
+                angle2: 0,
+                dir2: 'due West',
+                cartesian: 180,
+                isCardinal: true
+            };
+        }
+        if (Math.abs(norm - 270) < eps) {
+            return {
+                primary: 'due South',
+                alternate: '[South]',
+                angle1: 0,
+                dir1: 'due South',
+                angle2: 0,
+                dir2: 'due South',
+                cartesian: 270,
+                isCardinal: true
+            };
+        }
+
+        // Quadrant 1 (0 < norm < 90)
+        if (norm > 0 && norm < 90) {
+            const a1 = norm;
+            const a2 = 90 - norm;
+            return {
+                primary: `${a1.toFixed(decimals)}° N of E`,
+                alternate: `${a2.toFixed(decimals)}° E of N`,
+                angle1: parseFloat(a1.toFixed(decimals)),
+                dir1: 'N of E',
+                angle2: parseFloat(a2.toFixed(decimals)),
+                dir2: 'E of N',
+                cartesian: norm,
+                isCardinal: false
+            };
+        }
+
+        // Quadrant 2 (90 < norm < 180)
+        if (norm > 90 && norm < 180) {
+            const a1 = 180 - norm;
+            const a2 = norm - 90;
+            return {
+                primary: `${a1.toFixed(decimals)}° N of W`,
+                alternate: `${a2.toFixed(decimals)}° W of N`,
+                angle1: parseFloat(a1.toFixed(decimals)),
+                dir1: 'N of W',
+                angle2: parseFloat(a2.toFixed(decimals)),
+                dir2: 'W of N',
+                cartesian: norm,
+                isCardinal: false
+            };
+        }
+
+        // Quadrant 3 (180 < norm < 270)
+        if (norm > 180 && norm < 270) {
+            const a1 = norm - 180;
+            const a2 = 270 - norm;
+            return {
+                primary: `${a1.toFixed(decimals)}° S of W`,
+                alternate: `${a2.toFixed(decimals)}° W of S`,
+                angle1: parseFloat(a1.toFixed(decimals)),
+                dir1: 'S of W',
+                angle2: parseFloat(a2.toFixed(decimals)),
+                dir2: 'W of S',
+                cartesian: norm,
+                isCardinal: false
+            };
+        }
+
+        // Quadrant 4 (270 < norm < 360)
+        if (norm > 270 && norm < 360) {
+            const a1 = 360 - norm;
+            const a2 = norm - 270;
+            return {
+                primary: `${a1.toFixed(decimals)}° S of E`,
+                alternate: `${a2.toFixed(decimals)}° E of S`,
+                angle1: parseFloat(a1.toFixed(decimals)),
+                dir1: 'S of E',
+                angle2: parseFloat(a2.toFixed(decimals)),
+                dir2: 'E of S',
+                cartesian: norm,
+                isCardinal: false
+            };
+        }
+
+        return {
+            primary: `${norm.toFixed(decimals)}°`,
+            alternate: `${norm.toFixed(decimals)}°`,
+            angle1: norm,
+            dir1: '',
+            angle2: norm,
+            dir2: '',
+            cartesian: norm,
+            isCardinal: false
+        };
+    }
+
+    /**
+     * Convert Physics 30 compass bearing (angle + quadrant label) to Cartesian angle (0 to 360).
+     * @param {number} angle - Angle in degrees (typically 0 to 90)
+     * @param {string} direction - Quadrant string (e.g. 'N of E', 'E of N', 'due North', etc.)
+     * @returns {number|null} Cartesian angle in [0, 360) or null if invalid
+     */
+    function compassToCartesian(angle, direction) {
+        if (!direction) return normalizeAngle(angle);
+        const dir = direction.trim().toLowerCase().replace(/[\[\]]/g, '');
+        const a = parseFloat(angle) || 0;
+
+        // Cardinals
+        if (dir === 'due east' || dir === 'east' || dir === 'e') return 0;
+        if (dir === 'due north' || dir === 'north' || dir === 'n') return 90;
+        if (dir === 'due west' || dir === 'west' || dir === 'w') return 180;
+        if (dir === 'due south' || dir === 'south' || dir === 's') return 270;
+
+        // Quadrant 1
+        if (dir === 'n of e' || dir === 'north of east' || dir === 'n e' || dir === 'ne') return normalizeAngle(a);
+        if (dir === 'e of n' || dir === 'east of north') return normalizeAngle(90 - a);
+
+        // Quadrant 2
+        if (dir === 'n of w' || dir === 'north of west' || dir === 'n w' || dir === 'nw') return normalizeAngle(180 - a);
+        if (dir === 'w of n' || dir === 'west of north') return normalizeAngle(90 + a);
+
+        // Quadrant 3
+        if (dir === 's of w' || dir === 'south of west' || dir === 's w' || dir === 'sw') return normalizeAngle(180 + a);
+        if (dir === 'w of s' || dir === 'west of south') return normalizeAngle(270 - a);
+
+        // Quadrant 4
+        if (dir === 's of e' || dir === 'south of east' || dir === 's e' || dir === 'se') return normalizeAngle(360 - a);
+        if (dir === 'e of s' || dir === 'east of south') return normalizeAngle(270 + a);
+
+        return normalizeAngle(a);
+    }
+
+    /**
+     * Parse arbitrary user input string for compass heading.
+     * Examples: "35 N of E", "35° N of E", "due North", "E", "North", "55 E of N"
+     * @param {string} inputStr
+     * @returns {Object|null} { angle, direction, cartesian, valid }
+     */
+    function parseCompassInput(inputStr) {
+        if (!inputStr || typeof inputStr !== 'string') return null;
+        let str = inputStr.trim().toLowerCase().replace(/[°\[\],]/g, ' ');
+
+        // Check cardinal single words
+        if (/^(due\s+)?east$/i.test(str) || str === 'e') return { angle: 0, direction: 'due East', cartesian: 0, valid: true };
+        if (/^(due\s+)?north$/i.test(str) || str === 'n') return { angle: 0, direction: 'due North', cartesian: 90, valid: true };
+        if (/^(due\s+)?west$/i.test(str) || str === 'w') return { angle: 0, direction: 'due West', cartesian: 180, valid: true };
+        if (/^(due\s+)?south$/i.test(str) || str === 's') return { angle: 0, direction: 'due South', cartesian: 270, valid: true };
+
+        // Match patterns like "35.2 n of e" or "n 35.2 e" or "35.2 e of n"
+        const angleMatch = str.match(/([0-9]+(?:\.[0-9]+)?)/);
+        if (!angleMatch) return null;
+
+        const val = parseFloat(angleMatch[1]);
+        const cleanStr = str.replace(angleMatch[1], '').trim();
+
+        // Quadrant matches
+        const quadrantMap = [
+            { regex: /n(?:orth)?\s+of\s+e(?:ast)?|n\s*e/i, dir: 'N of E' },
+            { regex: /e(?:ast)?\s+of\s+n(?:orth)?/i, dir: 'E of N' },
+            { regex: /n(?:orth)?\s+of\s+w(?:est)?|n\s*w/i, dir: 'N of W' },
+            { regex: /w(?:est)?\s+of\s+n(?:orth)?/i, dir: 'W of N' },
+            { regex: /s(?:outh)?\s+of\s+w(?:est)?|s\s*w/i, dir: 'S of W' },
+            { regex: /w(?:est)?\s+of\s+s(?:outh)?/i, dir: 'W of S' },
+            { regex: /s(?:outh)?\s+of\s+e(?:ast)?|s\s*e/i, dir: 'S of E' },
+            { regex: /e(?:ast)?\s+of\s+s(?:outh)?/i, dir: 'E of S' },
+            { regex: /^(?:due\s+)?east$|^e$/i, dir: 'due East' },
+            { regex: /^(?:due\s+)?north$|^n$/i, dir: 'due North' },
+            { regex: /^(?:due\s+)?west$|^w$/i, dir: 'due West' },
+            { regex: /^(?:due\s+)?south$|^s$/i, dir: 'due South' }
+        ];
+
+        for (const item of quadrantMap) {
+            if (item.regex.test(cleanStr)) {
+                const cart = compassToCartesian(val, item.dir);
+                return { angle: val, direction: item.dir, cartesian: cart, valid: true };
+            }
+        }
+
+        // Default: treat as Cartesian degrees
+        return { angle: val, direction: '', cartesian: normalizeAngle(val), valid: true };
+    }
+
+    /**
+     * Check if student's answer angle/direction matches target angle within tolerance.
+     * Handles cyclic 360 wrap-around and alternative quadrant expressions (e.g. 30° N of E == 60° E of N).
+     * @param {number} studentAngle
+     * @param {string} studentDir
+     * @param {number} targetCartesianAngle - target angle in Cartesian degrees (0=E, 90=N)
+     * @param {number} toleranceDeg - Angular tolerance in degrees (default 2.0)
+     * @returns {Object} { isCorrect, delta, studentCartesian, targetCartesian }
+     */
+    function verifyCompassMatch(studentAngle, studentDir, targetCartesianAngle, toleranceDeg = 2.0) {
+        const studentCart = compassToCartesian(studentAngle, studentDir);
+        const targetCart = normalizeAngle(targetCartesianAngle);
+
+        if (studentCart === null) {
+            return { isCorrect: false, delta: Infinity, studentCartesian: null, targetCartesian: targetCart };
+        }
+
+        let diff = Math.abs(studentCart - targetCart);
+        if (diff > 180) diff = 360 - diff;
+
+        return {
+            isCorrect: diff <= toleranceDeg,
+            delta: diff,
+            studentCartesian: studentCart,
+            targetCartesian: targetCart
+        };
+    }
+
+    /**
+     * Get list of standard quadrant options for dropdowns.
+     */
+    function getDirectionOptions() {
+        return [
+            { value: 'N of E', label: '° N of E' },
+            { value: 'E of N', label: '° E of N' },
+            { value: 'N of W', label: '° N of W' },
+            { value: 'W of N', label: '° W of N' },
+            { value: 'S of W', label: '° S of W' },
+            { value: 'W of S', label: '° W of S' },
+            { value: 'S of E', label: '° S of E' },
+            { value: 'E of S', label: '° E of S' },
+            { value: 'due East', label: '[due East]' },
+            { value: 'due North', label: '[due North]' },
+            { value: 'due West', label: '[due West]' },
+            { value: 'due South', label: '[due South]' }
+        ];
+    }
+
+    return {
+        normalizeAngle,
+        cartesianToCompass,
+        compassToCartesian,
+        parseCompassInput,
+        verifyCompassMatch,
+        getDirectionOptions
+    };
+}));
+
+// ========== js/physics-engine.js ==========
+/**
+ * Physics 30 2D Collision Physics Engine
+ * Handles 2D rigid-body disc collisions, coefficient of restitution (e),
+ * momentum conservation, kinetic energy calculations, and trajectory integration.
+ */
+
+(function(root, factory) {
+    if (typeof exports === 'object' && typeof module !== 'undefined') {
+        const Compass = require('./compass.js');
+        module.exports = factory(Compass);
+    } else {
+        root.PhysicsEngine = factory(root.Compass);
+    }
+}(typeof self !== 'undefined' ? self : this, function(Compass) {
+    'use strict';
+
+    class PhysicsObject {
+        constructor(config = {}) {
+            this.id = config.id || 'obj1';
+            this.label = config.label || 'Object 1';
+            this.color = config.color || '#3b82f6'; // Blue
+            this.mass = Math.max(0.01, config.mass || 2.0); // kg
+            this.x = config.x || 0; // meters (world coordinates)
+            this.y = config.y || 0;
+            this.vx = config.vx || 0; // m/s
+            this.vy = config.vy || 0;
+            this.radius = config.radius || this.calculateRadius(this.mass);
+            this.trail = [];
+            this.maxTrailLength = 150;
+        }
+
+        calculateRadius(mass) {
+            // Scale visually with cubic root of mass for realistic mass volume representation
+            return Math.max(16, Math.min(48, 18 * Math.cbrt(mass / 2)));
+        }
+
+        updateMass(mass) {
+            this.mass = Math.max(0.01, mass);
+            this.radius = this.calculateRadius(this.mass);
+        }
+
+        setVelocity(speed, angleDeg) {
+            const rad = (angleDeg * Math.PI) / 180;
+            this.vx = speed * Math.cos(rad);
+            this.vy = speed * Math.sin(rad);
+        }
+
+        get speed() {
+            return Math.hypot(this.vx, this.vy);
+        }
+
+        get angleDeg() {
+            const rad = Math.atan2(this.vy, this.vx);
+            let deg = (rad * 180) / Math.PI;
+            if (deg < 0) deg += 360;
+            return deg;
+        }
+
+        get compassHeading() {
+            return Compass ? Compass.cartesianToCompass(this.angleDeg) : { primary: `${this.angleDeg.toFixed(1)}°` };
+        }
+
+        get px() {
+            return this.mass * this.vx;
+        }
+
+        get py() {
+            return this.mass * this.vy;
+        }
+
+        get pTotal() {
+            return this.mass * this.speed;
+        }
+
+        get kineticEnergy() {
+            return 0.5 * this.mass * (this.vx * this.vx + this.vy * this.vy);
+        }
+
+        step(dt) {
+            this.x += this.vx * dt;
+            this.y += this.vy * dt;
+            this.trail.push({ x: this.x, y: this.y });
+            if (this.trail.length > this.maxTrailLength) {
+                this.trail.shift();
+            }
+        }
+
+        clearTrail() {
+            this.trail = [];
+        }
+
+        clone() {
+            const obj = new PhysicsObject({
+                id: this.id,
+                label: this.label,
+                color: this.color,
+                mass: this.mass,
+                x: this.x,
+                y: this.y,
+                vx: this.vx,
+                vy: this.vy,
+                radius: this.radius
+            });
+            return obj;
+        }
+    }
+
+    class CollisionWorld {
+        constructor() {
+            this.obj1 = new PhysicsObject({ id: 'obj1', label: 'Object 1 (Blue)', color: '#3b82f6', mass: 2.0 });
+            this.obj2 = new PhysicsObject({ id: 'obj2', label: 'Object 2 (Red)', color: '#ef4444', mass: 2.0 });
+            this.elasticity = 1.0; // 1.0 = Perfectly elastic, 0.0 = Perfectly inelastic
+            this.time = 0;
+            this.hasCollided = false;
+            this.isStuck = false;
+            this.stuckOffset = { dx: 0, dy: 0 };
+            this.initialState = null;
+            this.postCollisionState = null;
+            this.collisionPoint = null;
+            this.scale = 20; // pixels per meter
+        }
+
+        /**
+         * Configure initial setup for 2-body collision.
+         * @param {Object} params - { m1, v1, a1, m2, v2, a2, impactOffset, elasticity }
+         */
+        setupScenario(params) {
+            const m1 = parseFloat(params.m1) || 2.0;
+            const v1 = parseFloat(params.v1) || 10.0;
+            const a1 = parseFloat(params.a1) || 0.0; // Cartesian degrees
+
+            const m2 = parseFloat(params.m2) || 2.0;
+            const v2 = parseFloat(params.v2) || 0.0;
+            const a2 = parseFloat(params.a2) || 180.0;
+
+            const impactOffset = parseFloat(params.impactOffset) || 0.0; // -1 to +1 glancing factor
+            this.elasticity = Math.max(0, Math.min(1, parseFloat(params.elasticity) !== undefined ? parseFloat(params.elasticity) : 1.0));
+
+            this.obj1.updateMass(m1);
+            this.obj2.updateMass(m2);
+
+            // Convert angles to radians and calculate velocity vectors
+            const rad1 = (a1 * Math.PI) / 180;
+            const rad2 = (a2 * Math.PI) / 180;
+            const v1x = v1 * Math.cos(rad1);
+            const v1y = v1 * Math.sin(rad1);
+            const v2x = v2 * Math.cos(rad2);
+            const v2y = v2 * Math.sin(rad2);
+
+            this.obj1.vx = v1x;
+            this.obj1.vy = v1y;
+            this.obj2.vx = v2x;
+            this.obj2.vy = v2y;
+
+            const rSum = (this.obj1.radius + this.obj2.radius) / this.scale;
+
+            // Relative velocity: v_rel = v1 - v2
+            const relVx = v1x - v2x;
+            const relVy = v1y - v2y;
+            const relSpeed = Math.hypot(relVx, relVy);
+
+            // Synchronized approach time: scale time so objects start on-screen and arrive together
+            const maxSpeed = Math.max(v1, v2);
+            let approachTime = 1.8; // default approach duration in seconds
+
+            if (maxSpeed > 0) {
+                const maxTravel = 13.0; // max meters from center
+                approachTime = Math.min(2.5, Math.max(0.85, maxTravel / maxSpeed));
+            }
+
+            // Calculate glancing offset perpendicular to relative velocity
+            let perpX = 0;
+            let perpY = 0;
+            if (relSpeed > 0.001) {
+                perpX = -relVy / relSpeed;
+                perpY = relVx / relSpeed;
+            } else {
+                perpX = -Math.sin(rad1);
+                perpY = Math.cos(rad1);
+            }
+
+            const offsetDistance = impactOffset * rSum * 0.90;
+            const offsetX = perpX * offsetDistance;
+            const offsetY = perpY * offsetDistance;
+
+            // Position objects so their trajectories intersect at contact point at t = approachTime
+            if (v2 === 0) {
+                // Object 2 is stationary at origin
+                this.obj2.x = 0;
+                this.obj2.y = 0;
+                this.obj1.x = -v1x * approachTime + offsetX;
+                this.obj1.y = -v1y * approachTime + offsetY;
+            } else if (v1 === 0) {
+                // Object 1 is stationary at origin
+                this.obj1.x = 0;
+                this.obj1.y = 0;
+                this.obj2.x = -v2x * approachTime - offsetX;
+                this.obj2.y = -v2y * approachTime - offsetY;
+            } else {
+                // Both moving: synchronized arrival at center
+                this.obj1.x = -v1x * approachTime + 0.5 * offsetX;
+                this.obj1.y = -v1y * approachTime + 0.5 * offsetY;
+                this.obj2.x = -v2x * approachTime - 0.5 * offsetX;
+                this.obj2.y = -v2y * approachTime - 0.5 * offsetY;
+            }
+
+            this.obj1.clearTrail();
+            this.obj2.clearTrail();
+
+            this.time = 0;
+            this.hasCollided = false;
+            this.isStuck = false;
+            this.collisionPoint = null;
+
+            // Record initial snapshot
+            this.initialState = this.captureSnapshot();
+            this.postCollisionState = null;
+        }
+
+        captureSnapshot() {
+            return {
+                time: this.time,
+                elasticity: this.elasticity,
+                obj1: {
+                    mass: this.obj1.mass,
+                    x: this.obj1.x,
+                    y: this.obj1.y,
+                    vx: this.obj1.vx,
+                    vy: this.obj1.vy,
+                    speed: this.obj1.speed,
+                    angleDeg: this.obj1.angleDeg,
+                    compass: this.obj1.compassHeading,
+                    px: this.obj1.px,
+                    py: this.obj1.py,
+                    pTotal: this.obj1.pTotal,
+                    ek: this.obj1.kineticEnergy
+                },
+                obj2: {
+                    mass: this.obj2.mass,
+                    x: this.obj2.x,
+                    y: this.obj2.y,
+                    vx: this.obj2.vx,
+                    vy: this.obj2.vy,
+                    speed: this.obj2.speed,
+                    angleDeg: this.obj2.angleDeg,
+                    compass: this.obj2.compassHeading,
+                    px: this.obj2.px,
+                    py: this.obj2.py,
+                    pTotal: this.obj2.pTotal,
+                    ek: this.obj2.kineticEnergy
+                },
+                system: {
+                    pxTotal: this.obj1.px + this.obj2.px,
+                    pyTotal: this.obj1.py + this.obj2.py,
+                    pTotal: Math.hypot(this.obj1.px + this.obj2.px, this.obj1.py + this.obj2.py),
+                    pAngleDeg: (() => {
+                        const px = this.obj1.px + this.obj2.px;
+                        const py = this.obj1.py + this.obj2.py;
+                        let deg = (Math.atan2(py, px) * 180) / Math.PI;
+                        if (deg < 0) deg += 360;
+                        return deg;
+                    })(),
+                    ekTotal: this.obj1.kineticEnergy + this.obj2.kineticEnergy
+                }
+            };
+        }
+
+        step(dt) {
+            if (this.isStuck) {
+                // Move together with combined center of mass velocity
+                this.obj1.x += this.obj1.vx * dt;
+                this.obj1.y += this.obj1.vy * dt;
+                this.obj2.x = this.obj1.x + this.stuckOffset.dx;
+                this.obj2.y = this.obj1.y + this.stuckOffset.dy;
+
+                this.obj1.trail.push({ x: this.obj1.x, y: this.obj1.y });
+                this.obj2.trail.push({ x: this.obj2.x, y: this.obj2.y });
+                if (this.obj1.trail.length > this.obj1.maxTrailLength) this.obj1.trail.shift();
+                if (this.obj2.trail.length > this.obj2.maxTrailLength) this.obj2.trail.shift();
+
+                this.time += dt;
+                return;
+            }
+
+            // Normal independent movement
+            this.obj1.step(dt);
+            this.obj2.step(dt);
+            this.time += dt;
+
+            // Collision check
+            const dx = this.obj2.x - this.obj1.x;
+            const dy = this.obj2.y - this.obj1.y;
+            const dist = Math.hypot(dx, dy);
+            const rSum = (this.obj1.radius + this.obj2.radius) / this.scale;
+
+            if (dist <= rSum) {
+                // Check relative velocity to avoid repeated collision triggers when separating
+                const nx = dx / (dist || 1);
+                const ny = dy / (dist || 1);
+                const relVx = this.obj1.vx - this.obj2.vx;
+                const relVy = this.obj1.vy - this.obj2.vy;
+                const vn = relVx * nx + relVy * ny;
+
+                if (vn > 0) {
+                    this.resolveCollision(nx, ny, vn, dist, rSum);
+                    this.hasCollided = true;
+                    this.collisionPoint = {
+                        x: this.obj1.x + nx * (this.obj1.radius / this.scale),
+                        y: this.obj1.y + ny * (this.obj1.radius / this.scale)
+                    };
+                    this.postCollisionState = this.captureSnapshot();
+                }
+            }
+        }
+
+        resolveCollision(nx, ny, vn, dist, rSum) {
+            const m1 = this.obj1.mass;
+            const m2 = this.obj2.mass;
+            const e = this.elasticity;
+
+            if (e === 0) {
+                // Completely inelastic collision: stick together
+                const vcmX = (m1 * this.obj1.vx + m2 * this.obj2.vx) / (m1 + m2);
+                const vcmY = (m1 * this.obj1.vy + m2 * this.obj2.vy) / (m1 + m2);
+
+                this.obj1.vx = vcmX;
+                this.obj1.vy = vcmY;
+                this.obj2.vx = vcmX;
+                this.obj2.vy = vcmY;
+
+                this.isStuck = true;
+                this.stuckOffset = {
+                    dx: this.obj2.x - this.obj1.x,
+                    dy: this.obj2.y - this.obj1.y
+                };
+                return;
+            }
+
+            // General 2D restitution impulse resolution
+            const impulseMag = ((1 + e) * vn) / (1 / m1 + 1 / m2);
+
+            this.obj1.vx -= (impulseMag / m1) * nx;
+            this.obj1.vy -= (impulseMag / m1) * ny;
+
+            this.obj2.vx += (impulseMag / m2) * nx;
+            this.obj2.vy += (impulseMag / m2) * ny;
+
+            // Separate overlapping discs slightly to prevent numerical sticking
+            const overlap = rSum - dist;
+            if (overlap > 0) {
+                const sep1 = overlap * (m2 / (m1 + m2));
+                const sep2 = overlap * (m1 / (m1 + m2));
+                this.obj1.x -= nx * sep1;
+                this.obj1.y -= ny * sep1;
+                this.obj2.x += nx * sep2;
+                this.obj2.y += ny * sep2;
+            }
+        }
+
+        getCenterOfMass() {
+            const m1 = this.obj1.mass;
+            const m2 = this.obj2.mass;
+            const x = (m1 * this.obj1.x + m2 * this.obj2.x) / (m1 + m2);
+            const y = (m1 * this.obj1.y + m2 * this.obj2.y) / (m1 + m2);
+            const vx = (m1 * this.obj1.vx + m2 * this.obj2.vx) / (m1 + m2);
+            const vy = (m1 * this.obj1.vy + m2 * this.obj2.vy) / (m1 + m2);
+            return { x, y, vx, vy, speed: Math.hypot(vx, vy) };
+        }
+    }
+
+    /**
+     * Analytical 2D Collision Solver for theoretical before/after calculations.
+     * Given initial state, computes theoretical post-collision velocities and angles.
+     */
+    function calculateAnalyticalCollision(m1, v1, a1Deg, m2, v2, a2Deg, impactOffset = 0, e = 1.0) {
+        const rad1 = (a1Deg * Math.PI) / 180;
+        const rad2 = (a2Deg * Math.PI) / 180;
+
+        const v1x = v1 * Math.cos(rad1);
+        const v1y = v1 * Math.sin(rad1);
+        const v2x = v2 * Math.cos(rad2);
+        const v2y = v2 * Math.sin(rad2);
+
+        // Initial momentum & energy
+        const p1x_i = m1 * v1x;
+        const p1y_i = m1 * v1y;
+        const p2x_i = m2 * v2x;
+        const p2y_i = m2 * v2y;
+        const pTotX = p1x_i + p2x_i;
+        const pTotY = p1y_i + p2y_i;
+        const ek1_i = 0.5 * m1 * v1 * v1;
+        const ek2_i = 0.5 * m2 * v2 * v2;
+        const ekTot_i = ek1_i + ek2_i;
+
+        if (e === 0) {
+            // Perfectly inelastic
+            const vfx = pTotX / (m1 + m2);
+            const vfy = pTotY / (m1 + m2);
+            const vf = Math.hypot(vfx, vfy);
+            let angleDeg = (Math.atan2(vfy, vfx) * 180) / Math.PI;
+            if (angleDeg < 0) angleDeg += 360;
+
+            const ekTot_f = 0.5 * (m1 + m2) * vf * vf;
+            const ekLost = ekTot_i - ekTot_f;
+
+            return {
+                obj1: {
+                    vfx, vfy, vf, angleDeg,
+                    compass: Compass ? Compass.cartesianToCompass(angleDeg) : null,
+                    pfx: m1 * vfx, pfy: m1 * vfy, pf: m1 * vf, ek_f: 0.5 * m1 * vf * vf
+                },
+                obj2: {
+                    vfx, vfy, vf, angleDeg,
+                    compass: Compass ? Compass.cartesianToCompass(angleDeg) : null,
+                    pfx: m2 * vfx, pfy: m2 * vfy, pf: m2 * vf, ek_f: 0.5 * m2 * vf * vf
+                },
+                system: {
+                    pTotX, pTotY, pTot: Math.hypot(pTotX, pTotY),
+                    ekTot_i, ekTot_f, ekLost,
+                    percentEkLost: ekTot_i > 0 ? (ekLost / ekTot_i) * 100 : 0
+                }
+            };
+        }
+
+        // Glancing collision with normal determined by impact offset
+        // Angle of line of centers at contact:
+        const collisionAngle = Math.asin(Math.max(-0.99, Math.min(0.99, impactOffset)));
+        const nx = Math.cos(collisionAngle);
+        const ny = Math.sin(collisionAngle);
+
+        const relVx = v1x - v2x;
+        const relVy = v1y - v2y;
+        const vn = relVx * nx + relVy * ny;
+
+        let v1fx = v1x, v1fy = v1y, v2fx = v2x, v2fy = v2y;
+
+        if (vn > 0) {
+            const J = ((1 + e) * vn) / (1 / m1 + 1 / m2);
+            v1fx = v1x - (J / m1) * nx;
+            v1fy = v1y - (J / m1) * ny;
+            v2fx = v2x + (J / m2) * nx;
+            v2fy = v2y + (J / m2) * ny;
+        }
+
+        const v1f = Math.hypot(v1fx, v1fy);
+        const v2f = Math.hypot(v2fx, v2fy);
+
+        let a1fDeg = (Math.atan2(v1fy, v1fx) * 180) / Math.PI;
+        if (a1fDeg < 0) a1fDeg += 360;
+        let a2fDeg = (Math.atan2(v2fy, v2fx) * 180) / Math.PI;
+        if (a2fDeg < 0) a2fDeg += 360;
+
+        const ek1_f = 0.5 * m1 * v1f * v1f;
+        const ek2_f = 0.5 * m2 * v2f * v2f;
+        const ekTot_f = ek1_f + ek2_f;
+        const ekLost = ekTot_i - ekTot_f;
+
+        return {
+            obj1: {
+                vfx: v1fx, vfy: v1fy, vf: v1f, angleDeg: a1fDeg,
+                compass: Compass ? Compass.cartesianToCompass(a1fDeg) : null,
+                pfx: m1 * v1fx, pfy: m1 * v1fy, pf: m1 * v1f, ek_f: ek1_f
+            },
+            obj2: {
+                vfx: v2fx, vfy: v2fy, vf: v2f, angleDeg: a2fDeg,
+                compass: Compass ? Compass.cartesianToCompass(a2fDeg) : null,
+                pfx: m2 * v2fx, pfy: m2 * v2fy, pf: m2 * v2f, ek_f: ek2_f
+            },
+            system: {
+                pTotX, pTotY, pTot: Math.hypot(pTotX, pTotY),
+                ekTot_i, ekTot_f, ekLost,
+                percentEkLost: ekTot_i > 0 ? (ekLost / ekTot_i) * 100 : 0
+            }
+        };
+    }
+
+    return {
+        PhysicsObject,
+        CollisionWorld,
+        calculateAnalyticalCollision
+    };
+}));
+
+// ========== js/vector-renderer.js ==========
+/**
+ * Physics 30 Visual Canvas Renderer
+ * Renders high-visibility 2D colliding pucks, motion trails, compass directions,
+ * and impact collision effects with zero confusing vector overlays.
+ */
+
+(function(root, factory) {
+    if (typeof exports === 'object' && typeof module !== 'undefined') {
+        module.exports = factory();
+    } else {
+        root.VectorRenderer = factory();
+    }
+}(typeof self !== 'undefined' ? self : this, function() {
+    'use strict';
+
+    class CanvasRenderer {
+        constructor(canvas, options = {}) {
+            this.canvas = canvas;
+            this.ctx = canvas.getContext('2d');
+            this.scale = options.scale || 22; // pixels per world meter
+            this.origin = { x: 450, y: 240 };
+
+            // Visual Options (Clean physical representation)
+            this.showTrails = true;
+            this.showGrid = true;
+            this.impactFlash = 0; // Flash counter on impact
+            
+            this.resize();
+        }
+
+        resize() {
+            if (!this.canvas) return;
+            const rect = this.canvas.getBoundingClientRect();
+            let w = rect.width;
+            let h = rect.height;
+
+            if (w <= 0 || h <= 0) {
+                // Fallback to parent container width or standard defaults
+                const parent = this.canvas.parentElement;
+                w = parent ? parent.clientWidth : 850;
+                h = 480;
+            }
+
+            if (w > 0 && h > 0) {
+                this.canvas.width = w;
+                this.canvas.height = h;
+                this.origin = { x: w / 2, y: h / 2 };
+            }
+        }
+
+        worldToScreen(wx, wy) {
+            return {
+                x: this.origin.x + wx * this.scale,
+                y: this.origin.y - wy * this.scale // Invert y for Cartesian (North is up)
+            };
+        }
+
+        screenToWorld(sx, sy) {
+            return {
+                x: (sx - this.origin.x) / this.scale,
+                y: (this.origin.y - sy) / this.scale
+            };
+        }
+
+        clear() {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
+
+        drawBackground() {
+            const ctx = this.ctx;
+            const w = this.canvas.width;
+            const h = this.canvas.height;
+            const ox = this.origin.x;
+            const oy = this.origin.y;
+
+            // Deep space / physics arena background
+            const bgGrad = ctx.createRadialGradient(ox, oy, 50, ox, oy, Math.max(w, h));
+            bgGrad.addColorStop(0, '#0f172a');
+            bgGrad.addColorStop(1, '#020617');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, w, h);
+
+            if (!this.showGrid) return;
+
+            // Subtle arena grid
+            const step = this.scale * 2.5; // Every 2.5 meters
+            ctx.save();
+            ctx.strokeStyle = 'rgba(51, 65, 85, 0.4)';
+            ctx.lineWidth = 1;
+
+            for (let x = ox % step; x < w; x += step) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, h);
+                ctx.stroke();
+            }
+
+            for (let y = oy % step; y < h; y += step) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
+                ctx.stroke();
+            }
+
+            // Crosshair Axes (East-West and North-South)
+            ctx.strokeStyle = 'rgba(100, 116, 139, 0.6)';
+            ctx.lineWidth = 1.5;
+
+            // X-Axis
+            ctx.beginPath();
+            ctx.moveTo(0, oy);
+            ctx.lineTo(w, oy);
+            ctx.stroke();
+
+            // Y-Axis
+            ctx.beginPath();
+            ctx.moveTo(ox, 0);
+            ctx.lineTo(ox, h);
+            ctx.stroke();
+
+            // Center Ring
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(ox, oy, this.scale * 2, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Compass Labels (Clear and large)
+            ctx.font = 'bold 13px system-ui, sans-serif';
+            ctx.fillStyle = '#94a3b8';
+
+            // North
+            ctx.textAlign = 'center';
+            ctx.fillText('▲ NORTH', ox, 22);
+
+            // South
+            ctx.fillText('▼ SOUTH', ox, h - 14);
+
+            // East
+            ctx.textAlign = 'right';
+            ctx.fillText('EAST ▶', w - 16, oy - 10);
+
+            // West
+            ctx.textAlign = 'left';
+            ctx.fillText('◀ WEST', 16, oy - 10);
+
+            ctx.restore();
+        }
+
+        drawTrail(obj) {
+            if (!this.showTrails || !obj.trail || obj.trail.length < 2) return;
+            const ctx = this.ctx;
+            ctx.save();
+
+            for (let i = 0; i < obj.trail.length - 1; i++) {
+                const p1 = this.worldToScreen(obj.trail[i].x, obj.trail[i].y);
+                const p2 = this.worldToScreen(obj.trail[i + 1].x, obj.trail[i + 1].y);
+                const progress = (i + 1) / obj.trail.length;
+
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.strokeStyle = obj.color;
+                ctx.globalAlpha = progress * 0.6;
+                ctx.lineWidth = 3.5;
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        drawObject(obj) {
+            const ctx = this.ctx;
+            const screen = this.worldToScreen(obj.x, obj.y);
+
+            ctx.save();
+
+            // Outer Glow
+            ctx.shadowColor = obj.color;
+            ctx.shadowBlur = 18;
+
+            // Disc Body Gradient
+            const rad = Math.max(18, obj.radius);
+            const gradient = ctx.createRadialGradient(
+                screen.x - rad * 0.35,
+                screen.y - rad * 0.35,
+                rad * 0.1,
+                screen.x,
+                screen.y,
+                rad
+            );
+            gradient.addColorStop(0, '#ffffff');
+            gradient.addColorStop(0.35, obj.color);
+            gradient.addColorStop(1, '#020617');
+
+            ctx.beginPath();
+            ctx.arc(screen.x, screen.y, rad, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Border Ring
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = '#ffffff';
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Direction pointer line (shows movement direction cleanly without full vector algebra)
+            if (obj.speed > 0.1) {
+                const angleRad = (obj.angleDeg * Math.PI) / 180;
+                const ptrX = screen.x + Math.cos(angleRad) * (rad + 12);
+                const ptrY = screen.y - Math.sin(angleRad) * (rad + 12);
+
+                ctx.beginPath();
+                ctx.moveTo(screen.x + Math.cos(angleRad) * rad, screen.y - Math.sin(angleRad) * rad);
+                ctx.lineTo(ptrX, ptrY);
+                ctx.strokeStyle = '#f8fafc';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Pointer tip dot
+                ctx.beginPath();
+                ctx.arc(ptrX, ptrY, 3.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+            }
+
+            // Text on disc: Mass and Speed
+            ctx.font = 'bold 12px system-ui, sans-serif';
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`${obj.mass.toFixed(1)} kg`, screen.x, screen.y - 5);
+
+            ctx.font = '11px system-ui, sans-serif';
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fillText(`${obj.speed.toFixed(1)} m/s`, screen.x, screen.y + 9);
+
+            ctx.restore();
+        }
+
+        drawImpactFlash(collisionPoint) {
+            if (!collisionPoint || this.impactFlash <= 0) return;
+            const ctx = this.ctx;
+            const screen = this.worldToScreen(collisionPoint.x, collisionPoint.y);
+
+            ctx.save();
+            const alpha = this.impactFlash / 20;
+            const radius = 30 + (20 - this.impactFlash) * 3;
+
+            const grad = ctx.createRadialGradient(screen.x, screen.y, 2, screen.x, screen.y, radius);
+            grad.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+            grad.addColorStop(0.4, `rgba(251, 191, 36, ${alpha * 0.8})`);
+            grad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(screen.x, screen.y, radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+            this.impactFlash--;
+        }
+
+        triggerImpact() {
+            this.impactFlash = 20; // 20 frames flash animation
+        }
+
+        render(world) {
+            // Auto resize if width is not synced
+            if (this.canvas.width === 0 || this.canvas.height === 0) {
+                this.resize();
+            }
+
+            this.clear();
+            this.drawBackground();
+
+            if (world.obj1) this.drawTrail(world.obj1);
+            if (world.obj2) this.drawTrail(world.obj2);
+
+            if (world.obj1) this.drawObject(world.obj1);
+            if (world.obj2) this.drawObject(world.obj2);
+
+            if (world.collisionPoint) {
+                this.drawImpactFlash(world.collisionPoint);
+            }
+        }
+    }
+
+    return {
+        CanvasRenderer
+    };
+}));
+
+// ========== js/lab-worksheets.js ==========
+/**
+ * Physics 30 Structured Lab Activities & Inquiry Modules
+ * 4 Guided Investigation Worksheets aligned with Alberta Physics 30 Unit A.
+ * Formatted with rich HTML mathematical typography (subscripts, superscripts, Greek letters).
+ */
+
+(function(root, factory) {
+    if (typeof exports === 'object' && typeof module !== 'undefined') {
+        module.exports = factory();
+    } else {
+        root.LabWorksheets = factory();
+    }
+}(typeof self !== 'undefined' ? self : this, function() {
+    'use strict';
+
+    const worksheets = [
+        {
+            id: 'act1',
+            title: 'Activity 1: Elastic vs. Inelastic Collisions & Kinetic Energy',
+            subtitle: 'Comparing momentum conservation and kinetic energy transformations in 1D head-on collisions.',
+            setupParams: {
+                m1: 3.0,
+                v1: 12.0,
+                a1: 0.0, // due East
+                m2: 3.0,
+                v2: 0.0,
+                a2: 180.0,
+                impactOffset: 0.0,
+                elasticity: 1.0
+            },
+            instructions: [
+                'Load the default scenario: Object 1 (3.0 kg) moving at 12.0 m/s [due East] towards stationary Object 2 (3.0 kg).',
+                'Run the simulation with <b>Elasticity = 100% (Perfectly Elastic, <i>e</i> = 1.0)</b>. Observe the final speeds and kinetic energy.',
+                'Now adjust Elasticity to <b>50% (Inelastic, <i>e</i> = 0.5)</b> and reset/run.',
+                'Finally, switch to <b>0% (Completely Inelastic, <i>e</i> = 0.0)</b> and run the collision.'
+            ],
+            questions: [
+                {
+                    id: 'q1_1',
+                    prompt: 'Under which elasticity condition(s) is the total vector momentum (&Sigma;<i>p&#8407;</i>) conserved in this isolated system?',
+                    type: 'choice',
+                    options: [
+                        'Only in Perfectly Elastic collisions (100%)',
+                        'Only in Inelastic and Completely Inelastic collisions',
+                        'In ALL isolated collisions (Elastic, Inelastic, and Completely Inelastic)',
+                        'Momentum is never conserved if kinetic energy is lost'
+                    ],
+                    correctIndex: 2,
+                    hint: 'Think about Newton\'s Third Law and the definition of an isolated system. Does momentum conservation depend on whether thermal energy is produced during deformation?',
+                    explanation: 'Law of Conservation of Momentum: In an isolated system (no external net forces), total vector momentum is ALWAYS conserved regardless of elasticity: &Sigma;<i>p&#8407;</i><sub>initial</sub> = &Sigma;<i>p&#8407;</i><sub>final</sub>.'
+                },
+                {
+                    id: 'q1_2',
+                    prompt: 'For the completely inelastic collision (<i>e</i> = 0%), both 3.0 kg objects stick together. What is their final combined speed in m/s?',
+                    type: 'numeric',
+                    expectedValue: 6.0,
+                    tolerance: 0.2,
+                    unit: 'm/s',
+                    hint: 'Use conservation of momentum: <i>m</i><sub>1</sub><i>v</i><sub>1</sub> + <i>m</i><sub>2</sub><i>v</i><sub>2</sub> = (<i>m</i><sub>1</sub> + <i>m</i><sub>2</sub>)<i>v</i><sub>f</sub>. Solve for <i>v</i><sub>f</sub>.',
+                    explanation: '<i>m</i><sub>1</sub><i>v</i><sub>1</sub> + <i>m</i><sub>2</sub><i>v</i><sub>2</sub> = (<i>m</i><sub>1</sub> + <i>m</i><sub>2</sub>)<i>v</i><sub>f</sub> &implies; (3.0 kg)(12.0 m/s) + 0 = (6.0 kg)<i>v</i><sub>f</sub> &implies; <i>v</i><sub>f</sub> = 36.0 / 6.0 = <b>6.0 m/s</b>.'
+                },
+                {
+                    id: 'q1_3',
+                    prompt: 'What percentage (%) of the initial kinetic energy is lost to thermal/sound/deformation in the completely inelastic collision (<i>e</i> = 0%)?',
+                    type: 'numeric',
+                    expectedValue: 50.0,
+                    tolerance: 1.0,
+                    unit: '%',
+                    hint: 'Calculate initial <i>E</i><sub>ki</sub> = &frac12;<i>m</i><sub>1</sub><i>v</i><sub>1</sub><sup>2</sup> and final <i>E</i><sub>kf</sub> = &frac12;(<i>m</i><sub>1</sub> + <i>m</i><sub>2</sub>)<i>v</i><sub>f</sub><sup>2</sup>. Percentage lost = [(&Delta;<i>E</i><sub>k</sub>) / <i>E</i><sub>ki</sub>] &times; 100%.',
+                    explanation: 'Initial <i>E</i><sub>ki</sub> = &frac12;(3.0 kg)(12.0 m/s)<sup>2</sup> = 216.0 J. Final <i>E</i><sub>kf</sub> = &frac12;(6.0 kg)(6.0 m/s)<sup>2</sup> = 108.0 J. Energy lost = 108.0 J (exactly <b>50.0%</b> of initial kinetic energy).'
+                }
+            ]
+        },
+        {
+            id: 'act2',
+            title: 'Activity 2: Equal Mass Glancing Collisions & The 90° Rule',
+            subtitle: 'Investigating the angular separation between identical masses in elastic 2D collisions.',
+            setupParams: {
+                m1: 2.5,
+                v1: 15.0,
+                a1: 0.0, // East
+                m2: 2.5,
+                v2: 0.0,
+                a2: 180.0,
+                impactOffset: 0.45,
+                elasticity: 1.0
+            },
+            instructions: [
+                'Set both masses equal (<i>m</i><sub>1</sub> = <i>m</i><sub>2</sub> = 2.5 kg).',
+                'Set Object 2 at rest (<i>v</i><sub>2</sub> = 0 m/s) and Object 1 moving East at 15.0 m/s.',
+                'Set <b>Elasticity = 100% (<i>e</i> = 1.0)</b> and the <b>Impact Glancing Offset to ~0.45</b>.',
+                'Run the simulation and examine the deflection angles of Object 1 and Object 2 after collision.'
+            ],
+            questions: [
+                {
+                    id: 'q2_1',
+                    prompt: 'In a perfectly elastic 2D collision where an object strikes an identical stationary object off-center, what is the angle between their final velocity vectors (<i>&theta;</i><sub>1</sub> + <i>&theta;</i><sub>2</sub>)?',
+                    type: 'choice',
+                    options: [
+                        'Always 45°',
+                        'Always exactly 90° (Right Angle)',
+                        'Always 180° (Straight line)',
+                        'It depends entirely on the initial speed'
+                    ],
+                    correctIndex: 1,
+                    hint: 'When two equal masses collide elastically with one target at rest, the vector dot product of their final velocities equals zero (<i>v&#8407;</i><sub>1f</sub> &middot; <i>v&#8407;</i><sub>2f</sub> = 0). What geometric angle does a zero dot product indicate?',
+                    explanation: 'For <i>m</i><sub>1</sub> = <i>m</i><sub>2</sub> and <i>v</i><sub>2i</sub> = 0 in an elastic collision: <i>p&#8407;</i><sub>1i</sub> = <i>p&#8407;</i><sub>1f</sub> + <i>p&#8407;</i><sub>2f</sub> and <i>E</i><sub>ki</sub> = <i>E</i><sub>kf</sub>. Squaring the vector equation gives |<i>v</i><sub>1i</sub>|<sup>2</sup> = |<i>v</i><sub>1f</sub>|<sup>2</sup> + |<i>v</i><sub>2f</sub>|<sup>2</sup> + 2(<i>v&#8407;</i><sub>1f</sub> &middot; <i>v&#8407;</i><sub>2f</sub>). Since energy conservation requires |<i>v</i><sub>1i</sub>|<sup>2</sup> = |<i>v</i><sub>1f</sub>|<sup>2</sup> + |<i>v</i><sub>2f</sub>|<sup>2</sup>, the term 2(<i>v&#8407;</i><sub>1f</sub> &middot; <i>v&#8407;</i><sub>2f</sub>) must equal 0, proving the paths are perpendicular (<b>90.0&deg; separation angle</b>).'
+                },
+                {
+                    id: 'q2_2',
+                    prompt: 'If Object 1 deflects at 26.5° N of E, what compass heading does Object 2 scatter towards?',
+                    type: 'compass',
+                    expectedCartesian: 296.5, // 63.5° S of E
+                    primaryCompass: '63.5° S of E',
+                    alternateCompass: '26.5° E of S',
+                    hint: 'The two paths form a 90&deg; right angle. If Object 1 deflects 26.5&deg; North of East, Object 2 must deflect (90.0&deg; &minus; 26.5&deg;) South of East.',
+                    explanation: 'Because the total separation is 90&deg;, Object 2 scatters at 90.0&deg; &minus; 26.5&deg; = <b>63.5&deg; S of E</b> (or <b>26.5&deg; E of S</b>).'
+                }
+            ]
+        },
+        {
+            id: 'act3',
+            title: 'Activity 3: Right-Angle Intersection Collisions',
+            subtitle: 'Analyzing orthogonal vector momentum in traffic collisions.',
+            setupParams: {
+                m1: 1200,
+                v1: 20.0,
+                a1: 90.0, // due North
+                m2: 1500,
+                v2: 16.0,
+                a2: 0.0,  // due East
+                impactOffset: 0.0,
+                elasticity: 0.0
+            },
+            instructions: [
+                'Scenario: Car 1 (1200 kg) travels <b>[due North]</b> at 20.0 m/s.',
+                'Car 2 (1500 kg) travels <b>[due East]</b> at 16.0 m/s.',
+                'They collide at an intersection and lock bumpers (Elasticity = 0%, completely inelastic).',
+                'Run the simulation and observe the wreckage moving as one combined body.'
+            ],
+            questions: [
+                {
+                    id: 'q3_1',
+                    prompt: 'What is the total initial x-momentum (&Sigma;<i>p</i><sub>x</sub>) and y-momentum (&Sigma;<i>p</i><sub>y</sub>) of the system before the crash?',
+                    type: 'choice',
+                    options: [
+                        '∑px = 24 000 kg·m/s [East], ∑py = 24 000 kg·m/s [North]',
+                        '∑px = 12 000 kg·m/s [East], ∑py = 15 000 kg·m/s [North]',
+                        '∑px = 33 941 kg·m/s [East], ∑py = 0 kg·m/s',
+                        '∑px = 20 000 kg·m/s [East], ∑py = 16 000 kg·m/s [North]'
+                    ],
+                    correctIndex: 0,
+                    hint: 'Calculate <i>p</i><sub>x</sub> = <i>m</i><sub>2</sub><i>v</i><sub>2</sub> (for the car moving East) and <i>p</i><sub>y</sub> = <i>m</i><sub>1</sub><i>v</i><sub>1</sub> (for the car moving North).',
+                    explanation: '<i>p</i><sub>x</sub> = <i>m</i><sub>2</sub><i>v</i><sub>2</sub> = (1500 kg)(16 m/s) = <b>24 000 kg·m/s [East]</b>.<br><i>p</i><sub>y</sub> = <i>m</i><sub>1</sub><i>v</i><sub>1</sub> = (1200 kg)(20 m/s) = <b>24 000 kg·m/s [North]</b>.'
+                },
+                {
+                    id: 'q3_2',
+                    prompt: 'Calculate the magnitude of the final velocity (<i>v</i><sub>f</sub>) of the locked cars in m/s (to 1 decimal place).',
+                    type: 'numeric',
+                    expectedValue: 12.6,
+                    tolerance: 0.3,
+                    unit: 'm/s',
+                    hint: 'Find total momentum using Pythagoras: <i>p</i><sub>total</sub> = &radic;(<i>p</i><sub>x</sub><sup>2</sup> + <i>p</i><sub>y</sub><sup>2</sup>). Then divide by the combined mass (<i>m</i><sub>1</sub> + <i>m</i><sub>2</sub>).',
+                    explanation: '<i>p</i><sub>total</sub> = &radic;(24000<sup>2</sup> + 24000<sup>2</sup>) = 33 941 kg·m/s. Total mass = 1200 + 1500 = 2700 kg.<br><i>v</i><sub>f</sub> = 33 941 / 2700 = 12.57 &approx; <b>12.6 m/s</b>.'
+                },
+                {
+                    id: 'q3_3',
+                    prompt: 'What is the compass heading direction of the wreckage after the collision?',
+                    type: 'compass',
+                    expectedCartesian: 45.0,
+                    primaryCompass: '45.0° N of E',
+                    alternateCompass: '45.0° E of N',
+                    hint: 'Use trigonometry: <i>&theta;</i> = tan<sup>&minus;1</sup>(<i>p</i><sub>y</sub> / <i>p</i><sub>x</sub>). What angle corresponds to equal North and East momentum components?',
+                    explanation: '<i>&theta;</i> = tan<sup>&minus;1</sup>(<i>p</i><sub>y</sub> / <i>p</i><sub>x</sub>) = tan<sup>&minus;1</sup>(24000 / 24000) = <b>45.0&deg; N of E</b> (or <b>45.0&deg; E of N</b>).'
+                }
+            ]
+        },
+        {
+            id: 'act4',
+            title: 'Activity 4: General 2D Glancing Collision & Component Method',
+            subtitle: 'Verifying the independent conservation of x and y momentum components in oblique scattering.',
+            setupParams: {
+                m1: 4.0,
+                v1: 18.0,
+                a1: 30.0, // 30° N of E
+                m2: 2.0,
+                v2: 10.0,
+                a2: 135.0, // 45° N of W
+                impactOffset: 0.3,
+                elasticity: 0.8
+            },
+            instructions: [
+                'Set Object 1: 4.0 kg moving at 18.0 m/s at 30° N of E.',
+                'Set Object 2: 2.0 kg moving at 10.0 m/s at 45° N of W (135° Cartesian).',
+                'Set Elasticity = 80% (0.80) and run the simulation.',
+                'Observe how both the x-momentum and y-momentum remain constant from before collision to after collision.'
+            ],
+            questions: [
+                {
+                    id: 'q4_1',
+                    prompt: 'Calculate the total initial x-momentum (&Sigma;<i>p</i><sub>ix</sub> = <i>m</i><sub>1</sub><i>v</i><sub>1</sub> cos 30° + <i>m</i><sub>2</sub><i>v</i><sub>2</sub> cos 135°) in kg·m/s (to 1 decimal place).',
+                    type: 'numeric',
+                    expectedValue: 48.2,
+                    tolerance: 0.8,
+                    unit: 'kg·m/s',
+                    hint: 'Calculate <i>p</i><sub>1x</sub> = (4.0)(18.0)&middot;cos(30&deg;) and <i>p</i><sub>2x</sub> = (2.0)(10.0)&middot;cos(135&deg;). Remember cos(135&deg;) is negative because Object 2 is moving West.',
+                    explanation: '<i>p</i><sub>1x</sub> = (4.0)(18.0)cos(30&deg;) = 62.35 kg·m/s. <i>p</i><sub>2x</sub> = (2.0)(10.0)cos(135&deg;) = &minus;14.14 kg·m/s.<br>&Sigma;<i>p</i><sub>ix</sub> = 62.35 &minus; 14.14 = <b>48.2 kg·m/s [East]</b>.'
+                },
+                {
+                    id: 'q4_2',
+                    prompt: 'Calculate the total initial y-momentum (&Sigma;<i>p</i><sub>iy</sub> = <i>m</i><sub>1</sub><i>v</i><sub>1</sub> sin 30° + <i>m</i><sub>2</sub><i>v</i><sub>2</sub> sin 135°) in kg·m/s (to 1 decimal place).',
+                    type: 'numeric',
+                    expectedValue: 50.1,
+                    tolerance: 0.8,
+                    unit: 'kg·m/s',
+                    hint: 'Calculate <i>p</i><sub>1y</sub> = (4.0)(18.0)&middot;sin(30&deg;) and <i>p</i><sub>2y</sub> = (2.0)(10.0)&middot;sin(135&deg;). Both objects have a northward (+y) component.',
+                    explanation: '<i>p</i><sub>1y</sub> = (4.0)(18.0)sin(30&deg;) = 36.00 kg·m/s. <i>p</i><sub>2y</sub> = (2.0)(10.0)sin(135&deg;) = 14.14 kg·m/s.<br>&Sigma;<i>p</i><sub>iy</sub> = 36.00 + 14.14 = 50.14 &approx; <b>50.1 kg·m/s [North]</b>.'
+                },
+                {
+                    id: 'q4_3',
+                    prompt: 'True or False: In a closed 2D collision, if momentum is conserved along the x-axis, it must automatically be conserved along the y-axis without exception.',
+                    type: 'choice',
+                    options: [
+                        'True: One axis guarantees the other.',
+                        'False: Conservation of momentum is a vector law that must hold true independently for BOTH the x-component and y-component simultaneously.'
+                    ],
+                    correctIndex: 1,
+                    hint: 'Momentum is a vector quantity. Can external or internal impulses act along the y-axis independently of the x-axis?',
+                    explanation: 'Vector conservation requires &Sigma;<i>p</i><sub>ix</sub> = &Sigma;<i>p</i><sub>fx</sub> AND &Sigma;<i>p</i><sub>iy</sub> = &Sigma;<i>p</i><sub>fy</sub> independently. Both orthogonal components must satisfy conservation.'
+                }
+            ]
+        }
+    ];
+
+    return {
+        getWorksheets: () => worksheets,
+        getWorksheetById: (id) => worksheets.find(w => w.id === id)
+    };
+}));
+
+// ========== js/lab-controller.js ==========
+/**
+ * Physics 30 Lab Simulation Controller
+ * Manages simulation animation loop, visual puck collisions, data updates,
+ * and guided worksheets with zero confusing vector overlays.
+ */
+
+(function(root, factory) {
+    if (typeof exports === 'object' && typeof module !== 'undefined') {
+        module.exports = factory();
+    } else {
+        root.LabController = factory();
+    }
+}(typeof self !== 'undefined' ? self : this, function() {
+    'use strict';
+
+    let world = null;
+    let renderer = null;
+    let isRunning = false;
+    let playbackSpeed = 1.0;
+    let animFrameId = null;
+    let lastTime = 0;
+    let hadCollided = false;
+
+    function init() {
+        const canvas = document.getElementById('sim-canvas');
+        if (!canvas) return;
+
+        world = new PhysicsEngine.CollisionWorld();
+        renderer = new VectorRenderer.CanvasRenderer(canvas);
+
+        window.addEventListener('resize', () => {
+            if (renderer) {
+                renderer.resize();
+                draw();
+            }
+        });
+
+        bindControls();
+        bindWorksheets();
+        resetSimulation();
+    }
+
+    function readInputParams() {
+        const m1 = parseFloat(document.getElementById('m1-input')?.value || 3.0);
+        const v1 = parseFloat(document.getElementById('v1-input')?.value || 12.0);
+        const a1Val = parseFloat(document.getElementById('a1-input')?.value || 0.0);
+        const a1Dir = document.getElementById('a1-dir')?.value || 'due East';
+        const a1Cart = Compass.compassToCartesian(a1Val, a1Dir);
+
+        const m2 = parseFloat(document.getElementById('m2-input')?.value || 3.0);
+        const v2 = parseFloat(document.getElementById('v2-input')?.value || 0.0);
+        const a2Val = parseFloat(document.getElementById('a2-input')?.value || 0.0);
+        const a2Dir = document.getElementById('a2-dir')?.value || 'due West';
+        const a2Cart = Compass.compassToCartesian(a2Val, a2Dir);
+
+        const impactOffset = parseFloat(document.getElementById('offset-slider')?.value || 0.0);
+        const elasticity = parseFloat(document.getElementById('elasticity-slider')?.value || 100) / 100;
+
+        return {
+            m1, v1, a1: a1Cart,
+            m2, v2, a2: a2Cart,
+            impactOffset,
+            elasticity
+        };
+    }
+
+    function resetSimulation() {
+        pauseSimulation();
+        const params = readInputParams();
+        world.setupScenario(params);
+        hadCollided = false;
+        updateCompassLabels();
+        updateDataTable();
+        
+        if (renderer) {
+            renderer.resize();
+            draw();
+        }
+    }
+
+    function playSimulation() {
+        if (isRunning) return;
+        isRunning = true;
+        lastTime = performance.now();
+        const playBtn = document.getElementById('btn-play-pause');
+        if (playBtn) {
+            playBtn.innerHTML = '<span class="icon">⏸</span> Pause';
+            playBtn.classList.remove('btn-success');
+            playBtn.classList.add('btn-warning');
+        }
+        loop(lastTime);
+    }
+
+    function pauseSimulation() {
+        isRunning = false;
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        const playBtn = document.getElementById('btn-play-pause');
+        if (playBtn) {
+            playBtn.innerHTML = '<span class="icon">▶</span> Run Collision';
+            playBtn.classList.remove('btn-warning');
+            playBtn.classList.add('btn-success');
+        }
+    }
+
+    function stepSimulation() {
+        pauseSimulation();
+        const dt = (1 / 60) * playbackSpeed;
+        world.step(dt);
+        if (world.hasCollided && !hadCollided) {
+            hadCollided = true;
+            if (renderer) renderer.triggerImpact();
+        }
+        updateDataTable();
+        draw();
+    }
+
+    function loop(currentTime) {
+        if (!isRunning) return;
+        const elapsed = (currentTime - lastTime) / 1000;
+        lastTime = currentTime;
+
+        const dt = Math.min(elapsed, 0.05) * playbackSpeed;
+        world.step(dt);
+
+        if (world.hasCollided && !hadCollided) {
+            hadCollided = true;
+            if (renderer) renderer.triggerImpact();
+        }
+
+        updateDataTable();
+        draw();
+
+        animFrameId = requestAnimationFrame(loop);
+    }
+
+    function draw() {
+        if (!renderer || !world) return;
+        renderer.render(world);
+    }
+
+    function updateCompassLabels() {
+        const a1Val = parseFloat(document.getElementById('a1-input')?.value || 0.0);
+        const a1Dir = document.getElementById('a1-dir')?.value || 'due East';
+        const a1Cart = Compass.compassToCartesian(a1Val, a1Dir);
+        const comp1 = Compass.cartesianToCompass(a1Cart);
+        const badge1 = document.getElementById('a1-compass-badge');
+        if (badge1) badge1.textContent = comp1.primary;
+
+        const a2Val = parseFloat(document.getElementById('a2-input')?.value || 0.0);
+        const a2Dir = document.getElementById('a2-dir')?.value || 'due West';
+        const a2Cart = Compass.compassToCartesian(a2Val, a2Dir);
+        const comp2 = Compass.cartesianToCompass(a2Cart);
+        const badge2 = document.getElementById('a2-compass-badge');
+        if (badge2) badge2.textContent = comp2.primary;
+
+        const elSlider = document.getElementById('elasticity-slider');
+        const elValBadge = document.getElementById('elasticity-value-badge');
+        if (elSlider && elValBadge) {
+            const val = parseFloat(elSlider.value);
+            if (val === 100) elValBadge.textContent = '100% (Elastic: e = 1.0)';
+            else if (val === 0) elValBadge.textContent = '0% (Completely Inelastic: Stick Together)';
+            else elValBadge.textContent = `${val}% (Inelastic: e = ${(val / 100).toFixed(2)})`;
+        }
+
+        const offsetSlider = document.getElementById('offset-slider');
+        const offsetBadge = document.getElementById('offset-value-badge');
+        if (offsetSlider && offsetBadge) {
+            const val = parseFloat(offsetSlider.value);
+            if (val === 0) offsetBadge.textContent = '0.0 (Head-on)';
+            else if (val > 0) offsetBadge.textContent = `+${val.toFixed(2)} (Glancing Top)`;
+            else offsetBadge.textContent = `${val.toFixed(2)} (Glancing Bottom)`;
+        }
+    }
+
+    function updateDataTable() {
+        if (!world) return;
+        const initial = world.initialState;
+        const current = world.captureSnapshot();
+        const hasCollided = world.hasCollided;
+        const final = world.postCollisionState || current;
+
+        // Mass
+        const m1Val = initial ? initial.obj1.mass : current.obj1.mass;
+        const m2Val = initial ? initial.obj2.mass : current.obj2.mass;
+        setText('dt-m1', `${m1Val.toFixed(1)} kg`);
+        setText('dt-m2', `${m2Val.toFixed(1)} kg`);
+
+        // Initial Data (Always visible, never disappears!)
+        if (initial) {
+            setText('dt-v1-init', `${initial.obj1.speed.toFixed(2)} m/s`);
+            setText('dt-a1-init', initial.obj1.compass.primary);
+            setText('dt-v2-init', `${initial.obj2.speed.toFixed(2)} m/s`);
+            setText('dt-a2-init', initial.obj2.compass.primary);
+
+            const compInitSys = Compass.cartesianToCompass(initial.system.pAngleDeg);
+            setHTML('dt-ptot-init', `<i>p</i><sub>initial</sub>: ${initial.system.pTotal.toFixed(1)} kg·m/s [${compInitSys.primary}]`);
+        }
+
+        // Final Data (Shows "— (Pending)" before impact, and locked final values after impact)
+        if (hasCollided) {
+            setText('dt-v1-final', `${final.obj1.speed.toFixed(2)} m/s`);
+            setText('dt-a1-final', final.obj1.compass.primary);
+            setText('dt-v2-final', `${final.obj2.speed.toFixed(2)} m/s`);
+            setText('dt-a2-final', final.obj2.compass.primary);
+
+            const compFinalSys = Compass.cartesianToCompass(final.system.pAngleDeg);
+            setHTML('dt-ptot-final', `<i>p</i><sub>final</sub>: ${final.system.pTotal.toFixed(1)} kg·m/s [${compFinalSys.primary}]`);
+
+            // Ek Changes (Initial ➔ Final)
+            const ek1_i = initial ? initial.obj1.ek.toFixed(1) : '—';
+            const ek1_f = final.obj1.ek.toFixed(1);
+            setHTML('dt-ek1-change', `${ek1_i} J ➔ ${ek1_f} J`);
+
+            const ek2_i = initial ? initial.obj2.ek.toFixed(1) : '—';
+            const ek2_f = final.obj2.ek.toFixed(1);
+            setHTML('dt-ek2-change', `${ek2_i} J ➔ ${ek2_f} J`);
+
+            const ekTot_i = initial ? initial.system.ekTotal.toFixed(1) : '—';
+            const ekTot_f = final.system.ekTotal.toFixed(1);
+            setHTML('dt-ek-tot-change', `<i>E</i><sub>k</sub>: ${ekTot_i} J ➔ ${ekTot_f} J`);
+        } else {
+            setText('dt-v1-final', '— (Pending)');
+            setText('dt-a1-final', '—');
+            setText('dt-v2-final', '— (Pending)');
+            setText('dt-a2-final', '—');
+            setHTML('dt-ptot-final', '<i>p</i><sub>final</sub>: — (Pending Collision)');
+
+            const ek1_i = initial ? initial.obj1.ek.toFixed(1) : current.obj1.ek.toFixed(1);
+            setHTML('dt-ek1-change', `${ek1_i} J ➔ ...`);
+
+            const ek2_i = initial ? initial.obj2.ek.toFixed(1) : current.obj2.ek.toFixed(1);
+            setHTML('dt-ek2-change', `${ek2_i} J ➔ ...`);
+
+            const ekTot_i = initial ? initial.system.ekTotal.toFixed(1) : current.system.ekTotal.toFixed(1);
+            setHTML('dt-ek-tot-change', `<i>E</i><sub>k</sub>: ${ekTot_i} J ➔ ...`);
+        }
+
+        // Energy Bar Comparison
+        const ekInit = (initial && initial.system.ekTotal) || 1;
+        const ekCurr = (hasCollided ? final.system.ekTotal : current.system.ekTotal);
+        const ekPct = Math.max(0, Math.min(100, (ekCurr / ekInit) * 100));
+        const ekLostPct = Math.max(0, 100 - ekPct);
+
+        const bar = document.getElementById('energy-bar-fill');
+        if (bar) {
+            bar.style.width = `${ekPct}%`;
+            if (ekPct >= 99) bar.className = 'progress-bar bg-success';
+            else if (ekPct >= 50) bar.className = 'progress-bar bg-info';
+            else bar.className = 'progress-bar bg-warning';
+        }
+        setText('energy-retained-text', `${ekPct.toFixed(1)}% Retained (${ekCurr.toFixed(1)} J / ${ekInit.toFixed(1)} J)`);
+        setText('energy-lost-text', `${ekLostPct.toFixed(1)}% (${(ekInit - ekCurr).toFixed(1)} J Lost)`);
+
+        // Collision status badge
+        const collBadge = document.getElementById('sim-status-badge');
+        if (collBadge) {
+            if (world.isStuck) {
+                collBadge.textContent = '💥 Collided & Stuck Together (e = 0.0)';
+                collBadge.className = 'badge badge-warning';
+            } else if (world.hasCollided) {
+                collBadge.textContent = '💥 Collided & Rebounding';
+                collBadge.className = 'badge badge-info';
+            } else {
+                collBadge.textContent = 'Moving Toward Collision';
+                collBadge.className = 'badge badge-primary';
+            }
+        }
+    }
+
+    function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    }
+
+    function setHTML(id, html) {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+    }
+
+    function bindControls() {
+        // Play / Pause / Step / Reset
+        document.getElementById('btn-play-pause')?.addEventListener('click', () => {
+            if (isRunning) pauseSimulation();
+            else playSimulation();
+        });
+
+        document.getElementById('btn-step')?.addEventListener('click', stepSimulation);
+        document.getElementById('btn-reset')?.addEventListener('click', resetSimulation);
+
+        // Speed Buttons
+        document.querySelectorAll('.btn-speed').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.btn-speed').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                playbackSpeed = parseFloat(e.target.dataset.speed || 1.0);
+            });
+        });
+
+        // Sliders and Number Inputs
+        const inputIds = [
+            'm1-input', 'v1-input', 'a1-input', 'a1-dir',
+            'm2-input', 'v2-input', 'a2-input', 'a2-dir',
+            'offset-slider', 'elasticity-slider'
+        ];
+        inputIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', () => {
+                updateCompassLabels();
+                resetSimulation();
+            });
+        });
+
+        // Elasticity Preset Buttons
+        document.getElementById('btn-elastic-100')?.addEventListener('click', () => {
+            const slider = document.getElementById('elasticity-slider');
+            if (slider) slider.value = 100;
+            updateCompassLabels();
+            resetSimulation();
+        });
+        document.getElementById('btn-elastic-50')?.addEventListener('click', () => {
+            const slider = document.getElementById('elasticity-slider');
+            if (slider) slider.value = 50;
+            updateCompassLabels();
+            resetSimulation();
+        });
+        document.getElementById('btn-elastic-0')?.addEventListener('click', () => {
+            const slider = document.getElementById('elasticity-slider');
+            if (slider) slider.value = 0;
+            updateCompassLabels();
+            resetSimulation();
+        });
+
+        // Quick Direction Buttons for Object 1 & Object 2
+        document.querySelectorAll('.btn-quick-dir-1').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const a1Input = document.getElementById('a1-input');
+                const a1Dir = document.getElementById('a1-dir');
+                if (a1Input && a1Dir) {
+                    a1Input.value = e.target.dataset.angle || 0;
+                    a1Dir.value = e.target.dataset.dir || 'due East';
+                    updateCompassLabels();
+                    resetSimulation();
+                }
+            });
+        });
+
+        document.querySelectorAll('.btn-quick-dir-2').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const a2Input = document.getElementById('a2-input');
+                const a2Dir = document.getElementById('a2-dir');
+                if (a2Input && a2Dir) {
+                    a2Input.value = e.target.dataset.angle || 0;
+                    a2Dir.value = e.target.dataset.dir || 'due West';
+                    updateCompassLabels();
+                    resetSimulation();
+                }
+            });
+        });
+
+        // Toggle Trails
+        document.getElementById('toggle-trails')?.addEventListener('change', (e) => {
+            if (renderer) renderer.showTrails = e.target.checked;
+            draw();
+        });
+
+        // Sidebar Collapsing & Expansion
+        const layoutContainer = document.getElementById('sim-layout-container');
+        
+        function toggleControls() {
+            if (layoutContainer) {
+                layoutContainer.classList.toggle('controls-collapsed');
+                setTimeout(() => {
+                    if (renderer) {
+                        renderer.resize();
+                        draw();
+                    }
+                }, 280);
+            }
+        }
+
+        function toggleActivities() {
+            if (layoutContainer) {
+                layoutContainer.classList.toggle('activities-collapsed');
+                setTimeout(() => {
+                    if (renderer) {
+                        renderer.resize();
+                        draw();
+                    }
+                }, 280);
+            }
+        }
+
+        document.getElementById('btn-toggle-controls')?.addEventListener('click', toggleControls);
+        document.getElementById('btn-expand-controls')?.addEventListener('click', toggleControls);
+        document.getElementById('btn-toggle-activities')?.addEventListener('click', toggleActivities);
+        document.getElementById('btn-expand-activities')?.addEventListener('click', toggleActivities);
+    }
+
+    function bindWorksheets() {
+        const worksheets = LabWorksheets.getWorksheets();
+        const tabContainer = document.getElementById('worksheet-tabs');
+        const contentContainer = document.getElementById('worksheet-content');
+        if (!tabContainer || !contentContainer) return;
+
+        tabContainer.innerHTML = '';
+        contentContainer.innerHTML = '';
+
+        worksheets.forEach((ws, idx) => {
+            // Tab button
+            const tabBtn = document.createElement('button');
+            tabBtn.className = `btn btn-tab ${idx === 0 ? 'active' : ''}`;
+            tabBtn.textContent = `Activity ${idx + 1}`;
+            tabBtn.addEventListener('click', () => {
+                document.querySelectorAll('#worksheet-tabs .btn-tab').forEach(b => b.classList.remove('active'));
+                tabBtn.classList.add('active');
+                document.querySelectorAll('.worksheet-panel').forEach(p => p.classList.add('hidden'));
+                document.getElementById(`worksheet-panel-${ws.id}`)?.classList.remove('hidden');
+            });
+            tabContainer.appendChild(tabBtn);
+
+            // Panel Content
+            const panel = document.createElement('div');
+            panel.id = `worksheet-panel-${ws.id}`;
+            panel.className = `worksheet-panel ${idx !== 0 ? 'hidden' : ''}`;
+
+            let html = `
+                <div class="worksheet-header">
+                    <h4>${ws.title}</h4>
+                    <p class="text-muted">${ws.subtitle}</p>
+                    <button class="btn btn-outline-primary btn-load-scenario" data-ws-id="${ws.id}">
+                        📥 Load Setup & Run Collision
+                    </button>
+                </div>
+                <div class="worksheet-instructions">
+                    <h5>Instructions:</h5>
+                    <ol>
+                        ${ws.instructions.map(ins => `<li>${ins}</li>`).join('')}
+                    </ol>
+                </div>
+                <div class="worksheet-questions">
+                    <h5>Lab Questions & Checks:</h5>
+            `;
+
+            ws.questions.forEach((q, qIdx) => {
+                html += `
+                    <div class="question-card" id="qcard-${q.id}">
+                        <div class="question-prompt"><b>Q${qIdx + 1}.</b> ${q.prompt}</div>
+                `;
+
+                if (q.type === 'choice') {
+                    html += `
+                        <div class="choice-list">
+                            ${q.options.map((opt, oIdx) => `
+                                <label class="choice-option">
+                                    <input type="radio" name="q_${q.id}" value="${oIdx}">
+                                    <span>${opt}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    `;
+                } else if (q.type === 'numeric') {
+                    html += `
+                        <div class="input-group-row">
+                            <input type="number" step="0.1" class="form-control" id="input_${q.id}" placeholder="Enter number...">
+                            <span class="input-unit">${q.unit || ''}</span>
+                        </div>
+                    `;
+                } else if (q.type === 'compass') {
+                    html += `
+                        <div class="input-group-row">
+                            <input type="number" step="0.1" class="form-control" id="input_ang_${q.id}" placeholder="Angle..." style="max-width: 90px;">
+                            <select class="form-control" id="input_dir_${q.id}">
+                                ${Compass.getDirectionOptions().map(opt => `<option value="${opt.value}">${opt.label}</option>`).join('')}
+                            </select>
+                        </div>
+                    `;
+                }
+
+                html += `
+                        <div class="question-actions">
+                            <button class="btn btn-sm btn-primary btn-check-q" data-qid="${q.id}" data-wsid="${ws.id}">Check Answer</button>
+                            <span class="q-feedback" id="feedback_${q.id}"></span>
+                        </div>
+                        <div class="q-explanation hidden" id="expl_${q.id}">
+                            💡 <b>Explanation:</b> ${q.explanation}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            panel.innerHTML = html;
+            contentContainer.appendChild(panel);
+        });
+
+        // Bind Load Scenario Buttons
+        document.querySelectorAll('.btn-load-scenario').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const wsId = e.target.dataset.wsId;
+                const ws = LabWorksheets.getWorksheetById(wsId);
+                if (!ws) return;
+
+                const p = ws.setupParams;
+                setVal('m1-input', p.m1);
+                setVal('v1-input', p.v1);
+                const c1 = Compass.cartesianToCompass(p.a1);
+                setVal('a1-input', c1.angle1);
+                setVal('a1-dir', c1.dir1);
+
+                setVal('m2-input', p.m2);
+                setVal('v2-input', p.v2);
+                const c2 = Compass.cartesianToCompass(p.a2);
+                setVal('a2-input', c2.angle1);
+                setVal('a2-dir', c2.dir1);
+
+                setVal('offset-slider', p.impactOffset);
+                setVal('elasticity-slider', p.elasticity * 100);
+
+                updateCompassLabels();
+                resetSimulation();
+                playSimulation(); // Auto run on load so students see it right away!
+            });
+        });
+
+        // Bind Question Checking Buttons
+        document.querySelectorAll('.btn-check-q').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const qId = e.target.dataset.qid;
+                const wsId = e.target.dataset.wsid;
+                const ws = LabWorksheets.getWorksheetById(wsId);
+                const q = ws?.questions.find(item => item.id === qId);
+                if (!q) return;
+
+                const feedbackEl = document.getElementById(`feedback_${qId}`);
+                const explEl = document.getElementById(`expl_${qId}`);
+                let isCorrect = false;
+
+                if (q.type === 'choice') {
+                    const selected = document.querySelector(`input[name="q_${qId}"]:checked`);
+                    if (!selected) {
+                        if (feedbackEl) {
+                            feedbackEl.textContent = 'Please select an option first.';
+                            feedbackEl.className = 'q-feedback text-warning';
+                        }
+                        return;
+                    }
+                    isCorrect = parseInt(selected.value, 10) === q.correctIndex;
+                } else if (q.type === 'numeric') {
+                    const inputVal = parseFloat(document.getElementById(`input_${qId}`)?.value);
+                    if (isNaN(inputVal)) {
+                        if (feedbackEl) {
+                            feedbackEl.textContent = 'Please enter a number.';
+                            feedbackEl.className = 'q-feedback text-warning';
+                        }
+                        return;
+                    }
+                    isCorrect = Math.abs(inputVal - q.expectedValue) <= (q.tolerance || 0.1);
+                } else if (q.type === 'compass') {
+                    const angVal = parseFloat(document.getElementById(`input_ang_${qId}`)?.value);
+                    const dirVal = document.getElementById(`input_dir_${qId}`)?.value;
+                    if (isNaN(angVal)) {
+                        if (feedbackEl) {
+                            feedbackEl.textContent = 'Please enter an angle.';
+                            feedbackEl.className = 'q-feedback text-warning';
+                        }
+                        return;
+                    }
+                    const res = Compass.verifyCompassMatch(angVal, dirVal, q.expectedCartesian, 2.5);
+                    isCorrect = res.isCorrect;
+                }
+
+                if (feedbackEl) {
+                    if (isCorrect) {
+                        feedbackEl.textContent = '✓ Correct! Well done.';
+                        feedbackEl.className = 'q-feedback text-success font-bold';
+                        if (explEl) {
+                            explEl.innerHTML = `💡 <b>Explanation:</b> ${q.explanation}`;
+                            explEl.classList.remove('hidden');
+                        }
+                    } else {
+                        feedbackEl.textContent = '✗ Incorrect. Try again!';
+                        feedbackEl.className = 'q-feedback text-danger font-bold';
+                        if (explEl) {
+                            explEl.innerHTML = `💡 <b>Hint:</b> ${q.hint || 'Review the formulas and components, then try again.'}`;
+                            explEl.classList.remove('hidden');
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    function setVal(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.value = val;
+    }
+
+    return {
+        init,
+        resetSimulation,
+        playSimulation,
+        pauseSimulation,
+        stepSimulation
+    };
+}));
+
+// ========== js/practice-engine.js ==========
+/**
+ * Physics 30 Practice Problem Generator & Solver Engine
+ * Generates clear, curriculum-aligned questions across 5 categories:
+ *  1. Linear Head-on Collisions
+ *  2. Right-Angle Collisions (Intersections)
+ *  3. Glancing / Oblique 2D Collisions (One or both at angles)
+ *  4. Exploding Objects (2 or 3 fragments max)
+ *  5. Ballistic Pendulums (Momentum + Energy conservation)
+ * 
+ * Fully formatted with rich HTML math formulas (subscripts, superscripts, Greek symbols, square roots)
+ * and targeted guiding hints for incorrect attempts.
+ */
+
+(function(root, factory) {
+    if (typeof exports === 'object' && typeof module !== 'undefined') {
+        const Compass = require('./compass.js');
+        module.exports = factory(Compass);
+    } else {
+        root.PracticeEngine = factory(root.Compass);
+    }
+}(typeof self !== 'undefined' ? self : this, function(Compass) {
+    'use strict';
+
+    // Helper randomizers
+    function randChoice(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function randFloat(min, max, decimals = 1) {
+        const val = min + Math.random() * (max - min);
+        return parseFloat(val.toFixed(decimals));
+    }
+
+    function randInt(min, max) {
+        return Math.floor(min + Math.random() * (max - min + 1));
+    }
+
+    /**
+     * Category 1: Linear / Head-on Collisions
+     */
+    function generateLinearProblem() {
+        const scenarios = [
+            { nameA: 'Curling Rock A', nameB: 'Curling Rock B' },
+            { nameA: 'Train Car 1', nameB: 'Train Car 2' },
+            { nameA: 'Air Track Glider A', nameB: 'Air Track Glider B' },
+            { nameA: 'Billiard Ball 1', nameB: 'Billiard Ball 2' }
+        ];
+        const sc = randChoice(scenarios);
+        const mA = randFloat(1.5, 6.0, 1);
+        const mB = randFloat(1.5, 6.0, 1);
+        const vA_i = randFloat(4.0, 12.0, 1); // moving East
+        const vB_i = randFloat(2.0, 8.0, 1); // moving West
+
+        const isCompletelyInelastic = Math.random() > 0.5;
+
+        if (isCompletelyInelastic) {
+            // Both stick together
+            const pA_i = mA * vA_i; // +x (East)
+            const pB_i = -mB * vB_i; // -x (West)
+            const pTot = pA_i + pB_i;
+            const mTot = mA + mB;
+            const vf = pTot / mTot;
+            const speed_f = Math.abs(vf);
+            const cartesianAngle = vf >= 0 ? 0 : 180;
+            const compass = Compass.cartesianToCompass(cartesianAngle);
+
+            return {
+                id: 'linear_' + Date.now(),
+                category: 'linear',
+                categoryName: '1D Linear Head-on Collision',
+                title: 'Head-On Collision (Stick Together)',
+                prompt: `${sc.nameA} (${mA} kg) travels <b>[due East]</b> at ${vA_i} m/s and collides head-on with ${sc.nameB} (${mB} kg) traveling <b>[due West]</b> at ${vB_i} m/s. The two objects stick together upon impact. Calculate their combined final speed in m/s and compass heading direction.`,
+                targetValue: parseFloat(speed_f.toFixed(2)),
+                unit: 'm/s',
+                targetCartesian: cartesianAngle,
+                compassExpected: compass,
+                isDirectionRequired: true,
+                hint: 'Apply Conservation of Momentum: &Sigma;<i>p</i><sub>i</sub> = &Sigma;<i>p</i><sub>f</sub> &implies; (<i>m</i><sub>A</sub><i>v</i><sub>Ai</sub> + <i>m</i><sub>B</sub><i>v</i><sub>Bi</sub>) = (<i>m</i><sub>A</sub> + <i>m</i><sub>B</sub>)<i>v</i><sub>f</sub>. Remember to assign opposite signs (+ for East, &minus; for West).',
+                solutionSteps: [
+                    `<b>Step 1: Calculate initial momentum for each object (East is positive, West is negative):</b><br>
+                     Momentum of ${sc.nameA}: <i>p</i><sub>Ai</sub> = (<i>m</i><sub>A</sub>)(+<i>v</i><sub>Ai</sub>) = (${mA} kg)(+${vA_i} m/s) = <b>+${pA_i.toFixed(2)} kg·m/s [East]</b><br>
+                     Momentum of ${sc.nameB}: <i>p</i><sub>Bi</sub> = (<i>m</i><sub>B</sub>)(&minus;<i>v</i><sub>Bi</sub>) = (${mB} kg)(&minus;${vB_i} m/s) = <b>&minus;${Math.abs(pB_i).toFixed(2)} kg·m/s [West]</b><br>
+                     Total Initial Momentum: &Sigma;<i>p</i><sub>initial</sub> = +${pA_i.toFixed(2)} + (&minus;${Math.abs(pB_i).toFixed(2)}) = <b>${pTot.toFixed(2)} kg·m/s</b>`,
+                    `<b>Step 2: Apply Conservation of Momentum:</b><br>
+                     &Sigma;<i>p</i><sub>initial</sub> = &Sigma;<i>p</i><sub>final</sub><br>
+                     ${pTot.toFixed(2)} kg·m/s = (<i>m</i><sub>A</sub> + <i>m</i><sub>B</sub>) &times; <i>v</i><sub>f</sub><br>
+                     ${pTot.toFixed(2)} = (${mA} kg + ${mB} kg) &times; <i>v</i><sub>f</sub><br>
+                     ${pTot.toFixed(2)} = ${mTot.toFixed(1)} &times; <i>v</i><sub>f</sub><br>
+                     <i>v</i><sub>f</sub> = ${pTot.toFixed(2)} / ${mTot.toFixed(1)} = <b>${vf.toFixed(2)} m/s</b>`,
+                    `<b>Step 3: State final magnitude and compass direction:</b><br>
+                     Final Speed: <b>${speed_f.toFixed(2)} m/s</b><br>
+                     Compass Direction: <b>[${compass.primary}]</b>`
+                ]
+            };
+        } else {
+            // Rebound / stationary target
+            const vA_f = randFloat(-3.0, 3.0, 1);
+            const pA_i = mA * vA_i;
+            const pB_i = 0;
+            const pA_f = mA * vA_f;
+            const pB_f = pA_i - pA_f;
+            const vB_f = pB_f / mB;
+            const speedB_f = Math.abs(vB_f);
+            const cartesianAngle = vB_f >= 0 ? 0 : 180;
+            const compass = Compass.cartesianToCompass(cartesianAngle);
+
+            return {
+                id: 'linear_' + Date.now(),
+                category: 'linear',
+                categoryName: '1D Linear Collision',
+                title: 'Head-On Collision with Rebound',
+                prompt: `${sc.nameA} (${mA} kg) moves <b>[due East]</b> at ${vA_i} m/s and collides with stationary ${sc.nameB} (${mB} kg). After collision, ${sc.nameA} moves at ${Math.abs(vA_f)} m/s [${vA_f >= 0 ? 'due East' : 'due West'}]. What is the final speed and compass heading of ${sc.nameB}?`,
+                targetValue: parseFloat(speedB_f.toFixed(2)),
+                unit: 'm/s',
+                targetCartesian: cartesianAngle,
+                compassExpected: compass,
+                isDirectionRequired: true,
+                hint: 'Use 1D Conservation of Momentum: &Sigma;<i>p</i><sub>i</sub> = &Sigma;<i>p</i><sub>f</sub> &implies; <i>m</i><sub>A</sub><i>v</i><sub>Ai</sub> = <i>m</i><sub>A</sub><i>v</i><sub>Af</sub> + <i>m</i><sub>B</sub><i>v</i><sub>Bf</sub>. Pay careful attention to the direction sign (+ or &minus;) of Object A\'s final velocity.',
+                solutionSteps: [
+                    `<b>Step 1: Find total initial momentum:</b><br>
+                     Total Initial Momentum: &Sigma;<i>p</i><sub>initial</sub> = (${mA} kg)(+${vA_i} m/s) + 0 = <b>+${pA_i.toFixed(2)} kg·m/s [East]</b>`,
+                    `<b>Step 2: Apply momentum conservation to solve for ${sc.nameB}:</b><br>
+                     &Sigma;<i>p</i><sub>initial</sub> = <i>p</i><sub>Af</sub> + <i>p</i><sub>Bf</sub><br>
+                     +${pA_i.toFixed(2)} = (${mA} kg)(${vA_f} m/s) + (${mB} kg) &times; <i>v</i><sub>Bf</sub><br>
+                     +${pA_i.toFixed(2)} = ${pA_f.toFixed(2)} + (${mB} kg) &times; <i>v</i><sub>Bf</sub><br>
+                     <i>p</i><sub>Bf</sub> = +${pA_i.toFixed(2)} &minus; (${pA_f.toFixed(2)}) = ${pB_f.toFixed(2)} kg·m/s<br>
+                     <i>v</i><sub>Bf</sub> = ${pB_f.toFixed(2)} / ${mB} = <b>${vB_f.toFixed(2)} m/s</b>`,
+                    `<b>Step 3: State final answer:</b><br>
+                     Final Speed: <b>${speedB_f.toFixed(2)} m/s</b><br>
+                     Compass Direction: <b>[${compass.primary}]</b>`
+                ]
+            };
+        }
+    }
+
+    /**
+     * Category 2: Right-Angle (90°) Collisions
+     */
+    function generateRightAngleProblem() {
+        const vehicles = [
+            { v1Name: 'Car 1', v2Name: 'Car 2' },
+            { v1Name: 'Delivery Van', v2Name: 'Sedan' },
+            { v1Name: 'Truck', v2Name: 'Sports Car' }
+        ];
+        const vPair = randChoice(vehicles);
+        const m1 = randInt(10, 25) * 100; // e.g. 1200 kg to 2500 kg
+        const m2 = randInt(10, 25) * 100;
+        const v1 = randFloat(12.0, 25.0, 1); // North (90°)
+        const v2 = randFloat(12.0, 25.0, 1); // East (0°)
+
+        const px = m2 * v2; // East
+        const py = m1 * v1; // North
+        const mTot = m1 + m2;
+        const pTot = Math.hypot(px, py);
+        const vf = pTot / mTot;
+
+        const angleRad = Math.atan2(py, px);
+        const angleDeg = (angleRad * 180) / Math.PI;
+        const compass = Compass.cartesianToCompass(angleDeg);
+
+        return {
+            id: 'right_angle_' + Date.now(),
+            category: 'right_angle',
+            categoryName: 'Right-Angle (90°) Collision',
+            title: 'Intersection Traffic Collision',
+            prompt: `A ${m1} kg ${vPair.v1Name} is traveling <b>[due North]</b> at ${v1} m/s when it collides with a ${m2} kg ${vPair.v2Name} traveling <b>[due East]</b> at ${v2} m/s at an intersection. The two vehicles lock together and slide across the ice. Calculate the final speed in m/s and compass heading of the combined wreckage immediately after collision.`,
+            targetValue: parseFloat(vf.toFixed(2)),
+            unit: 'm/s',
+            targetCartesian: angleDeg,
+            compassExpected: compass,
+            isDirectionRequired: true,
+            hint: 'Calculate perpendicular momentum components (<i>p</i><sub>x</sub> = <i>m</i><sub>2</sub><i>v</i><sub>2</sub> [East] and <i>p</i><sub>y</sub> = <i>m</i><sub>1</sub><i>v</i><sub>1</sub> [North]). Use the Pythagorean theorem <i>p</i><sub>total</sub> = &radic;(<i>p</i><sub>x</sub><sup>2</sup> + <i>p</i><sub>y</sub><sup>2</sup>) to find total momentum and speed, and tan<sup>&minus;1</sup>(<i>p</i><sub>y</sub> / <i>p</i><sub>x</sub>) for the compass angle north of east.',
+            solutionSteps: [
+                `<b>Step 1: Calculate the East-West and North-South momentum components:</b><br>
+                 Eastward Momentum: <i>p</i><sub>x</sub> = (<i>m</i><sub>2</sub>)(<i>v</i><sub>2</sub>) = (${m2} kg) &times; (${v2} m/s) = <b>${px.toFixed(1)} kg·m/s [East]</b><br>
+                 Northward Momentum: <i>p</i><sub>y</sub> = (<i>m</i><sub>1</sub>)(<i>v</i><sub>1</sub>) = (${m1} kg) &times; (${v1} m/s) = <b>${py.toFixed(1)} kg·m/s [North]</b>`,
+                `<b>Step 2: Find total resultant momentum using the Pythagorean theorem:</b><br>
+                 <i>p</i><sub>total</sub> = &radic;(<i>p</i><sub>x</sub><sup>2</sup> + <i>p</i><sub>y</sub><sup>2</sup>)<br>
+                 <i>p</i><sub>total</sub> = &radic;(${px.toFixed(1)}<sup>2</sup> + ${py.toFixed(1)}<sup>2</sup>) = &radic;(${(px*px + py*py).toFixed(0)}) = <b>${pTot.toFixed(1)} kg·m/s</b>`,
+                `<b>Step 3: Calculate the combined final speed:</b><br>
+                 Final Speed: <i>v</i><sub>f</sub> = <i>p</i><sub>total</sub> / (<i>m</i><sub>1</sub> + <i>m</i><sub>2</sub>)<br>
+                 <i>v</i><sub>f</sub> = ${pTot.toFixed(1)} kg·m/s / (${m1} kg + ${m2} kg)<br>
+                 <i>v</i><sub>f</sub> = ${pTot.toFixed(1)} / ${mTot} = <b>${vf.toFixed(2)} m/s</b>`,
+                `<b>Step 4: Calculate the compass heading direction:</b><br>
+                 Angle <i>&theta;</i> = tan<sup>&minus;1</sup>(<i>p</i><sub>y</sub> / <i>p</i><sub>x</sub>)<br>
+                 <i>&theta;</i> = tan<sup>&minus;1</sup>(${py.toFixed(1)} / ${px.toFixed(1)}) = <b>${angleDeg.toFixed(1)}&deg; N of E</b> (Compass: [${compass.primary}])`
+            ]
+        };
+    }
+
+    /**
+     * Category 3: Glancing / Oblique 2D Collisions
+     */
+    function generateGlancingProblem() {
+        const scenarios = [
+            { name1: 'Hockey Puck 1', name2: 'Hockey Puck 2' },
+            { name1: 'Curling Rock 1', name2: 'Curling Rock 2' },
+            { name1: 'Billiard Ball 1', name2: 'Billiard Ball 2' }
+        ];
+        const sc = randChoice(scenarios);
+        const m1 = randFloat(1.0, 5.0, 1);
+        const m2 = randFloat(1.0, 5.0, 1);
+        const v1_i = randFloat(10.0, 24.0, 1);
+
+        const theta1Deg = randFloat(20.0, 45.0, 1);
+        const v1_f = randFloat(v1_i * 0.4, v1_i * 0.7, 1);
+
+        const theta1Rad = (theta1Deg * Math.PI) / 180;
+        const p1x_f = m1 * v1_f * Math.cos(theta1Rad);
+        const p1y_f = m1 * v1_f * Math.sin(theta1Rad);
+
+        const p1x_i = m1 * v1_i;
+        const p2x_f = p1x_i - p1x_f;
+        const p2y_f = -p1y_f;
+
+        const v2x_f = p2x_f / m2;
+        const v2y_f = p2y_f / m2;
+        const v2_f = Math.hypot(v2x_f, v2y_f);
+
+        let angle2Deg = (Math.atan2(v2y_f, v2x_f) * 180) / Math.PI;
+        if (angle2Deg < 0) angle2Deg += 360;
+        const compass2 = Compass.cartesianToCompass(angle2Deg);
+
+        return {
+            id: 'glancing_' + Date.now(),
+            category: 'glancing',
+            categoryName: 'Glancing 2D Oblique Collision',
+            title: '2D Glancing Collision',
+            prompt: `${sc.name1} (${m1} kg) travels <b>[due East]</b> at ${v1_i} m/s and strikes stationary ${sc.name2} (${m2} kg). After collision, ${sc.name1} moves at ${v1_f} m/s at <b>${theta1Deg}&deg; N of E</b>. Determine the final speed in m/s and compass heading of ${sc.name2}.`,
+            targetValue: parseFloat(v2_f.toFixed(2)),
+            unit: 'm/s',
+            targetCartesian: angle2Deg,
+            compassExpected: compass2,
+            isDirectionRequired: true,
+            hint: 'Break Object 1\'s final velocity into orthogonal components using cos(<i>&theta;</i>) for East and sin(<i>&theta;</i>) for North. Conserve Eastward momentum (&Sigma;<i>p</i><sub>x</sub>: <i>p</i><sub>1ix</sub> = <i>p</i><sub>1fx</sub> + <i>p</i><sub>2fx</sub>) and Northward momentum (&Sigma;<i>p</i><sub>y</sub>: 0 = <i>p</i><sub>1fy</sub> + <i>p</i><sub>2fy</sub>), then recombine with Pythagoras and tan<sup>&minus;1</sup>.',
+            solutionSteps: [
+                `<b>Step 1: Find initial momentum (purely Eastward):</b><br>
+                 Initial East Momentum: <i>p</i><sub>1ix</sub> = (${m1} kg) &times; (${v1_i} m/s) = <b>${p1x_i.toFixed(2)} kg·m/s [East]</b><br>
+                 Initial North/South Momentum: <i>p</i><sub>1iy</sub> = <b>0.00 kg·m/s</b>`,
+                `<b>Step 2: Break Object 1's final velocity into East and North components:</b><br>
+                 <i>p</i><sub>1fx</sub> = (<i>m</i><sub>1</sub>)(<i>v</i><sub>1f</sub>) &times; cos(${theta1Deg}&deg;) = (${m1})(${v1_f}) &times; cos(${theta1Deg}&deg;) = <b>${p1x_f.toFixed(2)} kg·m/s [East]</b><br>
+                 <i>p</i><sub>1fy</sub> = (<i>m</i><sub>1</sub>)(<i>v</i><sub>1f</sub>) &times; sin(${theta1Deg}&deg;) = (${m1})(${v1_f}) &times; sin(${theta1Deg}&deg;) = <b>${p1y_f.toFixed(2)} kg·m/s [North]</b>`,
+                `<b>Step 3: Solve for Object 2's components using conservation of momentum:</b><br>
+                 Eastward: <i>p</i><sub>2fx</sub> = <i>p</i><sub>1ix</sub> &minus; <i>p</i><sub>1fx</sub> = ${p1x_i.toFixed(2)} &minus; ${p1x_f.toFixed(2)} = <b>${p2x_f.toFixed(2)} kg·m/s [East]</b><br>
+                 North/South: <i>p</i><sub>2fy</sub> = 0 &minus; ${p1y_f.toFixed(2)} = <b>&minus;${Math.abs(p2y_f).toFixed(2)} kg·m/s [South]</b>`,
+                `<b>Step 4: Calculate final speed and compass angle for Object 2:</b><br>
+                 Total Momentum: <i>p</i><sub>2f</sub> = &radic;(${p2x_f.toFixed(2)}<sup>2</sup> + ${Math.abs(p2y_f).toFixed(2)}<sup>2</sup>) = <b>${Math.hypot(p2x_f, p2y_f).toFixed(2)} kg·m/s</b><br>
+                 Final Speed: <i>v</i><sub>2f</sub> = <i>p</i><sub>2f</sub> / <i>m</i><sub>2</sub> = ${Math.hypot(p2x_f, p2y_f).toFixed(2)} / ${m2} kg = <b>${v2_f.toFixed(2)} m/s</b><br>
+                 Compass Angle: <i>&theta;</i> = tan<sup>&minus;1</sup>(${Math.abs(p2y_f).toFixed(2)} / ${p2x_f.toFixed(2)}) = <b>${(360 - angle2Deg).toFixed(1)}&deg; S of E</b> (Compass: [${compass2.primary}])`
+            ]
+        };
+    }
+
+    /**
+     * Category 4: Exploding Objects (2 or 3 fragments max)
+     */
+    function generateExplosionProblem() {
+        const is3Piece = Math.random() > 0.4;
+
+        if (!is3Piece) {
+            // 2 pieces
+            const mTot = randFloat(10.0, 30.0, 1);
+            const m1 = randFloat(mTot * 0.3, mTot * 0.6, 1);
+            const m2 = parseFloat((mTot - m1).toFixed(1));
+            const v1 = randFloat(15.0, 45.0, 1);
+            const theta1 = randFloat(20.0, 70.0, 1);
+
+            const p1 = m1 * v1;
+            const v2 = p1 / m2;
+            const angle2Deg = theta1 + 180;
+            const compass2 = Compass.cartesianToCompass(angle2Deg);
+
+            return {
+                id: 'explosion_' + Date.now(),
+                category: 'explosion',
+                categoryName: 'Explosion / Fragmentation (2 Pieces)',
+                title: 'Stationary Object Splitting into 2 Pieces',
+                prompt: `A stationary object of mass ${mTot} kg at rest on a frictionless surface explodes into two pieces. Piece 1 (${m1} kg) flies off at ${v1} m/s at <b>${theta1}&deg; N of E</b>. Calculate the speed in m/s and compass heading of Piece 2 (${m2} kg).`,
+                targetValue: parseFloat(v2.toFixed(2)),
+                unit: 'm/s',
+                targetCartesian: angle2Deg,
+                compassExpected: compass2,
+                isDirectionRequired: true,
+                hint: 'Because the object was initially at rest, total initial momentum is zero (&Sigma;<i>p&#8407;</i> = 0). Piece 2 must have the exact same momentum magnitude as Piece 1 (<i>m</i><sub>1</sub><i>v</i><sub>1</sub> = <i>m</i><sub>2</sub><i>v</i><sub>2</sub>), but in the exact opposite compass direction (180&deg; away).',
+                solutionSteps: [
+                    `<b>Step 1: Apply Conservation of Momentum:</b><br>
+                     Since the object was initially at rest: &Sigma;<i>p&#8407;</i><sub>initial</sub> = 0.<br>
+                     <i>p&#8407;</i><sub>1</sub> + <i>p&#8407;</i><sub>2</sub> = 0 &implies; <i>p&#8407;</i><sub>2</sub> = &minus;<i>p&#8407;</i><sub>1</sub>.`,
+                    `<b>Step 2: Calculate speed of Piece 2:</b><br>
+                     Momentum Magnitude: <i>p</i><sub>1</sub> = (<i>m</i><sub>1</sub>)(<i>v</i><sub>1</sub>) = (${m1} kg) &times; (${v1} m/s) = ${p1.toFixed(1)} kg·m/s<br>
+                     Speed of Piece 2: <i>v</i><sub>2</sub> = <i>p</i><sub>1</sub> / <i>m</i><sub>2</sub> = ${p1.toFixed(1)} / ${m2} kg = <b>${v2.toFixed(2)} m/s</b>`,
+                    `<b>Step 3: State opposite compass direction:</b><br>
+                     Since Piece 1 travels at ${theta1}&deg; N of E, Piece 2 must travel directly opposite (180&deg; away): <b>${theta1}&deg; S of W</b> (Compass: [${compass2.primary}]).`
+                ]
+            };
+        } else {
+            // 3 pieces
+            const mTot = randFloat(12.0, 24.0, 1);
+            const m1 = randFloat(3.0, 6.0, 1);
+            const m2 = randFloat(3.0, 6.0, 1);
+            const m3 = parseFloat((mTot - m1 - m2).toFixed(1));
+
+            const v1 = randFloat(20.0, 40.0, 1); // Piece 1 goes North (90°)
+            const v2 = randFloat(20.0, 40.0, 1); // Piece 2 goes East (0°)
+
+            const p1y = m1 * v1; // North
+            const p2x = m2 * v2; // East
+
+            const p3x = -p2x;
+            const p3y = -p1y;
+            const p3 = Math.hypot(p3x, p3y);
+            const v3 = p3 / m3;
+
+            let angle3Deg = (Math.atan2(p3y, p3x) * 180) / Math.PI;
+            if (angle3Deg < 0) angle3Deg += 360;
+            const compass3 = Compass.cartesianToCompass(angle3Deg);
+
+            return {
+                id: 'explosion_' + Date.now(),
+                category: 'explosion',
+                categoryName: 'Explosion / Fragmentation (3 Pieces)',
+                title: 'Stationary Body Fragmenting into 3 Pieces',
+                prompt: `A stationary ${mTot} kg canister explodes into three pieces:<br>
+                • Piece 1 (${m1} kg) shoots <b>[due North]</b> at ${v1} m/s.<br>
+                • Piece 2 (${m2} kg) shoots <b>[due East]</b> at ${v2} m/s.<br>
+                Calculate the final speed in m/s and compass heading of the third piece (${m3} kg).`,
+                targetValue: parseFloat(v3.toFixed(2)),
+                unit: 'm/s',
+                targetCartesian: angle3Deg,
+                compassExpected: compass3,
+                isDirectionRequired: true,
+                hint: 'Total initial momentum is zero (&Sigma;<i>p&#8407;</i> = 0). Piece 3 must balance both other pieces: it needs Westward momentum equal to Piece 2\'s Eastward momentum (<i>p</i><sub>3x</sub> = &minus;<i>p</i><sub>2x</sub>), and Southward momentum equal to Piece 1\'s Northward momentum (<i>p</i><sub>3y</sub> = &minus;<i>p</i><sub>1y</sub>). Use Pythagoras to combine them.',
+                solutionSteps: [
+                    `<b>Step 1: Calculate the momentum of Piece 1 and Piece 2:</b><br>
+                     Piece 1 Northward: <i>p</i><sub>1y</sub> = (<i>m</i><sub>1</sub>)(<i>v</i><sub>1</sub>) = (${m1} kg) &times; (${v1} m/s) = ${p1y.toFixed(1)} kg·m/s [North]<br>
+                     Piece 2 Eastward: <i>p</i><sub>2x</sub> = (<i>m</i><sub>2</sub>)(<i>v</i><sub>2</sub>) = (${m2} kg) &times; (${v2} m/s) = ${p2x.toFixed(1)} kg·m/s [East]`,
+                    `<b>Step 2: Balance momentum along both axes for Piece 3:</b><br>
+                     To satisfy &Sigma;<i>p&#8407;</i> = 0:<br>
+                     Piece 3 Westward: <i>p</i><sub>3x</sub> = <b>${p2x.toFixed(1)} kg·m/s [West]</b><br>
+                     Piece 3 Southward: <i>p</i><sub>3y</sub> = <b>${p1y.toFixed(1)} kg·m/s [South]</b>`,
+                    `<b>Step 3: Calculate the speed of Piece 3:</b><br>
+                     Total Momentum: <i>p</i><sub>3</sub> = &radic;(${p2x.toFixed(1)}<sup>2</sup> + ${p1y.toFixed(1)}<sup>2</sup>) = ${p3.toFixed(1)} kg·m/s<br>
+                     Speed: <i>v</i><sub>3</sub> = <i>p</i><sub>3</sub> / <i>m</i><sub>3</sub> = ${p3.toFixed(1)} kg·m/s / ${m3} kg = <b>${v3.toFixed(2)} m/s</b>`,
+                    `<b>Step 4: Determine the compass heading:</b><br>
+                     Angle: <i>&theta;</i> = tan<sup>&minus;1</sup>(${p1y.toFixed(1)} / ${p2x.toFixed(1)}) = <b>${(angle3Deg - 180).toFixed(1)}&deg; S of W</b> (Compass: [${compass3.primary}])`
+                ]
+            };
+        }
+    }
+
+    /**
+     * Category 5: Ballistic Pendulums
+     */
+    function generateBallisticPendulumProblem() {
+        const bulletMassGrams = randFloat(10.0, 40.0, 1);
+        const m_bullet = bulletMassGrams / 1000;
+        const M_block = randFloat(1.5, 4.5, 2);
+        const g = 9.81;
+
+        const isFindSpeed = Math.random() > 0.5;
+
+        if (isFindSpeed) {
+            const h = randFloat(0.08, 0.28, 3);
+            const V_combined = Math.sqrt(2 * g * h);
+            const v0 = ((m_bullet + M_block) * V_combined) / m_bullet;
+
+            return {
+                id: 'ballistic_' + Date.now(),
+                category: 'ballistic',
+                categoryName: 'Ballistic Pendulum',
+                title: 'Determining Muzzle Velocity via Ballistic Pendulum',
+                prompt: `A ${bulletMassGrams} g bullet is fired horizontally into a suspended wooden block of mass ${M_block} kg. The bullet embeds into the block, causing the block and bullet to swing upward to a maximum height of ${(h * 100).toFixed(1)} cm. Calculate the initial speed of the bullet in m/s (use <i>g</i> = 9.81 m/s<sup>2</sup>).`,
+                targetValue: parseFloat(v0.toFixed(1)),
+                unit: 'm/s',
+                targetCartesian: 0,
+                isDirectionRequired: false,
+                hint: 'Work in two stages: (1) Find the combined speed right after impact from maximum height using energy conservation: <i>V</i> = &radic;(2<i>g</i><i>h</i>). (2) Use momentum conservation during impact: <i>m</i><sub>bullet</sub> &times; <i>v</i><sub>0</sub> = (<i>m</i><sub>bullet</sub> + <i>M</i><sub>block</sub>) &times; <i>V</i>. (Remember to convert bullet mass from grams to kg and height from cm to meters).',
+                solutionSteps: [
+                    `<b>Stage 2 (Swing Upward: Conservation of Mechanical Energy):</b><br>
+                     Kinetic energy immediately after collision converts into gravitational potential energy at peak height:<br>
+                     <i>E</i><sub>k</sub> = <i>E</i><sub>p</sub> &implies; &frac12;(<i>m</i> + <i>M</i>)<i>V</i><sup>2</sup> = (<i>m</i> + <i>M</i>)<i>g</i><i>h</i><br>
+                     Speed after collision: <i>V</i> = &radic;(2 &times; <i>g</i> &times; <i>h</i>)<br>
+                     <i>V</i> = &radic;(2 &times; 9.81 m/s<sup>2</sup> &times; ${h.toFixed(3)} m) = <b>${V_combined.toFixed(3)} m/s</b>`,
+                    `<b>Stage 1 (Impact: Conservation of Momentum):</b><br>
+                     Bullet Momentum = Combined Block + Bullet Momentum<br>
+                     (<i>m</i><sub>bullet</sub>)(<i>v</i><sub>bullet</sub>) = (<i>m</i><sub>bullet</sub> + <i>M</i><sub>block</sub>)(<i>V</i>)<br>
+                     (${m_bullet.toFixed(4)} kg) &times; <i>v</i><sub>bullet</sub> = (${(m_bullet + M_block).toFixed(4)} kg) &times; (${V_combined.toFixed(3)} m/s)<br>
+                     <i>v</i><sub>bullet</sub> = [(${(m_bullet + M_block).toFixed(4)}) &times; (${V_combined.toFixed(3)})] / ${m_bullet.toFixed(4)} = <b>${v0.toFixed(1)} m/s</b>`
+                ]
+            };
+        } else {
+            const v0 = randFloat(300.0, 600.0, 1);
+            const V_combined = (m_bullet * v0) / (m_bullet + M_block);
+            const h = (V_combined * V_combined) / (2 * g);
+            const h_cm = h * 100;
+
+            return {
+                id: 'ballistic_' + Date.now(),
+                category: 'ballistic',
+                categoryName: 'Ballistic Pendulum',
+                title: 'Calculating Maximum Swing Height',
+                prompt: `A ${bulletMassGrams} g bullet traveling horizontally at ${v0} m/s strikes and embeds into a stationary ${M_block} kg pendulum block. Calculate the maximum vertical height (<i>h</i>) in centimeters (cm) that the block swings upward (use <i>g</i> = 9.81 m/s<sup>2</sup>).`,
+                targetValue: parseFloat(h_cm.toFixed(2)),
+                unit: 'cm',
+                targetCartesian: 0,
+                isDirectionRequired: false,
+                hint: 'Use momentum conservation first to find the combined speed immediately after impact: <i>V</i> = (<i>m</i><sub>bullet</sub> &times; <i>v</i><sub>0</sub>) / (<i>m</i><sub>bullet</sub> + <i>M</i><sub>block</sub>). Then use mechanical energy conservation to find height: <i>h</i> = <i>V</i><sup>2</sup> / (2<i>g</i>). Multiply by 100 to enter centimeters.',
+                solutionSteps: [
+                    `<b>Stage 1 (Impact: Conservation of Momentum):</b><br>
+                     Initial Bullet Momentum = Combined Final Momentum<br>
+                     (<i>m</i><sub>bullet</sub>)(<i>v</i><sub>0</sub>) = (<i>m</i><sub>bullet</sub> + <i>M</i><sub>block</sub>)(<i>V</i>)<br>
+                     (${m_bullet.toFixed(4)} kg) &times; (${v0} m/s) = (${(m_bullet + M_block).toFixed(4)} kg) &times; <i>V</i><br>
+                     Combined Speed: <i>V</i> = (${m_bullet.toFixed(4)} &times; ${v0}) / ${(m_bullet + M_block).toFixed(4)} = <b>${V_combined.toFixed(4)} m/s</b>`,
+                    `<b>Stage 2 (Swing Upward: Conservation of Mechanical Energy):</b><br>
+                     Gravitational height: <i>h</i> = <i>V</i><sup>2</sup> / (2<i>g</i>)<br>
+                     <i>h</i> = (${V_combined.toFixed(4)})<sup>2</sup> / (2 &times; 9.81) = <b>${h.toFixed(4)} m</b><br>
+                     In centimeters: ${h.toFixed(4)} m &times; 100 = <b>${h_cm.toFixed(2)} cm</b>`
+                ]
+            };
+        }
+    }
+
+    /**
+     * Master Generator for all categories
+     */
+    function generateProblem(category = 'all') {
+        const catList = ['linear', 'right_angle', 'glancing', 'explosion', 'ballistic'];
+        let selectedCat = 'linear';
+
+        if (Array.isArray(category)) {
+            const validCats = category.filter(c => catList.includes(c));
+            if (validCats.length > 0) {
+                selectedCat = randChoice(validCats);
+            } else {
+                selectedCat = randChoice(catList);
+            }
+        } else if (category === 'all' || !catList.includes(category)) {
+            selectedCat = randChoice(catList);
+        } else {
+            selectedCat = category;
+        }
+
+        switch (selectedCat) {
+            case 'linear': return generateLinearProblem();
+            case 'right_angle': return generateRightAngleProblem();
+            case 'glancing': return generateGlancingProblem();
+            case 'explosion': return generateExplosionProblem();
+            case 'ballistic': return generateBallisticPendulumProblem();
+            default: return generateLinearProblem();
+        }
+    }
+
+    return {
+        generateProblem,
+        generateLinearProblem,
+        generateRightAngleProblem,
+        generateGlancingProblem,
+        generateExplosionProblem,
+        generateBallisticPendulumProblem
+    };
+}));
+
+// ========== js/app.js ==========
+/**
+ * Physics 30 2D Collision Suite - App Master Controller
+ * Handles view routing, practice problem UI, reference dialogs, and score tracking.
+ */
+
+(function() {
+    'use strict';
+
+    let currentProblem = null;
+    let selectedCategory = 'all';
+    let scoreStats = {
+        correct: 0,
+        total: 0,
+        streak: 0,
+        bestStreak: 0
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initNavigation();
+        initReferenceModal();
+        initPracticeMode();
+
+        // Initialize Lab
+        if (window.LabController) {
+            window.LabController.init();
+        }
+    });
+
+    /**
+     * View Routing & Navigation
+     */
+    function initNavigation() {
+        const navBtns = document.querySelectorAll('.nav-tab-btn');
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetView = btn.dataset.view;
+                switchView(targetView);
+            });
+        });
+
+        // Landing page action cards
+        document.getElementById('card-goto-lab')?.addEventListener('click', () => switchView('lab'));
+        document.getElementById('card-goto-practice')?.addEventListener('click', () => switchView('practice'));
+    }
+
+    function switchView(viewName) {
+        // Update nav tabs
+        document.querySelectorAll('.nav-tab-btn').forEach(b => {
+            if (b.dataset.view === viewName) b.classList.add('active');
+            else b.classList.remove('active');
+        });
+
+        // Update view sections
+        document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+        const targetSec = document.getElementById(`view-${viewName}`);
+        if (targetSec) targetSec.classList.add('active');
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (viewName === 'lab' && window.LabController) {
+            setTimeout(() => {
+                window.LabController.resetSimulation();
+            }, 60);
+        } else if (viewName === 'practice' && !currentProblem) {
+            loadNewPracticeProblem();
+        }
+    }
+
+    /**
+     * Physics 30 Reference Modal
+     */
+    function initReferenceModal() {
+        const modal = document.getElementById('reference-modal');
+        const openBtn = document.getElementById('btn-open-reference');
+        const closeBtn = document.getElementById('btn-close-reference');
+
+        openBtn?.addEventListener('click', () => modal?.classList.remove('hidden'));
+        closeBtn?.addEventListener('click', () => modal?.classList.add('hidden'));
+        modal?.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.add('hidden');
+        });
+    }
+
+    let activeCategories = ['linear', 'right_angle', 'glancing', 'explosion', 'ballistic'];
+
+    /**
+     * Practice Mode Controller
+     */
+    function initPracticeMode() {
+        // Multi-category checkbox toggles
+        const catCheckboxes = document.querySelectorAll('.cat-toggle-checkbox');
+        catCheckboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                updateActiveCategoriesFromCheckboxes();
+                loadNewPracticeProblem();
+            });
+        });
+
+        // Quick Preset Buttons
+        document.getElementById('btn-preset-all')?.addEventListener('click', () => {
+            catCheckboxes.forEach(cb => cb.checked = true);
+            updateActiveCategoriesFromCheckboxes();
+            loadNewPracticeProblem();
+        });
+
+        document.getElementById('btn-preset-2d')?.addEventListener('click', () => {
+            catCheckboxes.forEach(cb => {
+                cb.checked = (cb.value === 'right_angle' || cb.value === 'glancing' || cb.value === 'explosion');
+            });
+            updateActiveCategoriesFromCheckboxes();
+            loadNewPracticeProblem();
+        });
+
+        document.getElementById('btn-preset-linear-ballistic')?.addEventListener('click', () => {
+            catCheckboxes.forEach(cb => {
+                cb.checked = (cb.value === 'linear' || cb.value === 'ballistic');
+            });
+            updateActiveCategoriesFromCheckboxes();
+            loadNewPracticeProblem();
+        });
+
+        // Direction dropdown population
+        const dirSelect = document.getElementById('practice-dir-select');
+        if (dirSelect && window.Compass) {
+            dirSelect.innerHTML = Compass.getDirectionOptions().map(opt => `<option value="${opt.value}">${opt.label}</option>`).join('');
+            dirSelect.addEventListener('change', updateDirectionPreview);
+        }
+
+        const angleInput = document.getElementById('practice-angle-input');
+        angleInput?.addEventListener('input', updateDirectionPreview);
+
+        // Buttons
+        document.getElementById('btn-check-practice')?.addEventListener('click', checkPracticeAnswer);
+        document.getElementById('btn-next-practice')?.addEventListener('click', loadNewPracticeProblem);
+        document.getElementById('btn-show-solution')?.addEventListener('click', () => {
+            const solBox = document.getElementById('practice-solution-box');
+            if (solBox) solBox.classList.toggle('hidden');
+        });
+    }
+
+    function updateActiveCategoriesFromCheckboxes() {
+        const checked = Array.from(document.querySelectorAll('.cat-toggle-checkbox:checked')).map(cb => cb.value);
+        if (checked.length === 0) {
+            // If user unchecks everything, re-check all by default
+            document.querySelectorAll('.cat-toggle-checkbox').forEach(cb => cb.checked = true);
+            activeCategories = ['linear', 'right_angle', 'glancing', 'explosion', 'ballistic'];
+        } else {
+            activeCategories = checked;
+        }
+
+        const countBadge = document.getElementById('active-cat-count');
+        if (countBadge) {
+            countBadge.textContent = `${activeCategories.length} selected`;
+        }
+    }
+
+    function updateDirectionPreview() {
+        const angleVal = parseFloat(document.getElementById('practice-angle-input')?.value || 0);
+        const dirVal = document.getElementById('practice-dir-select')?.value || 'N of E';
+        const previewEl = document.getElementById('practice-dir-preview');
+
+        if (previewEl && window.Compass) {
+            const cart = Compass.compassToCartesian(angleVal, dirVal);
+            const comp = Compass.cartesianToCompass(cart);
+            previewEl.textContent = `Compass: [${comp.primary}] / [${comp.alternate}]`;
+        }
+    }
+
+    function loadNewPracticeProblem() {
+        if (!window.PracticeEngine) return;
+        currentProblem = PracticeEngine.generateProblem(activeCategories);
+
+        // Reset inputs & feedback
+        const magInput = document.getElementById('practice-mag-input');
+        const angInput = document.getElementById('practice-angle-input');
+        const feedbackBox = document.getElementById('practice-feedback-box');
+        const solBox = document.getElementById('practice-solution-box');
+
+        if (magInput) magInput.value = '';
+        if (angInput) angInput.value = '';
+        if (feedbackBox) feedbackBox.classList.add('hidden');
+        if (solBox) solBox.classList.add('hidden');
+
+        // Render problem details
+        setText('practice-prob-cat', currentProblem.categoryName);
+        setText('practice-prob-title', currentProblem.title);
+        const promptEl = document.getElementById('practice-prob-prompt');
+        if (promptEl) promptEl.innerHTML = currentProblem.prompt;
+
+        // Units
+        setText('practice-mag-unit', currentProblem.unit || 'm/s');
+
+        // Toggle direction input visibility for 1D scalar/energy problems vs 2D vector problems
+        const dirField = document.getElementById('practice-dir-field-block');
+        if (dirField) {
+            if (currentProblem.isDirectionRequired) {
+                dirField.classList.remove('hidden');
+            } else {
+                dirField.classList.add('hidden');
+            }
+        }
+
+        // Render Solution Steps
+        const stepsContainer = document.getElementById('practice-steps-container');
+        if (stepsContainer) {
+            stepsContainer.innerHTML = currentProblem.solutionSteps.map((step, idx) => `
+                <div class="solution-step">
+                    ${step}
+                </div>
+            `).join('');
+        }
+
+        updateDirectionPreview();
+    }
+
+    function checkPracticeAnswer() {
+        if (!currentProblem) return;
+
+        const magVal = parseFloat(document.getElementById('practice-mag-input')?.value);
+        const angVal = parseFloat(document.getElementById('practice-angle-input')?.value || 0);
+        const dirVal = document.getElementById('practice-dir-select')?.value || 'N of E';
+
+        const feedbackBox = document.getElementById('practice-feedback-box');
+        if (!feedbackBox) return;
+
+        if (isNaN(magVal)) {
+            feedbackBox.className = 'feedback-box incorrect';
+            feedbackBox.innerHTML = '⚠️ Please enter a numerical magnitude for your answer.';
+            feedbackBox.classList.remove('hidden');
+            return;
+        }
+
+        // Check magnitude (within 3% tolerance)
+        const magTolerance = Math.max(0.1, currentProblem.targetValue * 0.03);
+        const isMagCorrect = Math.abs(magVal - currentProblem.targetValue) <= magTolerance;
+
+        // Check direction
+        let isDirCorrect = true;
+        let dirFeedback = '';
+
+        if (currentProblem.isDirectionRequired) {
+            const dirResult = Compass.verifyCompassMatch(angVal, dirVal, currentProblem.targetCartesian, 2.5);
+            isDirCorrect = dirResult.isCorrect;
+            dirFeedback = isDirCorrect ? '<span style="color: #10b981; font-weight: 600;">✓ Correct!</span>' : '<span style="color: #f87171; font-weight: 600;">✗ Check your angle / quadrant</span>';
+        }
+
+        const isOverallCorrect = isMagCorrect && isDirCorrect;
+
+        scoreStats.total++;
+        if (isOverallCorrect) {
+            scoreStats.correct++;
+            scoreStats.streak++;
+            if (scoreStats.streak > scoreStats.bestStreak) scoreStats.bestStreak = scoreStats.streak;
+
+            feedbackBox.className = 'feedback-box correct';
+            feedbackBox.innerHTML = `
+                <div>
+                    <div style="font-size: 1.05rem; font-weight: 700; margin-bottom: 4px;">✓ Correct! Fantastic work!</div>
+                    <div>Your answer: <b>${magVal} ${currentProblem.unit}</b> ${currentProblem.isDirectionRequired ? `at <b>[${Compass.cartesianToCompass(Compass.compassToCartesian(angVal, dirVal)).primary}]</b>` : ''}.</div>
+                </div>
+            `;
+            // Auto show solution on correct answer
+            document.getElementById('practice-solution-box')?.classList.remove('hidden');
+        } else {
+            scoreStats.streak = 0;
+            feedbackBox.className = 'feedback-box incorrect';
+            const hintMsg = currentProblem.hint || 'Remember to apply Conservation of Momentum before and after the collision.';
+
+            feedbackBox.innerHTML = `
+                <div>
+                    <div style="font-size: 1rem; font-weight: 700; margin-bottom: 6px; color: #f87171;">✗ Not quite yet. Check your values:</div>
+                    <div style="margin-bottom: 8px; line-height: 1.6;">
+                        • <b>Magnitude / Speed:</b> ${isMagCorrect ? '<span style="color: #10b981; font-weight: 600;">✓ Correct!</span>' : '<span style="color: #f87171; font-weight: 600;">✗ Check your calculation</span>'}<br>
+                        ${currentProblem.isDirectionRequired ? `• <b>Compass Direction:</b> ${dirFeedback}<br>` : ''}
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.7); padding: 8px 12px; border-left: 3px solid var(--accent-blue); border-radius: 4px; font-size: 0.88rem;">
+                        💡 <b>Hint:</b> ${hintMsg}
+                    </div>
+                </div>
+            `;
+            // Keep solution hidden on incorrect so they can retry
+            document.getElementById('practice-solution-box')?.classList.add('hidden');
+        }
+
+        feedbackBox.classList.remove('hidden');
+        updateScoreboard();
+    }
+
+    function updateScoreboard() {
+        setText('score-correct', scoreStats.correct);
+        setText('score-total', scoreStats.total);
+        const pct = scoreStats.total > 0 ? Math.round((scoreStats.correct / scoreStats.total) * 100) : 0;
+        setText('score-accuracy', `${pct}%`);
+        setText('score-streak', `🔥 ${scoreStats.streak}`);
+    }
+
+    function setText(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    }
+
+    window.PhysicsApp = {
+        switchView,
+        loadNewPracticeProblem,
+        checkPracticeAnswer
+    };
+})();
+
+    </script>
+</body>
+</html>
