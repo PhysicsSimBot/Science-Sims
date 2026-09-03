@@ -1,0 +1,4032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics 20: Graph Analysis (Day 5)</title>
+    <style>
+        /* ==========================================================================
+           ALBERTA PHYSICS 20: KINEMATICS GRAPH ANALYSIS (DAY 5 LESSON)
+           Clean, high school friendly, paper-style design with zero distractions.
+           ========================================================================== */
+
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-sidebar: #f1f5f9;
+            --border-color: #cbd5e1;
+            --border-dark: #94a3b8;
+
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-light: #64748b;
+
+            --accent-blue: #0284c7;
+            --accent-blue-light: #e0f2fe;
+            --accent-green: #059669;
+            --accent-green-light: #d1fae5;
+            --accent-amber: #d97706;
+            --accent-amber-light: #fef3c7;
+            --accent-rose: #e11d48;
+            --accent-rose-light: #ffe4e6;
+            --accent-purple: #7c3aed;
+            --accent-purple-light: #ede9fe;
+
+            --grid-line: #e2e8f0;
+            --axis-line: #334155;
+            --plot-pos: #0284c7;
+            --plot-dist: #d97706;
+            --plot-vel: #059669;
+            --plot-speed: #7c3aed;
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Dark mode support */
+        body.dark-theme {
+            --bg-body: #0b0f19;
+            --bg-card: #131b2e;
+            --bg-sidebar: #1e293b;
+            --border-color: #27354f;
+            --border-dark: #475569;
+
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-light: #64748b;
+
+            --accent-blue: #38bdf8;
+            --accent-blue-light: rgba(56, 189, 248, 0.15);
+            --accent-green: #10b981;
+            --accent-green-light: rgba(16, 185, 129, 0.15);
+            --accent-amber: #f59e0b;
+            --accent-amber-light: rgba(245, 158, 11, 0.15);
+            --accent-rose: #f43f5e;
+            --accent-rose-light: rgba(244, 63, 94, 0.15);
+            --accent-purple: #a855f7;
+            --accent-purple-light: rgba(168, 85, 247, 0.15);
+
+            --grid-line: rgba(255, 255, 255, 0.08);
+            --axis-line: #cbd5e1;
+            --plot-pos: #38bdf8;
+            --plot-dist: #f59e0b;
+            --plot-vel: #10b981;
+            --plot-speed: #c084fc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header */
+        .app-header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .title-block h1 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .title-block p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.35rem;
+            background: var(--bg-sidebar);
+            padding: 0.25rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            padding: 0.45rem 0.9rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            background: var(--bg-card);
+            color: var(--accent-blue);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .theme-btn {
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.45rem 0.8rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Main Lesson Layout */
+        .lesson-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 1.25rem auto;
+            padding: 0 1.25rem;
+            flex: 1;
+        }
+
+        .lesson-part {
+            display: none;
+        }
+
+        .lesson-part.active {
+            display: block;
+        }
+
+        /* Friendly Lesson Intro Banner */
+        .intro-box {
+            background: var(--accent-blue-light);
+            border-left: 4px solid var(--accent-blue);
+            padding: 0.85rem 1.15rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1.25rem;
+            font-size: 0.92rem;
+            color: var(--text-main);
+        }
+
+        .intro-box strong {
+            color: var(--accent-blue);
+        }
+
+        /* 2-Column Split: Graphs on Left, Questions on Right */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        @media (max-width: 1050px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Graph Cards */
+        .graphs-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .graph-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .graph-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .graph-title {
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .graph-badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+
+        .badge-blue { background: var(--accent-blue-light); color: var(--accent-blue); }
+        .badge-amber { background: var(--accent-amber-light); color: var(--accent-amber); }
+        .badge-green { background: var(--accent-green-light); color: var(--accent-green); }
+
+        .canvas-holder {
+            position: relative;
+            width: 100%;
+            height: 250px;
+        }
+
+        .graph-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Question Column */
+        .question-column {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 5rem;
+        }
+
+        /* Progress Pills */
+        .question-stepper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.85rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .pill-group {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .q-pill {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: var(--bg-sidebar);
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .q-pill.active {
+            background: var(--accent-blue);
+            color: #ffffff;
+            border-color: var(--accent-blue);
+        }
+
+        .q-pill.answered-correct {
+            background: var(--accent-green-light);
+            color: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        .q-pill.answered-wrong {
+            background: var(--accent-rose-light);
+            color: var(--accent-rose);
+            border-color: var(--accent-rose);
+        }
+
+        .step-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Question Text */
+        .q-prompt {
+            font-size: 1.05rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 1.25rem;
+            color: var(--text-main);
+        }
+
+        /* Options */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .option-btn {
+            background: var(--bg-sidebar);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0.85rem 1rem;
+            text-align: left;
+            font-size: 0.95rem;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            line-height: 1.4;
+        }
+
+        .option-btn:hover {
+            border-color: var(--accent-blue);
+            background: var(--bg-card);
+        }
+
+        .option-btn.selected-correct {
+            background: var(--accent-green-light) !important;
+            border-color: var(--accent-green) !important;
+            font-weight: 600;
+        }
+
+        .option-btn.selected-wrong {
+            background: var(--accent-rose-light) !important;
+            border-color: var(--accent-rose) !important;
+        }
+
+        .option-letter {
+            font-weight: 700;
+            color: var(--accent-blue);
+            flex-shrink: 0;
+        }
+
+        /* Feedback Box */
+        .feedback-box {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+            display: none;
+            line-height: 1.5;
+            font-size: 0.92rem;
+            animation: fadeIn 0.2s ease-in;
+        }
+
+        .feedback-correct {
+            background: var(--accent-green-light);
+            border: 1px solid var(--accent-green);
+            color: #065f46;
+        }
+
+        body.dark-theme .feedback-correct {
+            color: #a7f3d0;
+        }
+
+        .feedback-wrong {
+            background: var(--accent-rose-light);
+            border: 1px solid var(--accent-rose);
+            color: #9f1239;
+        }
+
+        body.dark-theme .feedback-wrong {
+            color: #fecdd3;
+        }
+
+        .feedback-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.35rem;
+        }
+
+        /* Navigation Buttons */
+        .nav-btn-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.25rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .action-btn {
+            background: var(--accent-blue);
+            color: #ffffff;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .action-btn:hover {
+            opacity: 0.92;
+        }
+
+        .action-btn:disabled {
+            background: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .action-btn.btn-secondary {
+            background: var(--bg-sidebar);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .action-btn.btn-advance {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+            font-weight: 700;
+        }
+
+        .action-btn.btn-advance:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+        }
+
+        
+        /* Mastery Indicator & Section Locking */
+        .mastery-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.55rem 0.85rem;
+            background: var(--accent-blue-light);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            border-radius: var(--radius-sm);
+            font-size: 0.84rem;
+            font-weight: 600;
+            margin-bottom: 0.85rem;
+        }
+
+        .mastery-indicator.error {
+            background: var(--accent-rose-light);
+            border-color: var(--accent-rose);
+            color: #9f1239;
+        }
+
+        body.dark-theme .mastery-indicator.error {
+            color: #fecdd3;
+        }
+
+        .retry-card {
+            margin-top: 0.85rem;
+            padding: 0.85rem;
+            background: rgba(225, 29, 72, 0.08);
+            border: 1px dashed var(--accent-rose);
+            border-radius: var(--radius-sm);
+        }
+
+        .tab-btn.locked {
+            opacity: 0.55;
+            cursor: not-allowed;
+            filter: grayscale(0.6);
+        }
+
+        .tab-status {
+            margin-left: 0.35rem;
+            font-size: 0.85em;
+        }
+
+        .toast-msg {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #0f172a;
+            color: #ffffff;
+            border: 1px solid #334155;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .toast-msg.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        
+        
+        /* Dedicated Full-Screen Loading Page */
+        .loading-page-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-body);
+            color: var(--text-main);
+            padding: 1.5rem;
+            box-sizing: border-box;
+        }
+
+        .loading-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 620px;
+            width: 100%;
+            margin: 0 auto 1rem auto;
+        }
+
+        .loading-school-badge {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+        }
+
+        .loading-card-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 2rem;
+        }
+
+        .loading-main-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2.25rem 2.5rem;
+            max-width: 580px;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+            box-sizing: border-box;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .loading-card-header {
+            text-align: center;
+            margin-bottom: 1.35rem;
+        }
+
+        .loading-icon-badge {
+            font-size: 2.6rem;
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }
+
+        .loading-card-header h2 {
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 0 0 0.35rem 0;
+        }
+
+        .loading-subtitle {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .loading-rules-box {
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0.95rem 1.15rem;
+            margin-bottom: 1.35rem;
+        }
+
+        .loading-input-group {
+            margin-bottom: 1.35rem;
+        }
+
+        .loading-input-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .loading-text-input {
+            width: 100%;
+            padding: 0.85rem 1.15rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 1.05rem;
+            background: var(--bg-sidebar);
+            color: var(--text-main);
+            outline: none;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+
+        .loading-text-input:focus {
+            border-color: var(--accent-blue);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.15);
+        }
+
+        .loading-error-msg {
+            color: var(--accent-rose);
+            font-size: 0.84rem;
+            font-weight: 600;
+            margin-top: 0.4rem;
+        }
+
+        .loading-start-btn {
+            width: 100%;
+            justify-content: center;
+            font-size: 1.05rem;
+            padding: 0.85rem;
+            border-radius: var(--radius-md);
+        }
+
+        /* Student Badge & Teacher Portal Header Elements */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+        }
+
+        .student-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .student-pill:hover {
+            border-color: var(--accent-blue);
+            background: var(--accent-blue-light);
+        }
+
+        .badge-attempts {
+            background: var(--accent-blue);
+            color: #ffffff;
+            padding: 0.15rem 0.45rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .btn-teacher {
+            background: #1e293b;
+            color: #f8fafc;
+            border: 1px solid #475569;
+            padding: 0.45rem 0.85rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-teacher:hover {
+            background: #0f172a;
+            border-color: var(--accent-blue);
+            transform: translateY(-1px);
+        }
+
+        body.dark-theme .btn-teacher {
+            background: #334155;
+            color: #f8fafc;
+            border-color: #64748b;
+        }
+
+        /* Modal Overlays */
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: modalFadeIn 0.25s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.97); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .custom-modal-card {
+            background: var(--bg-card);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .custom-modal-card.wide {
+            max-width: 950px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 1.75rem 2rem;
+        }
+
+        .modal-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 0.25rem;
+            line-height: 1;
+            border-radius: var(--radius-sm);
+        }
+
+        .modal-close-btn:hover {
+            color: var(--accent-rose);
+            background: rgba(225, 29, 72, 0.1);
+        }
+
+        /* Teacher Stats Grid */
+        .teacher-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .teacher-stat-box {
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0.85rem 1rem;
+            text-align: center;
+        }
+
+        .teacher-stat-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+        }
+
+        .teacher-stat-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.2rem;
+        }
+
+        /* Teacher Table */
+        .teacher-table-container {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin-bottom: 1.25rem;
+            background: var(--bg-card);
+        }
+
+        .teacher-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        .teacher-table th {
+            position: sticky;
+            top: 0;
+            background: var(--bg-sidebar);
+            color: var(--text-main);
+            padding: 0.75rem 0.85rem;
+            font-weight: 700;
+            border-bottom: 2px solid var(--border-color);
+            z-index: 2;
+        }
+
+        .teacher-table td {
+            padding: 0.65rem 0.85rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .teacher-table tr:hover td {
+            background: rgba(2, 132, 199, 0.05);
+        }
+
+        .badge-done {
+            display: inline-block;
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+            padding: 0.15rem 0.45rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-prog {
+            display: inline-block;
+            background: #fef9c3;
+            color: #854d0e;
+            border: 1px solid #fde047;
+            padding: 0.15rem 0.45rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .modal-input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            background: var(--bg-sidebar);
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .modal-input-field:focus {
+            border-color: var(--accent-blue);
+            background: var(--bg-card);
+        }
+
+        /* Reference Table */
+        .ref-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+            margin-top: 1rem;
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .ref-table th, .ref-table td {
+            padding: 0.85rem 1rem;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .ref-table th {
+            background: var(--bg-sidebar);
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    
+        /* Clean High-School Math & Formula Styling */
+        .math-eq {
+            font-family: 'Cambria Math', 'Times New Roman', Georgia, serif;
+            font-size: 1.05em;
+        }
+        .vec {
+            display: inline-block;
+            position: relative;
+            font-style: italic;
+            font-family: 'Cambria Math', 'Times New Roman', Georgia, serif;
+            padding-top: 0.12em;
+        }
+        .vec::after {
+            content: '→';
+            position: absolute;
+            top: -0.55em;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.72em;
+            font-style: normal;
+            font-family: -apple-system, sans-serif;
+            line-height: 1;
+        }
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            padding: 0 0.25em;
+            font-size: 0.88em;
+            line-height: 1.15;
+            font-family: 'Cambria Math', 'Times New Roman', Georgia, serif;
+        }
+        .frac > .num {
+            border-bottom: 1.5px solid currentColor;
+            padding-bottom: 1px;
+        }
+        .frac > .den {
+            padding-top: 2px;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- ===================================================================
+         DEDICATED FULL-SCREEN LOADING PAGE
+         (Visible on startup; graphs are 100% hidden until name is entered)
+         =================================================================== -->
+    <div id="loading-page" class="loading-page-container">
+        <div class="loading-top-bar">
+            <span class="loading-school-badge">🏫 MHHS • Alberta Physics 20</span>
+            <div style="display: flex; gap: 0.65rem; align-items: center;">
+                <button class="btn-teacher" onclick="openTeacherModal()" title="Teacher Portal (Password Protected)">
+                    🔑 Teacher Portal
+                </button>
+                <button class="theme-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                    <span id="loading-theme-icon">🌙</span> <span id="loading-theme-label">Dark</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="loading-card-wrap">
+            <div class="loading-main-card">
+                <div class="loading-card-header">
+                    <div class="loading-icon-badge">📈</div>
+                    <h2>Alberta Physics 20: Graph Analysis</h2>
+                    <p class="loading-subtitle">Unit 1 Kinematics • Day 5 Lesson & Mastery Checkpoint</p>
+                </div>
+
+                <div class="loading-rules-box">
+                    <div style="font-weight: 800; color: var(--accent-blue); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
+                        <span>🎯</span> Lesson Mastery Rules:
+                    </div>
+                    <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.88rem; line-height: 1.5; color: var(--text-main);">
+                        <li>Analyze <strong>Distance vs. Time</strong>, <strong>Position vs. Time</strong>, and <strong>Velocity vs. Time</strong> graphs.</li>
+                        <li><strong>100% Mastery (5/5)</strong> is required on each section to unlock the next part.</li>
+                        <li>If an error is made, click <em>"Load New Graph & Try Again"</em>. Each reset is logged as an <strong>attempt</strong> for your teacher.</li>
+                    </ul>
+                </div>
+
+                <div class="loading-input-group">
+                    <label for="student-name-input" class="loading-input-label">
+                        Enter Your Full Name to Begin (First & Last):
+                    </label>
+                    <input 
+                        type="text" 
+                        id="student-name-input" 
+                        class="loading-text-input" 
+                        placeholder="e.g. Alex Smith" 
+                        autocomplete="name" 
+                        autofocus
+                    />
+                    <div id="student-name-error" class="loading-error-msg" style="display: none;">
+                        ⚠️ Please enter your first and last name to enter the lesson.
+                    </div>
+                </div>
+
+                <button class="action-btn btn-advance loading-start-btn" onclick="submitStudentName()">
+                    Enter Kinematics Lesson 🚀
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         LESSON SCREEN & GRAPHS (Completely hidden until student name is submitted)
+         =================================================================== -->
+    <div id="lesson-screen" style="display: none;">
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="title-block">
+                <h1>📈 Alberta Physics 20: Graph Analysis</h1>
+                <p>Day 5 • Distance vs. Position & Speed vs. Velocity</p>
+            </div>
+
+            <nav class="nav-tabs">
+                <button class="tab-btn active" id="tab-btn-part1" onclick="switchSection('part1')">Part 1: Distance vs. Position <span class="tab-status" id="status-p1"></span></button>
+                <button class="tab-btn locked" id="tab-btn-part2" onclick="switchSection('part2')">Part 2: Velocity & Area <span class="tab-status" id="status-p2">🔒</span></button>
+                <button class="tab-btn locked" id="tab-btn-part3" onclick="switchSection('part3')">Part 3: Practice Checkpoint <span class="tab-status" id="status-p3">🔒</span></button>
+                <button class="tab-btn" id="tab-btn-summary" onclick="switchSection('summary')">Quick Reference</button>
+            </nav>
+
+            <div class="header-actions">
+                <div class="student-pill" id="student-header-pill" onclick="showLoadingPage()" title="Active Student (Click to Switch Student)">
+                    <span>👤</span> <span id="student-display-name">Loading...</span>
+                    <span class="badge-attempts" id="student-display-attempts">0 Attempts</span>
+                </div>
+                <button class="btn-teacher" onclick="openTeacherModal()" title="Teacher Portal (Password Protected)">
+                    🔑 Teacher
+                </button>
+                <button class="theme-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                    <span id="theme-icon">🌙</span> <span id="theme-label">Dark</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="lesson-container">
+
+        <!-- ===================================================================
+             PART 1: DISTANCE VS POSITION
+             =================================================================== -->
+        <section id="part1" class="lesson-part active">
+            <div class="intro-box" id="p1-intro-box">
+                <strong>Scenario:</strong> A student starts at the classroom door (0 m). They walk <strong>6.0 m East</strong> in 3.0 s, stop for 2.0 s to check their phone, and then walk <strong>10.0 m West</strong> in 5.0 s past the door. Both graphs below represent this <em>exact same journey</em>.
+            </div>
+
+            <div class="workspace-grid">
+                <!-- Left: Side-by-Side Graphs -->
+                <div class="graphs-column">
+                    <!-- Graph 1: Distance vs. Time -->
+                    <div class="graph-card">
+                        <div class="graph-header">
+                            <span class="graph-title" style="color: var(--plot-dist);">
+                                📏 Graph A: Distance vs. Time (<i>d</i> vs <i>t</i>)
+                            </span>
+                            <span class="graph-badge badge-amber">Scalar • Odometer Total</span>
+                        </div>
+                        <div class="canvas-holder">
+                            <canvas id="canvas-m1-dist" class="graph-canvas"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Graph 2: Position vs. Time -->
+                    <div class="graph-card">
+                        <div class="graph-header">
+                            <span class="graph-title" style="color: var(--plot-pos);">
+                                📍 Graph B: Position vs. Time (<span class=\"vec\">d</span> vs <i>t</i>)
+                            </span>
+                            <span class="graph-badge badge-blue">Vector • Relative to Origin</span>
+                        </div>
+                        <div class="canvas-holder">
+                            <canvas id="canvas-m1-pos" class="graph-canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Guided Questions -->
+                <div class="question-column">
+                    <div class="mastery-indicator" id="p1-mastery-banner">🎯 Section Mastery: <strong>0 / 5 Correct</strong> (5/5 needed to unlock Part 2)</div>
+                    <div class="question-stepper">
+                        <span class="step-label" id="p1-counter">Question 1 of 5</span>
+                        <div class="pill-group" id="p1-pills">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="q-prompt" id="p1-prompt">
+                        Loading question...
+                    </div>
+
+                    <div class="options-list" id="p1-options">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div class="feedback-box" id="p1-feedback">
+                        <!-- Populated on click -->
+                    </div>
+
+                    <div class="nav-btn-row">
+                        <button class="action-btn btn-secondary" id="p1-prev-btn" onclick="prevP1()">← Previous</button>
+                        <button class="action-btn" id="p1-next-btn" onclick="nextP1()">Next Question →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================
+             PART 2: VELOCITY VS TIME & AREA UNDER THE CURVE
+             =================================================================== -->
+        <section id="part2" class="lesson-part">
+            <div class="intro-box" id="p2-intro-box">
+                <strong>Scenario:</strong> A toy car moves in a straight line East (+) and West (-). Its motion is tracked on the <strong>Velocity vs. Time graph</strong> below. We will use the graph's <strong>slope</strong> to find acceleration and its <strong>shaded geometric area</strong> to find displacement.
+            </div>
+
+            <div class="workspace-grid">
+                <!-- Left: Single Clean Velocity-Time Graph -->
+                <div class="graphs-column">
+                    <div class="graph-card">
+                        <div class="graph-header">
+                            <span class="graph-title" style="color: var(--plot-vel);">
+                                ⏱️ Velocity vs. Time (<span class=\"vec\">v</span> vs <i>t</i>)
+                            </span>
+                            <span class="graph-badge badge-green">Slope = a⃗ • Area = Displacement</span>
+                        </div>
+                        <div class="canvas-holder" style="height: 340px;">
+                            <canvas id="canvas-m2-vel" class="graph-canvas"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Helpful hint box -->
+                    <div class="graph-card" style="padding: 1rem; background: var(--bg-sidebar);">
+                        <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 0.35rem; color: var(--text-main);">
+                            💡 Quick Geometric Area Formulas:
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                            <span><strong>Triangle:</strong> Area = &frac12; &times; base &times; height</span>
+                            <span><strong>Rectangle:</strong> Area = base &times; height</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Guided Questions -->
+                <div class="question-column">
+                    <div class="mastery-indicator" id="p2-mastery-banner">🎯 Section Mastery: <strong>0 / 5 Correct</strong> (5/5 needed to unlock Part 3)</div>
+                    <div class="question-stepper">
+                        <span class="step-label" id="p2-counter">Question 1 of 5</span>
+                        <div class="pill-group" id="p2-pills">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="q-prompt" id="p2-prompt">
+                        Loading question...
+                    </div>
+
+                    <div class="options-list" id="p2-options">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div class="feedback-box" id="p2-feedback">
+                        <!-- Populated on click -->
+                    </div>
+
+                    <div class="nav-btn-row">
+                        <button class="action-btn btn-secondary" id="p2-prev-btn" onclick="prevP2()">← Previous</button>
+                        <button class="action-btn" id="p2-next-btn" onclick="nextP2()">Next Question →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================
+             PART 3: PRACTICE CHECKPOINT
+             =================================================================== -->
+        <section id="part3" class="lesson-part">
+            <div class="intro-box" id="p3-intro-box">
+                <strong>Checkpoint Challenge:</strong> Apply everything you have learned! Analyze the graph below and answer the 4 questions to verify your understanding before class ends.
+            </div>
+
+            <div class="workspace-grid">
+                <!-- Left: Fresh Checkpoint Graph -->
+                <div class="graphs-column">
+                    <div class="graph-card">
+                        <div class="graph-header">
+                            <span class="graph-title" id="p3-graph-title" style="color: var(--plot-vel);">
+                                🎯 Checkpoint Graph
+                            </span>
+                            <span class="graph-badge badge-blue">Alberta Physics 20</span>
+                        </div>
+                        <div class="canvas-holder" style="height: 340px;">
+                            <canvas id="canvas-m3-quiz" class="graph-canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Checkpoint Questions -->
+                <div class="question-column">
+                    <div class="mastery-indicator" id="p3-mastery-banner">🎯 Checkpoint Mastery: <strong>0 / 4 Correct</strong> (4/4 needed to complete checkpoint)</div>
+                    <div class="question-stepper">
+                        <span class="step-label" id="p3-counter">Question 1 of 4</span>
+                        <div class="pill-group" id="p3-pills">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="q-prompt" id="p3-prompt">
+                        Loading question...
+                    </div>
+
+                    <div class="options-list" id="p3-options">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div class="feedback-box" id="p3-feedback">
+                        <!-- Populated on click -->
+                    </div>
+
+                    <div class="nav-btn-row">
+                        <button class="action-btn btn-secondary" id="p3-prev-btn" onclick="prevP3()">← Previous</button>
+                        <button class="action-btn" id="p3-next-btn" onclick="nextP3()">Next Question →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ===================================================================
+             PART 4: SUMMARY CHEAT SHEET
+             =================================================================== -->
+        <section id="summary" class="lesson-part">
+            <div class="graph-card">
+                <div class="graph-header">
+                    <span class="graph-title">📋 Kinematics Graph Rules Summary (For Your Physics 20 Notes)</span>
+                </div>
+
+                <table class="ref-table">
+                    <thead>
+                        <tr>
+                            <th>Graph Type</th>
+                            <th>What the Y-Value Means</th>
+                            <th>What the Slope Means (<span class=\"frac\"><span class=\"num\">Rise</span><span class=\"den\">Run</span></span>)</th>
+                            <th>What the Area Means</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color: var(--plot-dist);">Distance vs. Time (<i>d</i> vs <i>t</i>)</strong></td>
+                            <td>Total odometer distance travelled (&ge; 0).</td>
+                            <td><strong>Speed (<i>v</i>)</strong><br>Slope can <strong>never</strong> be negative!</td>
+                            <td><em>No physical meaning</em></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--plot-pos);">Position vs. Time (<span class=\"vec\">d</span> vs <i>t</i>)</strong></td>
+                            <td>Location relative to origin (0 m). Can be +, 0, or &minus;.</td>
+                            <td><strong>Velocity (<span class=\"vec\">v</span>)</strong><br>Positive slope = Forward (+), Negative slope = Backward (&minus;).</td>
+                            <td><em>No physical meaning</em></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--plot-vel);">Velocity vs. Time (<span class=\"vec\">v</span> vs <i>t</i>)</strong></td>
+                            <td>Speed and direction (+ or &minus;). Crossing zero = <strong>turning around</strong>.</td>
+                            <td><strong>Acceleration (<span class=\"vec\">a</span>)</strong><br><span class=\"vec\">a</span> = <span class=\"frac\"><span class=\"num\">&Delta;<span class=\"vec\">v</span></span><span class=\"den\">&Delta;<i>t</i></span></span> (Flat line = 0 m/s<sup>2</sup>)</td>
+                            <td><strong>Displacement (&Delta;<span class=\"vec\">d</span>)</strong><br>Above axis is +, below axis is &minus;.</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--plot-speed);">Speed vs. Time (<i>v</i> vs <i>t</i>)</strong></td>
+                            <td>Magnitude of velocity (|<i>v</i>| &ge; 0). Never below axis.</td>
+                            <td>Rate of speed change.</td>
+                            <td><strong>Total Distance (<i>d</i>)</strong><br>Sum of all geometric areas.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+    </div><!-- end #lesson-screen -->
+
+
+
+
+    <!-- ===================================================================
+         TEACHER DASHBOARD MODAL (Protected by MHHSPhysics)
+         =================================================================== -->
+    <div id="teacher-dashboard-modal" class="custom-modal-overlay" style="display: none;">
+        <!-- View 1: Password Prompt -->
+        <div id="teacher-login-card" class="custom-modal-card">
+            <div class="modal-header-row">
+                <div class="modal-title">🔒 Teacher Access Portal</div>
+                <button class="modal-close-btn" onclick="closeTeacherModal()">✕</button>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                Please enter the instructor password to view student attempt tallies and export performance data.
+            </p>
+            <div style="margin-bottom: 1.25rem;">
+                <label for="teacher-pass-input" style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text-main);">
+                    Instructor Password:
+                </label>
+                <input type="password" id="teacher-pass-input" class="modal-input-field" placeholder="Enter teacher password..." />
+                <div id="teacher-pass-error" style="color: var(--accent-rose); font-size: 0.82rem; font-weight: 600; margin-top: 0.35rem; display: none;">
+                    ❌ Incorrect password. Access denied.
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <button class="action-btn btn-secondary" style="flex: 1; justify-content: center;" onclick="closeTeacherModal()">
+                    Cancel
+                </button>
+                <button class="action-btn" style="flex: 1; justify-content: center;" onclick="submitTeacherPassword()">
+                    Unlock Dashboard 🔓
+                </button>
+            </div>
+        </div>
+
+        <!-- View 2: Authenticated Dashboard -->
+        <div id="teacher-data-card" class="custom-modal-card wide" style="display: none;">
+            <div class="modal-header-row">
+                <div class="modal-title">
+                    🍎 Teacher Dashboard: Class Graph Mastery
+                </div>
+                <button class="modal-close-btn" onclick="closeTeacherModal()">✕</button>
+            </div>
+
+            <!-- Metric Summary Grid -->
+            <div class="teacher-stat-grid">
+                <div class="teacher-stat-box">
+                    <div class="teacher-stat-value" id="stat-total-students">0</div>
+                    <div class="teacher-stat-label">Students Logged</div>
+                </div>
+                <div class="teacher-stat-box">
+                    <div class="teacher-stat-value" id="stat-fully-mastered">0</div>
+                    <div class="teacher-stat-label">Fully Mastered (Day 5)</div>
+                </div>
+                <div class="teacher-stat-box">
+                    <div class="teacher-stat-value" id="stat-total-attempts">0</div>
+                    <div class="teacher-stat-label">Total Attempts Made</div>
+                </div>
+                <div class="teacher-stat-box">
+                    <div class="teacher-stat-value" id="stat-avg-attempts">0.0</div>
+                    <div class="teacher-stat-label">Avg Attempts / Student</div>
+                </div>
+            </div>
+
+            <!-- Filter Row -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; gap: 1rem;">
+                <input type="text" id="teacher-search-input" class="modal-input-field" style="max-width: 280px; padding: 0.45rem 0.75rem; font-size: 0.85rem;" placeholder="🔍 Filter student name..." oninput="filterTeacherTable()" />
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="action-btn btn-secondary" style="padding: 0.45rem 0.85rem; font-size: 0.82rem;" onclick="promptSwitchStudentFromTeacher()">
+                        👤 Switch / Add Student
+                    </button>
+                    <button class="action-btn" style="padding: 0.45rem 0.85rem; font-size: 0.82rem; background: #059669;" onclick="exportRosterCSV()">
+                        📥 Export to CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Roster Table -->
+            <div class="teacher-table-container">
+                <table class="teacher-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Date / Time</th>
+                            <th>Part 1 (Disp vs Pos)</th>
+                            <th>Part 2 (Vel & Area)</th>
+                            <th>Part 3 (Checkpoint)</th>
+                            <th>Total Attempts</th>
+                            <th>Course Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teacher-table-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer Controls -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem; border-top: 1px solid var(--border-color);">
+                <button class="action-btn btn-secondary" style="color: var(--accent-rose); border-color: rgba(225, 29, 72, 0.4); font-size: 0.8rem; padding: 0.4rem 0.75rem;" onclick="clearRosterConfirm()">
+                    🗑️ Clear Roster Records
+                </button>
+                <button class="action-btn" style="padding: 0.45rem 1.25rem;" onclick="closeTeacherModal()">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ===================================================================
+         JAVASCRIPT LESSON ENGINE & CRISP GRAPH RENDERING
+         =================================================================== -->
+    <script>
+
+        /* =====================================================================
+           STUDENT ONBOARDING & ATTEMPT TRACKING TELEMETRY
+           ===================================================================== */
+        const STORAGE_KEY_ROSTER = 'MHHS_PHYSICS20_ROSTER';
+        const STORAGE_KEY_ACTIVE_ID = 'MHHS_PHYSICS20_ACTIVE_ID';
+        const TEACHER_PASSWORD = 'MHHSPhysics';
+
+        let CURRENT_STUDENT = null;
+
+        function loadRoster() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY_ROSTER);
+                return data ? JSON.parse(data) : [];
+            } catch (e) {
+                console.error('Failed to load roster:', e);
+                return [];
+            }
+        }
+
+        function saveRoster(roster) {
+            try {
+                localStorage.setItem(STORAGE_KEY_ROSTER, JSON.stringify(roster));
+            } catch (e) {
+                console.error('Failed to save roster:', e);
+            }
+        }
+
+        function syncActiveStudent() {
+            if (!CURRENT_STUDENT) return;
+            const roster = loadRoster();
+            const idx = roster.findIndex(s => s.id === CURRENT_STUDENT.id);
+            if (idx !== -1) {
+                roster[idx] = CURRENT_STUDENT;
+            } else {
+                roster.push(CURRENT_STUDENT);
+            }
+            saveRoster(roster);
+            updateStudentHeader();
+        }
+
+        function updateStudentHeader() {
+            const nameEl = document.getElementById('student-display-name');
+            const attEl = document.getElementById('student-display-attempts');
+            if (!CURRENT_STUDENT) {
+                if (nameEl) nameEl.textContent = 'Guest Student';
+                if (attEl) attEl.textContent = '0 Attempts';
+                return;
+            }
+            if (nameEl) nameEl.textContent = CURRENT_STUDENT.name;
+            if (attEl) {
+                const total = CURRENT_STUDENT.totalAttempts || 1;
+                attEl.textContent = `${total} Attempt${total === 1 ? '' : 's'}`;
+            }
+        }
+
+        function openStudentModal() {
+            const modal = document.getElementById('student-welcome-modal');
+            const input = document.getElementById('student-name-input');
+            const err = document.getElementById('student-name-error');
+            if (err) err.style.display = 'none';
+            if (modal) modal.style.display = 'flex';
+            if (input) {
+                if (CURRENT_STUDENT) input.value = CURRENT_STUDENT.name;
+                setTimeout(() => input.focus(), 50);
+            }
+        }
+
+        function closeStudentModal() {
+            const modal = document.getElementById('student-welcome-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function submitStudentName() {
+            const input = document.getElementById('student-name-input');
+            const err = document.getElementById('student-name-error');
+            const rawName = input ? input.value.trim() : '';
+            if (!rawName || rawName.length < 2) {
+                if (err) err.style.display = 'block';
+                if (input) input.focus();
+                return;
+            }
+            if (err) err.style.display = 'none';
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-CA') + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const roster = loadRoster();
+            let student = roster.find(s => s.name.toLowerCase() === rawName.toLowerCase());
+            if (!student) {
+                student = {
+                    id: 'stu_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                    name: rawName,
+                    date: dateStr,
+                    p1Attempts: 1,
+                    p1Mastered: false,
+                    p2Attempts: 0,
+                    p2Mastered: false,
+                    p3Attempts: 0,
+                    p3Mastered: false,
+                    totalAttempts: 1,
+                    status: 'In Progress (Part 1)'
+                };
+                roster.push(student);
+                saveRoster(roster);
+            }
+
+            CURRENT_STUDENT = student;
+            try {
+                localStorage.setItem(STORAGE_KEY_ACTIVE_ID, CURRENT_STUDENT.id);
+            } catch (e) {}
+
+            updateStudentHeader();
+            
+            // Hide dedicated loading page and reveal lesson screen
+            const loadPage = document.getElementById('loading-page');
+            const lessonScreen = document.getElementById('lesson-screen');
+            if (loadPage) loadPage.style.display = 'none';
+            if (lessonScreen) lessonScreen.style.display = 'block';
+
+            // Initialize graphs now that container is visible
+            initP1();
+            initP2();
+            initP3();
+            updateLockUI();
+            switchSection('part1');
+            setTimeout(redrawCurrentSection, 40);
+
+            showToast(`👋 Welcome, ${CURRENT_STUDENT.name}! Lesson loaded.`);
+        }
+
+        function showLoadingPage() {
+            CURRENT_STUDENT = null;
+            try { localStorage.removeItem(STORAGE_KEY_ACTIVE_ID); } catch (e) {}
+
+            const loadPage = document.getElementById('loading-page');
+            const lessonScreen = document.getElementById('lesson-screen');
+            if (loadPage) loadPage.style.display = 'flex';
+            if (lessonScreen) lessonScreen.style.display = 'none';
+
+            const input = document.getElementById('student-name-input');
+            if (input) {
+                input.value = '';
+                setTimeout(() => input.focus(), 60);
+            }
+        }
+
+        function initStudentSession() {
+            // Always ensure loading page is visible on fresh page load so graphs are NOT visible initially
+            const loadPage = document.getElementById('loading-page');
+            const lessonScreen = document.getElementById('lesson-screen');
+            if (loadPage) loadPage.style.display = 'flex';
+            if (lessonScreen) lessonScreen.style.display = 'none';
+
+            const input = document.getElementById('student-name-input');
+            if (input) {
+                setTimeout(() => input.focus(), 60);
+            }
+        }
+
+        /* =====================================================================
+           TEACHER DASHBOARD MODAL CONTROLLER
+           ===================================================================== */
+        function openTeacherModal() {
+            const modal = document.getElementById('teacher-dashboard-modal');
+            const loginCard = document.getElementById('teacher-login-card');
+            const dataCard = document.getElementById('teacher-data-card');
+            const passInput = document.getElementById('teacher-pass-input');
+            const passErr = document.getElementById('teacher-pass-error');
+
+            if (loginCard) loginCard.style.display = 'block';
+            if (dataCard) dataCard.style.display = 'none';
+            if (passErr) passErr.style.display = 'none';
+            if (passInput) passInput.value = '';
+
+            if (modal) modal.style.display = 'flex';
+            setTimeout(() => { if (passInput) passInput.focus(); }, 50);
+        }
+
+        function closeTeacherModal() {
+            const modal = document.getElementById('teacher-dashboard-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function submitTeacherPassword() {
+            const passInput = document.getElementById('teacher-pass-input');
+            const passErr = document.getElementById('teacher-pass-error');
+            const entered = passInput ? passInput.value : '';
+
+            if (entered === TEACHER_PASSWORD) {
+                if (passErr) passErr.style.display = 'none';
+                document.getElementById('teacher-login-card').style.display = 'none';
+                document.getElementById('teacher-data-card').style.display = 'flex';
+                renderTeacherDashboard();
+            } else {
+                if (passErr) passErr.style.display = 'block';
+                if (passInput) {
+                    passInput.value = '';
+                    passInput.focus();
+                }
+            }
+        }
+
+        function renderTeacherDashboard() {
+            const roster = loadRoster();
+            const totalStudents = roster.length;
+            const fullyMastered = roster.filter(s => s.p1Mastered && s.p2Mastered && s.p3Mastered).length;
+            const totalAttempts = roster.reduce((acc, s) => acc + (s.totalAttempts || 0), 0);
+            const avgAttempts = totalStudents > 0 ? (totalAttempts / totalStudents).toFixed(1) : '0.0';
+
+            document.getElementById('stat-total-students').textContent = totalStudents;
+            document.getElementById('stat-fully-mastered').textContent = fullyMastered;
+            document.getElementById('stat-total-attempts').textContent = totalAttempts;
+            document.getElementById('stat-avg-attempts').textContent = avgAttempts;
+
+            renderTeacherTableRows(roster);
+        }
+
+        function renderTeacherTableRows(students) {
+            const tbody = document.getElementById('teacher-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (students.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                            No student records recorded yet on this computer.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            students.forEach(s => {
+                const tr = document.createElement('tr');
+                const isCurrent = CURRENT_STUDENT && CURRENT_STUDENT.id === s.id;
+
+                const p1Badge = s.p1Mastered 
+                    ? `<span class="badge-done">✅ ${s.p1Attempts} Att</span>` 
+                    : `<span class="badge-prog">⏳ ${s.p1Attempts || 1} Att</span>`;
+
+                const p2Badge = s.p2Mastered 
+                    ? `<span class="badge-done">✅ ${s.p2Attempts} Att</span>` 
+                    : (s.p2Attempts > 0 ? `<span class="badge-prog">⏳ ${s.p2Attempts} Att</span>` : '<span style="color: var(--text-muted);">Locked 🔒</span>');
+
+                const p3Badge = s.p3Mastered 
+                    ? `<span class="badge-done">✅ ${s.p3Attempts} Att</span>` 
+                    : (s.p3Attempts > 0 ? `<span class="badge-prog">⏳ ${s.p3Attempts} Att</span>` : '<span style="color: var(--text-muted);">Locked 🔒</span>');
+
+                const statusBadge = (s.p1Mastered && s.p2Mastered && s.p3Mastered)
+                    ? '<span class="badge-done">🏆 Day 5 Complete</span>'
+                    : `<span class="badge-prog">${s.status || 'In Progress'}</span>`;
+
+                tr.innerHTML = `
+                    <td style="font-weight: 700;">
+                        ${s.name} ${isCurrent ? '<span style="color: var(--accent-blue); font-size: 0.78rem;">(Active)</span>' : ''}
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 0.8rem;">${s.date || 'N/A'}</td>
+                    <td>${p1Badge}</td>
+                    <td>${p2Badge}</td>
+                    <td>${p3Badge}</td>
+                    <td style="font-weight: 800; text-align: center;">${s.totalAttempts || 1}</td>
+                    <td>${statusBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterTeacherTable() {
+            const query = (document.getElementById('teacher-search-input').value || '').toLowerCase();
+            const roster = loadRoster();
+            const filtered = roster.filter(s => s.name.toLowerCase().includes(query));
+            renderTeacherTableRows(filtered);
+        }
+
+        function exportRosterCSV() {
+            const roster = loadRoster();
+            if (roster.length === 0) {
+                alert('No student records to export yet.');
+                return;
+            }
+
+            const headers = ['Student Name', 'Date Logged', 'Part 1 Attempts', 'Part 1 Mastered', 'Part 2 Attempts', 'Part 2 Mastered', 'Part 3 Attempts', 'Part 3 Mastered', 'Total Attempts', 'Course Status'];
+            const rows = roster.map(s => [
+                `"${s.name.replace(/"/g, '""')}"`,
+                `"${s.date || ''}"`,
+                s.p1Attempts || 1,
+                s.p1Mastered ? 'YES' : 'NO',
+                s.p2Attempts || 0,
+                s.p2Mastered ? 'YES' : 'NO',
+                s.p3Attempts || 0,
+                s.p3Mastered ? 'YES' : 'NO',
+                s.totalAttempts || 1,
+                `"${(s.status || 'In Progress').replace(/"/g, '""')}"`
+            ]);
+
+            const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            const today = new Date().toISOString().slice(0, 10);
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', `MHHS_Physics20_Kinematics_Results_${today}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function clearRosterConfirm() {
+            if (confirm('⚠️ Are you sure you want to clear all student records on this computer?\n\nThis action cannot be undone.')) {
+                saveRoster([]);
+                CURRENT_STUDENT = null;
+                try { localStorage.removeItem(STORAGE_KEY_ACTIVE_ID); } catch (e) {}
+                renderTeacherDashboard();
+                updateStudentHeader();
+                showToast('🗑️ Student records cleared.');
+            }
+        }
+
+        function promptSwitchStudentFromTeacher() {
+            closeTeacherModal();
+            showLoadingPage();
+        }
+
+/* =====================================================================
+   GLOBAL MASTERY STATE & SECTION LOCKING
+   ===================================================================== */
+const PROGRESS = {
+    p1Unlocked: true,
+    p1Completed: false,
+    p2Unlocked: false,
+    p2Completed: false,
+    p3Unlocked: false,
+    p3Completed: false
+};
+
+let isDarkTheme = false;
+let currentTab = 'part1';
+
+function toggleTheme() {
+    isDarkTheme = !isDarkTheme;
+    document.body.classList.toggle('dark-theme', isDarkTheme);
+    document.getElementById('theme-icon').textContent = isDarkTheme ? '☀️' : '🌙';
+    document.getElementById('theme-label').textContent = isDarkTheme ? 'Light' : 'Dark';
+            const loadIcon = document.getElementById('loading-theme-icon');
+            const loadLabel = document.getElementById('loading-theme-label');
+            if (loadIcon) loadIcon.textContent = isDarkTheme ? '☀️' : '🌙';
+            if (loadLabel) loadLabel.textContent = isDarkTheme ? 'Light' : 'Dark';
+    redrawCurrentSection();
+}
+
+function getColors() {
+    return {
+        grid: isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0',
+        axis: isDarkTheme ? '#94a3b8' : '#334155',
+        axisZero: isDarkTheme ? '#f8fafc' : '#0f172a',
+        text: isDarkTheme ? '#94a3b8' : '#64748b',
+        textStrong: isDarkTheme ? '#f8fafc' : '#0f172a',
+        pos: isDarkTheme ? '#38bdf8' : '#0284c7',
+        dist: isDarkTheme ? '#f59e0b' : '#d97706',
+        vel: isDarkTheme ? '#10b981' : '#059669',
+        speed: isDarkTheme ? '#c084fc' : '#7c3aed',
+        rose: isDarkTheme ? '#f43f5e' : '#e11d48'
+    };
+}
+
+function switchSection(tabId) {
+    if (tabId === 'part2' && !PROGRESS.p2Unlocked) {
+        showToast('🔒 Part 2 is locked! You must score 5/5 on Part 1 to unlock it.');
+        return;
+    }
+    if (tabId === 'part3' && !PROGRESS.p3Unlocked) {
+        showToast('🔒 Part 3 is locked! You must score 5/5 on Part 2 to unlock it.');
+        return;
+    }
+
+    currentTab = tabId;
+    document.querySelectorAll('.nav-tabs .tab-btn').forEach(btn => {
+        const onclickStr = btn.getAttribute('onclick') || '';
+        btn.classList.toggle('active', onclickStr.includes(tabId));
+    });
+    document.querySelectorAll('.lesson-part').forEach(sec => {
+        sec.classList.toggle('active', sec.id === tabId);
+    });
+    setTimeout(redrawCurrentSection, 30);
+}
+
+function updateLockUI() {
+    const statusP1 = document.getElementById('status-p1');
+    if (statusP1) statusP1.textContent = PROGRESS.p1Completed ? '✅' : '';
+
+    const btnP2 = document.getElementById('tab-btn-part2');
+    const statusP2 = document.getElementById('status-p2');
+    if (btnP2 && statusP2) {
+        if (PROGRESS.p2Unlocked) {
+            btnP2.classList.remove('locked');
+            statusP2.textContent = PROGRESS.p2Completed ? '✅' : '';
+        } else {
+            btnP2.classList.add('locked');
+            statusP2.textContent = '🔒';
+        }
+    }
+
+    const btnP3 = document.getElementById('tab-btn-part3');
+    const statusP3 = document.getElementById('status-p3');
+    if (btnP3 && statusP3) {
+        if (PROGRESS.p3Unlocked) {
+            btnP3.classList.remove('locked');
+            statusP3.textContent = PROGRESS.p3Completed ? '✅' : '';
+        } else {
+            btnP3.classList.add('locked');
+            statusP3.textContent = '🔒';
+        }
+    }
+}
+
+function showToast(msg) {
+    let toast = document.getElementById('toast-notification');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast-notification';
+        toast.className = 'toast-msg';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3200);
+}
+
+function redrawCurrentSection() {
+    if (currentTab === 'part1') renderP1Graphs();
+    else if (currentTab === 'part2') renderP2Graph();
+    else if (currentTab === 'part3') renderP3Graph();
+}
+
+window.addEventListener('resize', redrawCurrentSection);
+
+/* =====================================================================
+   HIGH-DPI CANVAS UTILITIES
+   ===================================================================== */
+function initCanvas(canvas) {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.resetTransform();
+    ctx.scale(dpr, dpr);
+    return { ctx, w: rect.width, h: rect.height };
+}
+
+function drawGrid(ctx, w, h, xMin, xMax, yMin, yMax, xLabel, yLabel, options = {}) {
+    const c = getColors();
+    const padL = options.padL || 45;
+    const padR = options.padR || 15;
+    const padT = options.padT || 15;
+    const padB = options.padB || 30;
+
+    const plotW = w - padL - padR;
+    const plotH = h - padT - padB;
+
+    const toX = x => padL + ((x - xMin) / (xMax - xMin)) * plotW;
+    const toY = y => padT + ((yMax - y) / (yMax - yMin)) * plotH;
+
+    ctx.clearRect(0, 0, w, h);
+
+    // Vertical Grid Lines
+    const xStep = options.xStep || 1;
+    ctx.font = '11px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+
+    for (let x = Math.ceil(xMin); x <= xMax; x += xStep) {
+        const px = toX(x);
+        ctx.strokeStyle = c.grid;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(px, padT);
+        ctx.lineTo(px, h - padB);
+        ctx.stroke();
+
+        ctx.fillStyle = c.text;
+        ctx.fillText(x.toString(), px, h - padB + 5);
+    }
+
+    // Horizontal Grid Lines
+    const yStep = options.yStep || 2;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+
+    for (let y = Math.ceil(yMin / yStep) * yStep; y <= yMax; y += yStep) {
+        const py = toY(y);
+        ctx.strokeStyle = Math.abs(y) < 0.001 ? c.axisZero : c.grid;
+        ctx.lineWidth = Math.abs(y) < 0.001 ? 1.5 : 1;
+        ctx.beginPath();
+        ctx.moveTo(padL, py);
+        ctx.lineTo(w - padR, py);
+        ctx.stroke();
+
+        ctx.fillStyle = Math.abs(y) < 0.001 ? c.textStrong : c.text;
+        ctx.fillText(y.toString(), padL - 6, py);
+    }
+
+    // Outer Axes
+    ctx.strokeStyle = c.axis;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, h - padB);
+    ctx.lineTo(w - padR, h - padB);
+    ctx.stroke();
+
+    // Axis Labels
+    ctx.fillStyle = c.textStrong;
+    ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(xLabel, padL + plotW / 2, h - 8);
+
+    ctx.save();
+    ctx.translate(14, padT + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.fillText(yLabel, 0, 0);
+    ctx.restore();
+
+    return { toX, toY, padL, padR, padT, padB };
+}
+
+
+
+/* =====================================================================
+   SHUFFLE & RANDOMIZATION UTILITIES
+   ===================================================================== */
+function shuffleArray(arr) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+}
+
+
+function getDifferentRandomIndex(currentIdx, totalCount) {
+    if (totalCount <= 1) return 0;
+    let next = currentIdx;
+    let attempts = 0;
+    while (next === currentIdx && attempts < 20) {
+        next = Math.floor(Math.random() * totalCount);
+        attempts++;
+    }
+    return next;
+}
+
+function prepareShuffledQuestions(questions) {
+    return questions.map(q => {
+        const correctText = q.options[q.correct];
+        const shuffled = shuffleArray(q.options);
+        return {
+            ...q,
+            options: shuffled,
+            correct: shuffled.indexOf(correctText)
+        };
+    });
+}
+
+/* =====================================================================
+   PART 1: DATA VARIANTS & LOGIC (Distance vs. Position)
+   ===================================================================== */
+const P1_VARIANTS = [
+    {
+        id: 0,
+        scenarioText: "<strong>Scenario:</strong> A student starts at the classroom door (0 m). They walk <strong>6.0 m East</strong> in 3.0 s, stop for 2.0 s to check their phone, and then walk <strong>10.0 m West</strong> in 5.0 s past the door. Both graphs below represent this <em>exact same journey</em>.",
+        posData: [{ t: 0, pos: 0 }, { t: 3, pos: 6 }, { t: 5, pos: 6 }, { t: 10, pos: -4 }],
+        distData: [{ t: 0, dist: 0 }, { t: 3, dist: 6 }, { t: 5, dist: 6 }, { t: 10, dist: 16 }],
+        maxDist: 18,
+        yPosMin: -6,
+        yPosMax: 8,
+        flatT1: 3, flatT2: 5,
+        slopeDist: { t1: 0, d1: 0, t2: 3, d2: 6, runText: 'Run = 3.0 s', riseText: 'Rise = 6.0 m' },
+        slopePos: { t1: 5, d1: 6, t2: 10, d2: -4, runText: 'Run = 5.0 s', riseText: 'Rise = -10.0 m' },
+        questions: [
+            {
+                prompt: "Look closely at Graph A (Distance vs. Time). Notice that between t = 5.0 s and t = 10.0 s, the line slopes <strong>upward</strong>, while on Graph B (Position vs. Time) the line slopes <strong>downward</strong>. Why does Graph A never slope downward?",
+                options: [
+                    "Distance is a scalar that measures total accumulated path length, which can never decrease over time.",
+                    "Distance is measured relative to a fixed origin, so it resets to zero whenever the student changes direction.",
+                    "Distance only records movement in the forward direction, so backward movement is ignored on the graph.",
+                    "Distance-time slope represents acceleration, which remains positive whenever an object is in motion."
+                ],
+                correct: 0,
+                hint: "Think about an automobile's odometer. When a vehicle reverses, does the odometer subtract distance or keep accumulating kilometers?",
+                explanation: "<strong>Correct!</strong> Distance is like your car's odometer—every step you take adds to the total, even if you are walking backwards towards where you started. Therefore, distance can never decrease, and its graph <strong>never has a negative slope</strong>!",
+                highlightType: 'none'
+            },
+            {
+                prompt: "Between t = 3.0 s and t = 5.0 s, the line is completely <strong>horizontal (flat)</strong> on both graphs. What does a horizontal line mean on both distance-time and position-time graphs?",
+                options: [
+                    "The student is moving at a constant, non-zero speed in a straight line.",
+                    "The student is stationary (at rest), with both speed and velocity equal to zero.",
+                    "The student is undergoing constant acceleration in the positive East direction.",
+                    "The student has returned to the reference origin at the classroom door."
+                ],
+                correct: 1,
+                hint: "Slope equals Rise / Run. If a line is flat, the Rise (change in position) is 0 m over that time. What is their speed?",
+                explanation: "<strong>Correct!</strong> A horizontal line has a slope of zero (Rise = 0). Zero slope means speed = 0 m/s and velocity = 0 m/s. The student was stationary at 6.0 m for 2.0 seconds.",
+                highlightType: 'flat'
+            },
+            {
+                prompt: "At the end of the 10.0 s trip, what are the student's <strong>Total Distance Travelled</strong> and <strong>Net Displacement</strong>?",
+                options: [
+                    "Distance = 16.0 m; Displacement = +16.0 m (16.0 m East)",
+                    "Distance = 4.0 m; Displacement = -4.0 m (4.0 m West)",
+                    "Distance = 16.0 m; Displacement = -4.0 m (4.0 m West)",
+                    "Distance = 10.0 m; Displacement = +6.0 m (6.0 m East)"
+                ],
+                correct: 2,
+                hint: "Distance is total steps walked (6.0 m forward + 10.0 m back). Displacement is final position minus initial position (&minus;4.0 m &minus; 0 m).",
+                explanation: "<strong>Spot on!</strong><br>• <strong>Distance (Graph A):</strong> 6.0 m forward + 10.0 m back = <strong>16.0 m total</strong>.<br>• <strong>Displacement (Graph B):</strong> Final position minus initial position: &Delta;<span class=\"vec\">d</span> = &minus;4.0 m &minus; 0 m = <strong>&minus;4.0 m</strong> (or 4.0 m West).",
+                highlightType: 'none'
+            },
+            {
+                prompt: "Calculate the student's <strong>average speed</strong> during the first 3.0 seconds (between t = 0 s and t = 3.0 s) using the slope of Graph A: Slope = <span class=\"frac\"><span class=\"num\">Rise</span><span class=\"den\">Run</span></span>.",
+                options: [
+                    "0.50 m/s",
+                    "2.0 m/s",
+                    "6.0 m/s",
+                    "0.60 m/s"
+                ],
+                correct: 1,
+                hint: "Slope = Rise / Run. Look at Graph A: from t = 0 to 3.0 s, Rise = 6.0 m and Run = 3.0 s. Divide Rise by Run.",
+                explanation: "<strong>Correct!</strong><br>Speed = <span class=\"frac\"><span class=\"num\">&Delta;<i>d</i></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\">6.0 m &minus; 0 m</span><span class=\"den\">3.0 s &minus; 0 s</span></span> = <span class=\"frac\"><span class=\"num\">6.0 m</span><span class=\"den\">3.0 s</span></span> = <strong>2.0 m/s</strong>.",
+                highlightType: 'slope_dist'
+            },
+            {
+                prompt: "Calculate the student's <strong>average velocity</strong> during the return walk (between t = 5.0 s and t = 10.0 s) using the slope of Graph B: <span class=\"vec\">v</span> = <span class=\"frac\"><span class=\"num\">&Delta;<span class=\"vec\">d</span></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\"><span class=\"vec\">d</span><sub>2</sub> &minus; <span class=\"vec\">d</span><sub>1</sub></span><span class=\"den\"><i>t</i><sub>2</sub> &minus; <i>t</i><sub>1</sub></span></span>.",
+                options: [
+                    "+2.0 m/s (2.0 m/s East)",
+                    "-0.80 m/s (0.80 m/s West)",
+                    "-1.0 m/s (1.0 m/s West)",
+                    "-2.0 m/s (2.0 m/s West)"
+                ],
+                correct: 3,
+                hint: "Velocity is the slope of Graph B: (d2 - d1) / (t2 - t1) = (&minus;4.0 m &minus; 6.0 m) / (10.0 s &minus; 5.0 s). Pay close attention to the negative sign!",
+                explanation: "<strong>Outstanding!</strong><br><span class=\"vec\">v</span> = <span class=\"frac\"><span class=\"num\">&minus;4.0 m &minus; (+6.0 m)</span><span class=\"den\">10.0 s &minus; 5.0 s</span></span> = <span class=\"frac\"><span class=\"num\">&minus;10.0 m</span><span class=\"den\">5.0 s</span></span> = <strong>&minus;2.0 m/s</strong>.",
+                highlightType: 'slope_pos'
+            }
+        ]
+    },
+    {
+        id: 1,
+        scenarioText: "<strong>Scenario:</strong> A student starts at the classroom door (0 m). They walk <strong>8.0 m East</strong> in 4.0 s, stop for 2.0 s to check their phone, and then walk <strong>14.0 m West</strong> in 4.0 s past the door. Both graphs below represent this <em>exact same journey</em>.",
+        posData: [{ t: 0, pos: 0 }, { t: 4, pos: 8 }, { t: 6, pos: 8 }, { t: 10, pos: -6 }],
+        distData: [{ t: 0, dist: 0 }, { t: 4, dist: 8 }, { t: 6, dist: 8 }, { t: 10, dist: 22 }],
+        maxDist: 24,
+        yPosMin: -8,
+        yPosMax: 10,
+        flatT1: 4, flatT2: 6,
+        slopeDist: { t1: 0, d1: 0, t2: 4, d2: 8, runText: 'Run = 4.0 s', riseText: 'Rise = 8.0 m' },
+        slopePos: { t1: 6, d1: 8, t2: 10, d2: -6, runText: 'Run = 4.0 s', riseText: 'Rise = -14.0 m' },
+        questions: [
+            {
+                prompt: "Look closely at Graph A (Distance vs. Time). Notice that between t = 6.0 s and t = 10.0 s, the line slopes <strong>upward</strong>, while on Graph B (Position vs. Time) the line slopes <strong>downward</strong>. Why does Graph A never slope downward?",
+                options: [
+                    "Distance only records movement in the forward direction, so backward movement is ignored on the graph.",
+                    "Distance is a scalar that measures total accumulated path length, which can never decrease over time.",
+                    "Distance is measured relative to a fixed origin, so it resets to zero whenever the student changes direction.",
+                    "Distance-time slope represents acceleration, which remains positive whenever an object is in motion."
+                ],
+                correct: 1,
+                hint: "Think about an automobile's odometer. When a vehicle reverses, does the odometer subtract distance or keep accumulating kilometers?",
+                explanation: "<strong>Correct!</strong> Distance is like your car's odometer—every step you take adds to the total, even if you are walking backwards towards where you started. Therefore, distance can never decrease, and its graph <strong>never has a negative slope</strong>!",
+                highlightType: 'none'
+            },
+            {
+                prompt: "Between t = 4.0 s and t = 6.0 s, the line is completely <strong>horizontal (flat)</strong> on both graphs. What does a horizontal line mean on both distance-time and position-time graphs?",
+                options: [
+                    "The student is stationary (at rest), with both speed and velocity equal to zero.",
+                    "The student is moving at a constant, non-zero speed in a straight line.",
+                    "The student is undergoing constant acceleration in the positive East direction.",
+                    "The student has returned to the reference origin at the classroom door."
+                ],
+                correct: 0,
+                hint: "Slope equals Rise / Run. If a line is flat, the Rise (change in position) is 0 m over that time. What is their speed?",
+                explanation: "<strong>Correct!</strong> A horizontal line has a slope of zero (Rise = 0). Zero slope means speed = 0 m/s and velocity = 0 m/s. The student was stationary at 8.0 m for 2.0 seconds.",
+                highlightType: 'flat'
+            },
+            {
+                prompt: "At the end of the 10.0 s trip, what are the student's <strong>Total Distance Travelled</strong> and <strong>Net Displacement</strong>?",
+                options: [
+                    "Distance = 22.0 m; Displacement = +6.0 m (6.0 m East)",
+                    "Distance = 6.0 m; Displacement = -6.0 m (6.0 m West)",
+                    "Distance = 14.0 m; Displacement = +8.0 m (8.0 m East)",
+                    "Distance = 22.0 m; Displacement = -6.0 m (6.0 m West)"
+                ],
+                correct: 3,
+                hint: "Distance is total steps walked (8.0 m + 14.0 m = 22.0 m). Displacement is final position minus initial position (&minus;6.0 m &minus; 0 m = &minus;6.0 m).",
+                explanation: "<strong>Spot on!</strong><br>• <strong>Distance (Graph A):</strong> 8.0 m forward + 14.0 m back = <strong>22.0 m total</strong>.<br>• <strong>Displacement (Graph B):</strong> Final position minus initial position: &Delta;<span class=\"vec\">d</span> = &minus;6.0 m &minus; 0 m = <strong>&minus;6.0 m</strong> (or 6.0 m West).",
+                highlightType: 'none'
+            },
+            {
+                prompt: "Calculate the student's <strong>average speed</strong> during the first 4.0 seconds (between t = 0 s and t = 4.0 s) using the slope of Graph A: Slope = <span class=\"frac\"><span class=\"num\">Rise</span><span class=\"den\">Run</span></span>.",
+                options: [
+                    "0.50 m/s",
+                    "2.0 m/s",
+                    "8.0 m/s",
+                    "0.80 m/s"
+                ],
+                correct: 1,
+                hint: "Speed is the slope of Graph A: Rise / Run = 8.0 m / 4.0 s = 2.0 m/s.",
+                explanation: "<strong>Correct!</strong><br>Speed = <span class=\"frac\"><span class=\"num\">&Delta;<i>d</i></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\">8.0 m &minus; 0 m</span><span class=\"den\">4.0 s &minus; 0 s</span></span> = <strong>2.0 m/s</strong>.",
+                highlightType: 'slope_dist'
+            },
+            {
+                prompt: "Calculate the student's <strong>average velocity</strong> during the return walk (between t = 6.0 s and t = 10.0 s) using the slope of Graph B: <span class=\"vec\">v</span> = <span class=\"frac\"><span class=\"num\">&Delta;<span class=\"vec\">d</span></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\"><span class=\"vec\">d</span><sub>2</sub> &minus; <span class=\"vec\">d</span><sub>1</sub></span><span class=\"den\"><i>t</i><sub>2</sub> &minus; <i>t</i><sub>1</sub></span></span>.",
+                options: [
+                    "+3.5 m/s (3.5 m/s East)",
+                    "-3.5 m/s (3.5 m/s West)",
+                    "-1.5 m/s (1.5 m/s West)",
+                    "-0.60 m/s (0.60 m/s West)"
+                ],
+                correct: 1,
+                hint: "Velocity is the slope of Graph B: Rise / Run = (&minus;6.0 m &minus; 8.0 m) / (10.0 s &minus; 6.0 s) = &minus;14.0 m / 4.0 s.",
+                explanation: "<strong>Outstanding!</strong><br><span class=\"vec\">v</span> = <span class=\"frac\"><span class=\"num\">&minus;6.0 m &minus; (+8.0 m)</span><span class=\"den\">10.0 s &minus; 6.0 s</span></span> = <span class=\"frac\"><span class=\"num\">&minus;14.0 m</span><span class=\"den\">4.0 s</span></span> = <strong>&minus;3.5 m/s</strong>.",
+                highlightType: 'slope_pos'
+            }
+        ]
+    },
+    {
+        id: 2,
+        scenarioText: "<strong>Scenario:</strong> A student starts at the classroom door (0 m). They walk <strong>9.0 m East</strong> in 3.0 s, stop for 3.0 s to check their phone, and then walk <strong>12.0 m West</strong> in 4.0 s past the door. Both graphs below represent this <em>exact same journey</em>.",
+        posData: [{ t: 0, pos: 0 }, { t: 3, pos: 9 }, { t: 6, pos: 9 }, { t: 10, pos: -3 }],
+        distData: [{ t: 0, dist: 0 }, { t: 3, dist: 9 }, { t: 6, dist: 9 }, { t: 10, dist: 21 }],
+        maxDist: 24,
+        yPosMin: -6,
+        yPosMax: 12,
+        flatT1: 3, flatT2: 6,
+        slopeDist: { t1: 0, d1: 0, t2: 3, d2: 9, runText: 'Run = 3.0 s', riseText: 'Rise = 9.0 m' },
+        slopePos: { t1: 6, d1: 9, t2: 10, d2: -3, runText: 'Run = 4.0 s', riseText: 'Rise = -12.0 m' },
+        questions: [
+            {
+                prompt: "Look closely at Graph A (Distance vs. Time). Notice that between t = 6.0 s and t = 10.0 s, the line slopes <strong>upward</strong>, while on Graph B (Position vs. Time) the line slopes <strong>downward</strong>. Why does Graph A never slope downward?",
+                options: [
+                    "Distance is a scalar that measures total accumulated path length, which can never decrease over time.",
+                    "Distance-time slope represents acceleration, which remains positive whenever an object is in motion.",
+                    "Distance is measured relative to a fixed origin, so it resets to zero whenever the student changes direction.",
+                    "Distance only records movement in the forward direction, so backward movement is ignored on the graph."
+                ],
+                correct: 0,
+                hint: "Think about an automobile's odometer. When a vehicle reverses, does the odometer subtract distance or keep accumulating kilometers?",
+                explanation: "<strong>Correct!</strong> Distance is like your car's odometer—every step you take adds to the total, even if you are walking backwards towards where you started. Therefore, distance can never decrease, and its graph <strong>never has a negative slope</strong>!",
+                highlightType: 'none'
+            },
+            {
+                prompt: "Between t = 3.0 s and t = 6.0 s, the line is completely <strong>horizontal (flat)</strong> on both graphs. What does a horizontal line mean on both distance-time and position-time graphs?",
+                options: [
+                    "The student is moving at a constant, non-zero speed in a straight line.",
+                    "The student is undergoing constant acceleration in the positive East direction.",
+                    "The student is stationary (at rest), with both speed and velocity equal to zero.",
+                    "The student has returned to the reference origin at the classroom door."
+                ],
+                correct: 2,
+                hint: "Slope equals Rise / Run. If a line is flat, the Rise (change in position) is 0 m over that time. What is their speed?",
+                explanation: "<strong>Correct!</strong> A horizontal line has a slope of zero (Rise = 0). Zero slope means speed = 0 m/s and velocity = 0 m/s. The student was stationary at 9.0 m for 3.0 seconds.",
+                highlightType: 'flat'
+            },
+            {
+                prompt: "At the end of the 10.0 s trip, what are the student's <strong>Total Distance Travelled</strong> and <strong>Net Displacement</strong>?",
+                options: [
+                    "Distance = 21.0 m; Displacement = -3.0 m (3.0 m West)",
+                    "Distance = 21.0 m; Displacement = +3.0 m (3.0 m East)",
+                    "Distance = 3.0 m; Displacement = -3.0 m (3.0 m West)",
+                    "Distance = 12.0 m; Displacement = +9.0 m (9.0 m East)"
+                ],
+                correct: 0,
+                hint: "Distance is total steps walked (9.0 m + 12.0 m = 21.0 m). Displacement is final position minus initial position (&minus;3.0 m &minus; 0 m = &minus;3.0 m).",
+                explanation: "<strong>Spot on!</strong><br>• <strong>Distance (Graph A):</strong> 9.0 m forward + 12.0 m back = <strong>21.0 m total</strong>.<br>• <strong>Displacement (Graph B):</strong> Final position minus initial position: &Delta;<span class=\"vec\">d</span> = &minus;3.0 m &minus; 0 m = <strong>&minus;3.0 m</strong> (or 3.0 m West).",
+                highlightType: 'none'
+            },
+            {
+                prompt: "Calculate the student's <strong>average speed</strong> during the first 3.0 seconds (between t = 0 s and t = 3.0 s) using the slope of Graph A: Slope = <span class=\"frac\"><span class=\"num\">Rise</span><span class=\"den\">Run</span></span>.",
+                options: [
+                    "0.33 m/s",
+                    "9.0 m/s",
+                    "3.0 m/s",
+                    "0.90 m/s"
+                ],
+                correct: 2,
+                hint: "Speed is the slope of Graph A: Rise / Run = 9.0 m / 3.0 s = 3.0 m/s.",
+                explanation: "<strong>Correct!</strong><br>Speed = <span class=\"frac\"><span class=\"num\">&Delta;<i>d</i></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\">9.0 m &minus; 0 m</span><span class=\"den\">3.0 s &minus; 0 s</span></span> = <strong>3.0 m/s</strong>.",
+                highlightType: 'slope_dist'
+            },
+            {
+                prompt: "Calculate the student's <strong>average velocity</strong> during the return walk (between t = 6.0 s and t = 10.0 s) using the slope of Graph B: <span class=\"vec\">v</span> = <span class=\"frac\"><span class=\"num\">&Delta;<span class=\"vec\">d</span></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\"><span class=\"vec\">d</span><sub>2</sub> &minus; <span class=\"vec\">d</span><sub>1</sub></span><span class=\"den\"><i>t</i><sub>2</sub> &minus; <i>t</i><sub>1</sub></span></span>.",
+                options: [
+                    "-3.0 m/s (3.0 m/s West)",
+                    "+3.0 m/s (3.0 m/s East)",
+                    "-0.75 m/s (0.75 m/s West)",
+                    "-1.2 m/s (1.2 m/s West)"
+                ],
+                correct: 0,
+                hint: "Velocity is the slope of Graph B: Rise / Run = (&minus;3.0 m &minus; 9.0 m) / (10.0 s &minus; 6.0 s) = &minus;12.0 m / 4.0 s.",
+                explanation: "<strong>Outstanding!</strong><br><span class=\"vec\">v</span> = <span class=\"frac\"><span class=\"num\">&minus;3.0 m &minus; (+9.0 m)</span><span class=\"den\">10.0 s &minus; 6.0 s</span></span> = <strong>&minus;3.0 m/s</strong>.",
+                highlightType: 'slope_pos'
+            }
+        ]
+    },
+    {
+        id: 3,
+        scenarioText: "<strong>Scenario:</strong> A student starts at the classroom door (0 m). They walk <strong>10.0 m East</strong> in 5.0 s, stop for 2.0 s to check their phone, and then walk <strong>15.0 m West</strong> in 3.0 s past the door. Both graphs below represent this <em>exact same journey</em>.",
+        posData: [{ t: 0, pos: 0 }, { t: 5, pos: 10 }, { t: 7, pos: 10 }, { t: 10, pos: -5 }],
+        distData: [{ t: 0, dist: 0 }, { t: 5, dist: 10 }, { t: 7, dist: 10 }, { t: 10, dist: 25 }],
+        maxDist: 28,
+        yPosMin: -8,
+        yPosMax: 12,
+        flatT1: 5, flatT2: 7,
+        slopeDist: { t1: 0, d1: 0, t2: 5, d2: 10, runText: 'Run = 5.0 s', riseText: 'Rise = 10.0 m' },
+        slopePos: { t1: 7, d1: 10, t2: 10, d2: -5, runText: 'Run = 3.0 s', riseText: 'Rise = -15.0 m' },
+        questions: [
+            {
+                prompt: "Look closely at Graph A (Distance vs. Time). Notice that between t = 7.0 s and t = 10.0 s, the line slopes <strong>upward</strong>, while on Graph B (Position vs. Time) the line slopes <strong>downward</strong>. Why does Graph A never slope downward?",
+                options: [
+                    "Distance is a scalar that measures total accumulated path length, which can never decrease over time.",
+                    "Distance is measured relative to a fixed origin, so it resets to zero whenever the student changes direction.",
+                    "Distance only records movement in the forward direction, so backward movement is ignored on the graph.",
+                    "Distance-time slope represents acceleration, which remains positive whenever an object is in motion."
+                ],
+                correct: 0,
+                hint: "Think about an automobile's odometer. When a vehicle reverses, does the odometer subtract distance or keep accumulating kilometers?",
+                explanation: "<strong>Correct!</strong> Distance is like your car's odometer—every step you take adds to the total, even if you are walking backwards towards where you started. Therefore, distance can never decrease, and its graph <strong>never has a negative slope</strong>!",
+                highlightType: 'none'
+            },
+            {
+                prompt: "Between t = 5.0 s and t = 7.0 s, the line is completely <strong>horizontal (flat)</strong> on both graphs. What does a horizontal line mean on both distance-time and position-time graphs?",
+                options: [
+                    "The student is moving at a constant, non-zero speed in a straight line.",
+                    "The student is stationary (at rest), with both speed and velocity equal to zero.",
+                    "The student is undergoing constant acceleration in the positive East direction.",
+                    "The student has returned to the reference origin at the classroom door."
+                ],
+                correct: 1,
+                hint: "Slope equals Rise / Run. If a line is flat, the Rise (change in position) is 0 m over that time. What is their speed?",
+                explanation: "<strong>Correct!</strong> A horizontal line has a slope of zero (Rise = 0). Zero slope means speed = 0 m/s and velocity = 0 m/s. The student was stationary at 10.0 m for 2.0 seconds.",
+                highlightType: 'flat'
+            },
+            {
+                prompt: "At the end of the 10.0 s trip, what are the student's <strong>Total Distance Travelled</strong> and <strong>Net Displacement</strong>?",
+                options: [
+                    "Distance = 25.0 m; Displacement = +10.0 m (10.0 m East)",
+                    "Distance = 5.0 m; Displacement = -5.0 m (5.0 m West)",
+                    "Distance = 25.0 m; Displacement = -5.0 m (5.0 m West)",
+                    "Distance = 15.0 m; Displacement = +5.0 m (5.0 m East)"
+                ],
+                correct: 2,
+                hint: "Distance is total steps walked (10.0 m forward + 15.0 m back = 25.0 m). Displacement is final position minus initial position (&minus;5.0 m &minus; 0 m = &minus;5.0 m).",
+                explanation: "<strong>Spot on!</strong><br>• <strong>Distance (Graph A):</strong> 10.0 m forward + 15.0 m back = <strong>25.0 m total</strong>.<br>• <strong>Displacement (Graph B):</strong> Final position minus initial position: &Delta;<span class=\"vec\">d</span> = &minus;5.0 m &minus; 0 m = <strong>&minus;5.0 m</strong> (or 5.0 m West).",
+                highlightType: 'none'
+            },
+            {
+                prompt: "Calculate the student's <strong>average speed</strong> during the first 5.0 seconds (between t = 0 s and t = 5.0 s) using the slope of Graph A: Slope = <span class=\"frac\"><span class=\"num\">Rise</span><span class=\"den\">Run</span></span>.",
+                options: [
+                    "0.50 m/s",
+                    "2.0 m/s",
+                    "10.0 m/s",
+                    "0.20 m/s"
+                ],
+                correct: 1,
+                hint: "Speed is the slope of Graph A: Rise / Run = 10.0 m / 5.0 s. Divide 10.0 by 5.0.",
+                explanation: "<strong>Correct!</strong><br>Speed = <span class=\"frac\"><span class=\"num\">&Delta;<i>d</i></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\">10.0 m &minus; 0 m</span><span class=\"den\">5.0 s &minus; 0 s</span></span> = <strong>2.0 m/s</strong>.",
+                highlightType: 'slope_dist'
+            },
+            {
+                prompt: "Calculate the student's <strong>average velocity</strong> during the return walk (between t = 7.0 s and t = 10.0 s) using the slope of Graph B: <span class=\"vec\">v</span> = <span class=\"frac\"><span class=\"num\">&Delta;<span class=\"vec\">d</span></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\"><span class=\"vec\">d</span><sub>2</sub> &minus; <span class=\"vec\">d</span><sub>1</sub></span><span class=\"den\"><i>t</i><sub>2</sub> &minus; <i>t</i><sub>1</sub></span></span>.",
+                options: [
+                    "+5.0 m/s (5.0 m/s East)",
+                    "-0.60 m/s (0.60 m/s West)",
+                    "-3.0 m/s (3.0 m/s West)",
+                    "-5.0 m/s (5.0 m/s West)"
+                ],
+                correct: 3,
+                hint: "Velocity is the slope of Graph B: Rise / Run = (&minus;5.0 m &minus; 10.0 m) / (10.0 s &minus; 7.0 s) = &minus;15.0 m / 3.0 s.",
+                explanation: "<strong>Outstanding!</strong><br><span class=\"vec\">v</span> = <span class=\"frac\"><span class=\"num\">&minus;5.0 m &minus; (+10.0 m)</span><span class=\"den\">10.0 s &minus; 7.0 s</span></span> = <span class=\"frac\"><span class=\"num\">&minus;15.0 m</span><span class=\"den\">3.0 s</span></span> = <strong>&minus;5.0 m/s</strong>.",
+                highlightType: 'slope_pos'
+            }
+        ]
+    },
+    {
+        id: 4,
+        scenarioText: "<strong>Scenario:</strong> A student starts at the classroom door (0 m). They walk <strong>12.0 m East</strong> in 4.0 s, stop for 2.0 s to check their phone, and then walk <strong>14.0 m West</strong> in 4.0 s past the door. Both graphs below represent this <em>exact same journey</em>.",
+        posData: [{ t: 0, pos: 0 }, { t: 4, pos: 12 }, { t: 6, pos: 12 }, { t: 10, pos: -2 }],
+        distData: [{ t: 0, dist: 0 }, { t: 4, dist: 12 }, { t: 6, dist: 12 }, { t: 10, dist: 26 }],
+        maxDist: 30,
+        yPosMin: -6,
+        yPosMax: 14,
+        flatT1: 4, flatT2: 6,
+        slopeDist: { t1: 0, d1: 0, t2: 4, d2: 12, runText: 'Run = 4.0 s', riseText: 'Rise = 12.0 m' },
+        slopePos: { t1: 6, d1: 12, t2: 10, d2: -2, runText: 'Run = 4.0 s', riseText: 'Rise = -14.0 m' },
+        questions: [
+            {
+                prompt: "Look closely at Graph A (Distance vs. Time). Notice that between t = 6.0 s and t = 10.0 s, the line slopes <strong>upward</strong>, while on Graph B (Position vs. Time) the line slopes <strong>downward</strong>. Why does Graph A never slope downward?",
+                options: [
+                    "Distance only records movement in the forward direction, so backward movement is ignored on the graph.",
+                    "Distance is a scalar that measures total accumulated path length, which can never decrease over time.",
+                    "Distance is measured relative to a fixed origin, so it resets to zero whenever the student changes direction.",
+                    "Distance-time slope represents acceleration, which remains positive whenever an object is in motion."
+                ],
+                correct: 1,
+                hint: "Think about an automobile's odometer. When a vehicle reverses, does the odometer subtract distance or keep accumulating kilometers?",
+                explanation: "<strong>Correct!</strong> Distance is like your car's odometer—every step you take adds to the total, even if you are walking backwards towards where you started. Therefore, distance can never decrease, and its graph <strong>never has a negative slope</strong>!",
+                highlightType: 'none'
+            },
+            {
+                prompt: "Between t = 4.0 s and t = 6.0 s, the line is completely <strong>horizontal (flat)</strong> on both graphs. What does a horizontal line mean on both distance-time and position-time graphs?",
+                options: [
+                    "The student is stationary (at rest), with both speed and velocity equal to zero.",
+                    "The student is moving at a constant, non-zero speed in a straight line.",
+                    "The student is undergoing constant acceleration in the positive East direction.",
+                    "The student has returned to the reference origin at the classroom door."
+                ],
+                correct: 0,
+                hint: "Slope equals Rise / Run. If a line is flat, the Rise (change in position) is 0 m over that time. What is their speed?",
+                explanation: "<strong>Correct!</strong> A horizontal line has a slope of zero (Rise = 0). Zero slope means speed = 0 m/s and velocity = 0 m/s. The student was stationary at 12.0 m for 2.0 seconds.",
+                highlightType: 'flat'
+            },
+            {
+                prompt: "At the end of the 10.0 s trip, what are the student's <strong>Total Distance Travelled</strong> and <strong>Net Displacement</strong>?",
+                options: [
+                    "Distance = 26.0 m; Displacement = +12.0 m (12.0 m East)",
+                    "Distance = 2.0 m; Displacement = -2.0 m (2.0 m West)",
+                    "Distance = 14.0 m; Displacement = -12.0 m (12.0 m West)",
+                    "Distance = 26.0 m; Displacement = -2.0 m (2.0 m West)"
+                ],
+                correct: 3,
+                hint: "Distance is total steps walked (12.0 m + 14.0 m = 26.0 m). Displacement is final position minus initial position (&minus;2.0 m &minus; 0 m = &minus;2.0 m).",
+                explanation: "<strong>Spot on!</strong><br>• <strong>Distance (Graph A):</strong> 12.0 m forward + 14.0 m back = <strong>26.0 m total</strong>.<br>• <strong>Displacement (Graph B):</strong> Final position minus initial position: &Delta;<span class=\"vec\">d</span> = &minus;2.0 m &minus; 0 m = <strong>&minus;2.0 m</strong> (or 2.0 m West).",
+                highlightType: 'none'
+            },
+            {
+                prompt: "Calculate the student's <strong>average speed</strong> during the first 4.0 seconds (between t = 0 s and t = 4.0 s) using the slope of Graph A: Slope = <span class=\"frac\"><span class=\"num\">Rise</span><span class=\"den\">Run</span></span>.",
+                options: [
+                    "0.33 m/s",
+                    "3.0 m/s",
+                    "12.0 m/s",
+                    "0.75 m/s"
+                ],
+                correct: 1,
+                hint: "Speed is the slope of Graph A: Rise / Run = 12.0 m / 4.0 s. Divide 12.0 by 4.0.",
+                explanation: "<strong>Correct!</strong><br>Speed = <span class=\"frac\"><span class=\"num\">&Delta;<i>d</i></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\">12.0 m &minus; 0 m</span><span class=\"den\">4.0 s &minus; 0 s</span></span> = <strong>3.0 m/s</strong>.",
+                highlightType: 'slope_dist'
+            },
+            {
+                prompt: "Calculate the student's <strong>average velocity</strong> during the return walk (between t = 6.0 s and t = 10.0 s) using the slope of Graph B: <span class=\"vec\">v</span> = <span class=\"frac\"><span class=\"num\">&Delta;<span class=\"vec\">d</span></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\"><span class=\"vec\">d</span><sub>2</sub> &minus; <span class=\"vec\">d</span><sub>1</sub></span><span class=\"den\"><i>t</i><sub>2</sub> &minus; <i>t</i><sub>1</sub></span></span>.",
+                options: [
+                    "+3.5 m/s (3.5 m/s East)",
+                    "-3.5 m/s (3.5 m/s West)",
+                    "-1.4 m/s (1.4 m/s West)",
+                    "-0.70 m/s (0.70 m/s West)"
+                ],
+                correct: 1,
+                hint: "Velocity is the slope of Graph B: Rise / Run = (&minus;2.0 m &minus; 12.0 m) / (10.0 s &minus; 6.0 s) = &minus;14.0 m / 4.0 s.",
+                explanation: "<strong>Outstanding!</strong><br><span class=\"vec\">v</span> = <span class=\"frac\"><span class=\"num\">&minus;2.0 m &minus; (+12.0 m)</span><span class=\"den\">10.0 s &minus; 6.0 s</span></span> = <span class=\"frac\"><span class=\"num\">&minus;14.0 m</span><span class=\"den\">4.0 s</span></span> = <strong>&minus;3.5 m/s</strong>.",
+                highlightType: 'slope_pos'
+            }
+        ]
+    }
+
+];
+
+let p1VariantIdx = 0;
+let p1ActiveQuestions = [];
+let p1CurrentQ = 0;
+let p1Answers = {};
+let p1HasMistake = false;
+
+function initP1() {
+    p1VariantIdx = Math.floor(Math.random() * P1_VARIANTS.length);
+    p1ActiveQuestions = prepareShuffledQuestions(P1_VARIANTS[p1VariantIdx].questions);
+    p1CurrentQ = 0;
+    p1Answers = {};
+    p1HasMistake = false;
+    document.getElementById('p1-intro-box').innerHTML = P1_VARIANTS[p1VariantIdx].scenarioText;
+    updateP1MasteryBadge();
+    renderP1Pills();
+    loadP1Question(0);
+    renderP1Graphs();
+}
+
+function updateP1MasteryBadge() {
+    const banner = document.getElementById('p1-mastery-banner');
+    const total = P1_VARIANTS[p1VariantIdx].questions.length;
+    const correctCount = Object.values(p1Answers).filter(Boolean).length;
+    if (p1HasMistake) {
+        banner.className = 'mastery-indicator error';
+        banner.innerHTML = `⚠️ Mastery Attempt Failed: <strong>${correctCount} / ${total} Correct</strong> (New graph required to unlock Part 2)`;
+    } else if (PROGRESS.p1Completed) {
+        banner.className = 'mastery-indicator';
+        banner.style.background = '#dcfce7';
+        banner.style.color = '#15803d';
+        banner.style.borderColor = '#15803d';
+        banner.innerHTML = `✅ Section Mastered: <strong>${total} / ${total} (100%)</strong> • Part 2 is Unlocked!`;
+    } else {
+        banner.className = 'mastery-indicator';
+        banner.style.background = '';
+        banner.style.color = '';
+        banner.style.borderColor = '';
+        banner.innerHTML = `🎯 Section Mastery: <strong>${correctCount} / ${total} Correct</strong> (${total}/${total} needed to unlock Part 2)`;
+    }
+}
+
+function renderP1Pills() {
+    const container = document.getElementById('p1-pills');
+    container.innerHTML = '';
+    const questions = p1ActiveQuestions;
+    questions.forEach((_, idx) => {
+        const pill = document.createElement('button');
+        pill.className = 'q-pill' + (idx === p1CurrentQ ? ' active' : '');
+        if (p1Answers[idx] !== undefined) {
+            pill.classList.add(p1Answers[idx] ? 'answered-correct' : 'answered-wrong');
+        }
+        pill.textContent = (idx + 1).toString();
+        pill.onclick = () => loadP1Question(idx);
+        container.appendChild(pill);
+    });
+}
+
+function loadP1Question(idx) {
+    p1CurrentQ = idx;
+    const variant = P1_VARIANTS[p1VariantIdx];
+    const q = p1ActiveQuestions[idx];
+
+    document.getElementById('p1-counter').textContent = `Question ${idx + 1} of ${variant.questions.length}`;
+    document.getElementById('p1-prompt').innerHTML = q.prompt;
+
+    const optContainer = document.getElementById('p1-options');
+    optContainer.innerHTML = '';
+
+    const isAnswered = p1Answers[idx] !== undefined;
+
+    q.options.forEach((opt, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<span class="option-letter">${String.fromCharCode(65 + optIdx)}.</span> <span>${opt}</span>`;
+        if (isAnswered) {
+            btn.disabled = true;
+            if (p1Answers[idx] === true && optIdx === q.correct) {
+                btn.classList.add('selected-correct');
+            }
+        } else {
+            btn.onclick = () => answerP1(optIdx);
+        }
+        optContainer.appendChild(btn);
+    });
+
+    const fb = document.getElementById('p1-feedback');
+    fb.style.display = isAnswered ? 'block' : 'none';
+
+    document.getElementById('p1-prev-btn').disabled = (idx === 0);
+    const nextBtn = document.getElementById('p1-next-btn');
+
+    if (idx === variant.questions.length - 1) {
+        if (PROGRESS.p1Completed) {
+            nextBtn.disabled = false;
+            nextBtn.innerHTML = 'Advance to Part 2: Velocity & Area 🚀 →';
+            nextBtn.classList.add('btn-advance');
+        } else if (p1HasMistake) {
+            nextBtn.disabled = true;
+            nextBtn.innerHTML = '5/5 Required (Restart Below)';
+            nextBtn.classList.remove('btn-advance');
+        } else {
+            nextBtn.disabled = false;
+            nextBtn.innerHTML = 'Advance to Part 2: Velocity & Area 🚀 →';
+            nextBtn.classList.add('btn-advance');
+        }
+    } else {
+        nextBtn.disabled = false;
+        nextBtn.innerHTML = 'Next Question →';
+        nextBtn.classList.remove('btn-advance');
+    }
+
+    renderP1Pills();
+    renderP1Graphs();
+    updateP1MasteryBadge();
+}
+
+function answerP1(optIdx) {
+    const variant = P1_VARIANTS[p1VariantIdx];
+    const q = p1ActiveQuestions[p1CurrentQ];
+    const isCorrect = (optIdx === q.correct);
+
+    p1Answers[p1CurrentQ] = isCorrect;
+    if (!isCorrect) {
+        p1HasMistake = true;
+    }
+
+    const buttons = document.querySelectorAll('#p1-options .option-btn');
+    buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === optIdx) {
+            btn.classList.add(isCorrect ? 'selected-correct' : 'selected-wrong');
+        }
+    });
+
+    const fb = document.getElementById('p1-feedback');
+    fb.style.display = 'block';
+
+    if (isCorrect) {
+        fb.className = 'feedback-box feedback-correct';
+        const isLast = (p1CurrentQ === variant.questions.length - 1);
+        const correctCount = Object.values(p1Answers).filter(Boolean).length;
+        let advanceHtml = '';
+
+        if (isLast && correctCount === variant.questions.length && !p1HasMistake) {
+            PROGRESS.p1Completed = true;
+            PROGRESS.p2Unlocked = true;
+            updateLockUI();
+            if (CURRENT_STUDENT) {
+                CURRENT_STUDENT.p1Mastered = true;
+                if (!CURRENT_STUDENT.p2Attempts) CURRENT_STUDENT.p2Attempts = 1;
+                CURRENT_STUDENT.status = 'Part 1 Mastered';
+                syncActiveStudent();
+            }
+            advanceHtml = `
+                <div style="margin-top: 0.85rem; padding-top: 0.65rem; border-top: 1px dashed currentColor;">
+                    <div style="font-weight: 800; color: #15803d; margin-bottom: 0.35rem;">🎉 5/5 Perfect Score! Part 1 Mastered!</div>
+                    <button class="action-btn btn-advance" onclick="switchSection('part2'); window.scrollTo({ top: 0, behavior: 'smooth' });">
+                        Part 2 Unlocked! Advance to Velocity & Area 🚀 →
+                    </button>
+                </div>
+            `;
+        }
+
+        fb.innerHTML = `
+            <div class="feedback-title">✅ Excellent!</div>
+            <div>${q.explanation}</div>
+            ${advanceHtml}
+        `;
+    } else {
+        fb.className = 'feedback-box feedback-wrong';
+        fb.innerHTML = `
+            <div class="feedback-title">❌ Incorrect Answer</div>
+            <div style="margin-bottom: 0.5rem; line-height: 1.45;">${q.hint}</div>
+            <div class="retry-card">
+                <div style="font-weight: 700; margin-bottom: 0.25rem; color: var(--accent-rose);">⚠️ 5/5 Required to Unlock Part 2</div>
+                <p style="font-size: 0.84rem; margin-bottom: 0.65rem; color: var(--text-main);">
+                    To advance to Part 2, Alberta Physics 20 requires 100% mastery. Click below to load a fresh graph with new numbers and try again!
+                </p>
+                <button class="action-btn btn-advance" style="background: var(--accent-rose);" onclick="resetPart1WithNewGraph()">
+                    🔄 Load New Graph & Try Again
+                </button>
+            </div>
+        `;
+    }
+
+    updateP1MasteryBadge();
+    renderP1Pills();
+    renderP1Graphs();
+
+    const nextBtn = document.getElementById('p1-next-btn');
+    if (p1CurrentQ === variant.questions.length - 1) {
+        if (PROGRESS.p1Completed) {
+            nextBtn.disabled = false;
+            nextBtn.innerHTML = 'Advance to Part 2: Velocity & Area 🚀 →';
+            nextBtn.classList.add('btn-advance');
+        } else if (p1HasMistake) {
+            nextBtn.disabled = true;
+            nextBtn.innerHTML = '5/5 Required (Restart Below)';
+            nextBtn.classList.remove('btn-advance');
+        }
+    }
+}
+
+function resetPart1WithNewGraph() {
+    p1VariantIdx = getDifferentRandomIndex(p1VariantIdx, P1_VARIANTS.length);
+    const variant = P1_VARIANTS[p1VariantIdx];
+    p1ActiveQuestions = prepareShuffledQuestions(variant.questions);
+    document.getElementById('p1-intro-box').innerHTML = variant.scenarioText;
+    p1CurrentQ = 0;
+    p1Answers = {};
+    p1HasMistake = false;
+
+    if (CURRENT_STUDENT) {
+        CURRENT_STUDENT.p1Attempts = (CURRENT_STUDENT.p1Attempts || 1) + 1;
+        CURRENT_STUDENT.totalAttempts = (CURRENT_STUDENT.totalAttempts || 1) + 1;
+        syncActiveStudent();
+    }
+    updateP1MasteryBadge();
+    renderP1Pills();
+    loadP1Question(0);
+    renderP1Graphs();
+    showToast('📈 New graph loaded with randomized answers!');
+}
+
+function prevP1() {
+    if (p1CurrentQ > 0) loadP1Question(p1CurrentQ - 1);
+}
+
+function nextP1() {
+    const variant = P1_VARIANTS[p1VariantIdx];
+    if (p1CurrentQ < variant.questions.length - 1) {
+        loadP1Question(p1CurrentQ + 1);
+    } else {
+        if (PROGRESS.p1Completed) {
+            switchSection('part2');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            showToast('⚠️ 5/5 score required to unlock Part 2. Click "Load New Graph & Try Again"');
+        }
+    }
+}
+
+function renderP1Graphs() {
+    const variant = P1_VARIANTS[p1VariantIdx];
+    const q = p1ActiveQuestions[p1CurrentQ];
+    const highlight = q ? q.highlightType : 'none';
+
+    // Render Graph A: Distance-Time
+    const cDist = document.getElementById('canvas-m1-dist');
+    if (cDist) {
+        const { ctx, w, h } = initCanvas(cDist);
+        const col = getColors();
+        const { toX, toY } = drawGrid(ctx, w, h, 0, 10, 0, variant.maxDist, 'Time t (s)', 'Distance d (m)', {
+            xStep: 1,
+            yStep: 4
+        });
+
+        // Line
+        ctx.strokeStyle = col.dist;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        variant.distData.forEach((pt, i) => {
+            const x = toX(pt.t);
+            const y = toY(pt.dist);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // Dots
+        variant.distData.forEach(pt => {
+            ctx.fillStyle = col.dist;
+            ctx.beginPath();
+            ctx.arc(toX(pt.t), toY(pt.dist), 4.5, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // Slope triangle highlight
+        if (highlight === 'slope_dist') {
+            const s = variant.slopeDist;
+            const x1 = toX(s.t1), y1 = toY(s.d1);
+            const x2 = toX(s.t2), y2 = toY(s.d2);
+
+            ctx.strokeStyle = col.vel;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y1);
+            ctx.stroke();
+
+            ctx.strokeStyle = col.rose;
+            ctx.beginPath();
+            ctx.moveTo(x2, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillStyle = col.vel;
+            ctx.textAlign = 'center';
+            ctx.fillText(s.runText, (x1 + x2) / 2, y1 + 14);
+
+            ctx.fillStyle = col.rose;
+            ctx.textAlign = 'left';
+            ctx.fillText(s.riseText, x2 + 6, (y1 + y2) / 2);
+        } else if (highlight === 'flat') {
+            ctx.fillStyle = 'rgba(217, 119, 6, 0.2)';
+            ctx.fillRect(toX(variant.flatT1), toY(variant.maxDist), toX(variant.flatT2) - toX(variant.flatT1), toY(0) - toY(variant.maxDist));
+        }
+    }
+
+    // Render Graph B: Position-Time
+    const cPos = document.getElementById('canvas-m1-pos');
+    if (cPos) {
+        const { ctx, w, h } = initCanvas(cPos);
+        const col = getColors();
+        const { toX, toY } = drawGrid(ctx, w, h, 0, 10, variant.yPosMin, variant.yPosMax, 'Time t (s)', 'Position d⃗ (m)', {
+            xStep: 1,
+            yStep: 2
+        });
+
+        // Line
+        ctx.strokeStyle = col.pos;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        variant.posData.forEach((pt, i) => {
+            const x = toX(pt.t);
+            const y = toY(pt.pos);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // Dots
+        variant.posData.forEach(pt => {
+            ctx.fillStyle = col.pos;
+            ctx.beginPath();
+            ctx.arc(toX(pt.t), toY(pt.pos), 4.5, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // Slope triangle highlight
+        if (highlight === 'slope_pos') {
+            const s = variant.slopePos;
+            const x1 = toX(s.t1), y1 = toY(s.d1);
+            const x2 = toX(s.t2), y2 = toY(s.d2);
+
+            ctx.strokeStyle = col.vel;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y1);
+            ctx.stroke();
+
+            ctx.strokeStyle = col.rose;
+            ctx.beginPath();
+            ctx.moveTo(x2, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillStyle = col.vel;
+            ctx.textAlign = 'center';
+            ctx.fillText(s.runText, (x1 + x2) / 2, y1 + 14);
+
+            ctx.fillStyle = col.rose;
+            ctx.textAlign = 'left';
+            ctx.fillText(s.riseText, x2 + 6, (y1 + y2) / 2);
+        } else if (highlight === 'flat') {
+            ctx.fillStyle = 'rgba(2, 132, 199, 0.2)';
+            ctx.fillRect(toX(variant.flatT1), toY(variant.yPosMax), toX(variant.flatT2) - toX(variant.flatT1), toY(variant.yPosMin) - toY(variant.yPosMax));
+        }
+    }
+}
+
+
+/* =====================================================================
+   PART 2: DATA VARIANTS & LOGIC (Velocity vs. Time, Slope & Area)
+   ===================================================================== */
+const P2_VARIANTS = [
+    {
+        id: 0,
+        scenarioText: "<strong>Scenario:</strong> A toy car moves in a straight line East (+) and West (-). Its motion is tracked on the <strong>Velocity vs. Time graph</strong> below. We will use the graph's <strong>slope</strong> to find acceleration and its <strong>shaded geometric area</strong> to find displacement.",
+        velData: [{ t: 0, v: 8 }, { t: 4, v: 0 }, { t: 6, v: -4 }, { t: 10, v: -4 }],
+        yMin: -6, yMax: 10,
+        turnaroundT: 4,
+        slopeT1: 0, slopeV1: 8, slopeT2: 4, slopeV2: 0,
+        triPos: { t1: 0, t2: 4, v: 8, label: 'Area = +16.0 m' },
+        triNeg: { t1: 4, t2: 6, v: -4, label: '-4.0 m' },
+        rectNeg: { t1: 6, t2: 10, v: -4, label: '-16.0 m' },
+        questions: [
+            {
+                prompt: "Look at the point where the green line crosses the horizontal time axis at <strong>t = 4.0 s (v = 0 m/s)</strong>. What is the car physically doing at this exact moment?",
+                options: [
+                    "It has returned to its initial starting location at the reference origin.",
+                    "Its acceleration has dropped to zero while continuing at steady speed.",
+                    "It has stopped momentarily and is reversing its direction of motion.",
+                    "It has reached its maximum velocity in the positive East direction."
+                ],
+                correct: 2,
+                hint: "Velocity is speed with direction. When velocity crosses 0 m/s from positive to negative, the speed drops to zero and then motion proceeds in reverse.",
+                explanation: "<strong>Crucial Distinction!</strong> When velocity crosses the time axis (<i>v</i> = 0), the car stops for an instant and <strong>reverses direction</strong> (changing from moving East to moving West). Crossing the time axis on a velocity-time graph does <em>not</em> mean it is back at the starting line—it means its speed is zero!",
+                highlight: 'turnaround'
+            },
+            {
+                prompt: "Calculate the car's <strong>acceleration</strong> during the first 4.0 seconds (t = 0 s to 4.0 s) using the slope formula: <span class=\"vec\">a</span> = <span class=\"frac\"><span class=\"num\">&Delta;<span class=\"vec\">v</span></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\"><span class=\"vec\">v</span><sub>2</sub> &minus; <span class=\"vec\">v</span><sub>1</sub></span><span class=\"den\"><i>t</i><sub>2</sub> &minus; <i>t</i><sub>1</sub></span></span>.",
+                options: [
+                    "-2.0 m/s² (2.0 m/s² West)",
+                    "+2.0 m/s² (2.0 m/s² East)",
+                    "-0.50 m/s² (0.50 m/s² West)",
+                    "-8.0 m/s² (8.0 m/s² West)"
+                ],
+                correct: 0,
+                hint: "Slope = (v2 - v1) / (t2 - t1). Here v1 = +8.0 m/s and v2 = 0 m/s. Calculate: (0 - 8.0) / (4.0 - 0). Keep the negative sign!",
+                explanation: "<strong>Correct!</strong><br><span class=\"vec\">a</span> = <span class=\"frac\"><span class=\"num\">0 m/s &minus; (+8.0 m/s)</span><span class=\"den\">4.0 s &minus; 0 s</span></span> = <span class=\"frac\"><span class=\"num\">&minus;8.0 m/s</span><span class=\"den\">4.0 s</span></span> = <strong>&minus;2.0 m/s<sup>2</sup></strong>.",
+                highlight: 'slope'
+            },
+            {
+                prompt: "On a Velocity-Time graph, <strong>Area under the curve = Displacement</strong>. Calculate the area of the green triangle <strong>above the time axis</strong> between t = 0 s and t = 4.0 s: Area = &frac12; &times; base &times; height.",
+                options: [
+                    "+32.0 m (32.0 m East)",
+                    "+8.0 m (8.0 m East)",
+                    "-16.0 m (16.0 m West)",
+                    "+16.0 m (16.0 m East)"
+                ],
+                correct: 3,
+                hint: "Triangle Area = 1/2 &times; base &times; height. Base = 4.0 s, height = 8.0 m/s. Remember to multiply by 1/2.",
+                explanation: "<strong>Great work!</strong><br>Area = &frac12; &times; base &times; height = &frac12; &times; (4.0 s) &times; (8.0 m/s) = <strong>+16.0 m</strong>.",
+                highlight: 'pos_area'
+            },
+            {
+                prompt: "Now look at the region <strong>below the time axis</strong> between t = 4.0 s and t = 10.0 s. It is made of a triangle (t = 4.0 to 6.0 s) and a rectangle (t = 6.0 to 10.0 s). What is the car's <strong>net displacement</strong> for the full 10.0 s trip?",
+                options: [
+                    "+36.0 m (36.0 m East)",
+                    "-4.0 m (4.0 m West)",
+                    "-20.0 m (20.0 m West)",
+                    "+4.0 m (4.0 m East)"
+                ],
+                correct: 1,
+                hint: "Net displacement = Area Above (+) + Area Below (-). Area above is +16.0 m. Triangle below is &minus;4.0 m, rectangle below is &minus;16.0 m (Total below = &minus;20.0 m). Add them with signs!",
+                explanation: "<strong>Brilliant!</strong> Total Area Below = &minus;4.0 m + (&minus;16.0 m) = &minus;20.0 m.<br><strong>Net Displacement:</strong> +16.0 m + (&minus;20.0 m) = <strong>&minus;4.0 m [West]</strong>!",
+                highlight: 'all_areas'
+            },
+            {
+                prompt: "What was the car's <strong>total distance travelled</strong> during the entire 10.0 s trip?",
+                options: [
+                    "4.0 m",
+                    "20.0 m",
+                    "36.0 m",
+                    "16.0 m"
+                ],
+                correct: 2,
+                hint: "Total distance ignores direction—add the positive magnitudes of all areas like an odometer: |+16.0 m| + |&minus;20.0 m|.",
+                explanation: "<strong>Exactly!</strong> When finding <strong>total distance</strong>, direction does not matter—you add all geometric areas together as positive numbers (odometer reading):<br><i>d</i> = |+16.0 m| + |&minus;20.0 m| = 16.0 m + 20.0 m = <strong>36.0 m</strong>.",
+                highlight: 'all_areas'
+            }
+        ]
+    },
+    {
+        id: 1,
+        scenarioText: "<strong>Scenario:</strong> A remote control car moves along an East (+) and West (-) track. Its motion is recorded on the <strong>Velocity vs. Time graph</strong> below. Use the graph's <strong>slope</strong> to find acceleration and <strong>shaded geometric area</strong> to find displacement.",
+        velData: [{ t: 0, v: 6 }, { t: 3, v: 0 }, { t: 6, v: -6 }, { t: 10, v: -6 }],
+        yMin: -8, yMax: 8,
+        turnaroundT: 3,
+        slopeT1: 0, slopeV1: 6, slopeT2: 3, slopeV2: 0,
+        triPos: { t1: 0, t2: 3, v: 6, label: 'Area = +9.0 m' },
+        triNeg: { t1: 3, t2: 6, v: -6, label: '-9.0 m' },
+        rectNeg: { t1: 6, t2: 10, v: -6, label: '-24.0 m' },
+        questions: [
+            {
+                prompt: "Look at the point where the green line crosses the horizontal time axis at <strong>t = 3.0 s (v = 0 m/s)</strong>. What is the car physically doing at this exact moment?",
+                options: [
+                    "It has stopped momentarily and is reversing its direction of motion.",
+                    "It has returned to its initial starting location at the reference origin.",
+                    "Its acceleration has dropped to zero while continuing at steady speed.",
+                    "It has reached its maximum velocity in the positive East direction."
+                ],
+                correct: 0,
+                hint: "When velocity crosses 0 m/s from positive to negative, the speed drops to zero and motion proceeds in the negative direction.",
+                explanation: "<strong>Crucial Distinction!</strong> When velocity crosses the time axis (<i>v</i> = 0), the car stops for an instant and <strong>reverses direction</strong> (changing from moving East to moving West).",
+                highlight: 'turnaround'
+            },
+            {
+                prompt: "Calculate the car's <strong>acceleration</strong> during the first 3.0 seconds (t = 0 s to 3.0 s) using the slope formula: <span class=\"vec\">a</span> = <span class=\"frac\"><span class=\"num\">&Delta;<span class=\"vec\">v</span></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\"><span class=\"vec\">v</span><sub>2</sub> &minus; <span class=\"vec\">v</span><sub>1</sub></span><span class=\"den\"><i>t</i><sub>2</sub> &minus; <i>t</i><sub>1</sub></span></span>.",
+                options: [
+                    "+2.0 m/s² (2.0 m/s² East)",
+                    "-0.50 m/s² (0.50 m/s² West)",
+                    "-2.0 m/s² (2.0 m/s² West)",
+                    "-6.0 m/s² (6.0 m/s² West)"
+                ],
+                correct: 2,
+                hint: "Slope = (v2 - v1) / (t2 - t1). Here v1 = +6.0 m/s and v2 = 0 m/s. Calculate: (0 - 6.0) / (3.0 - 0).",
+                explanation: "<strong>Correct!</strong><br><span class=\"vec\">a</span> = <span class=\"frac\"><span class=\"num\">0 m/s &minus; (+6.0 m/s)</span><span class=\"den\">3.0 s &minus; 0 s</span></span> = <strong>&minus;2.0 m/s<sup>2</sup></strong>.",
+                highlight: 'slope'
+            },
+            {
+                prompt: "On a Velocity-Time graph, <strong>Area under the curve = Displacement</strong>. Calculate the area of the green triangle <strong>above the time axis</strong> between t = 0 s and t = 3.0 s: Area = &frac12; &times; base &times; height.",
+                options: [
+                    "+9.0 m (9.0 m East)",
+                    "+18.0 m (18.0 m East)",
+                    "-9.0 m (9.0 m West)",
+                    "+4.5 m (4.5 m East)"
+                ],
+                correct: 0,
+                hint: "Triangle Area = 1/2 &times; base &times; height. Base = 3.0 s, height = 6.0 m/s. Calculate 1/2 &times; 3.0 &times; 6.0.",
+                explanation: "<strong>Great work!</strong><br>Area = &frac12; &times; (3.0 s) &times; (6.0 m/s) = <strong>+9.0 m [East]</strong>.",
+                highlight: 'pos_area'
+            },
+            {
+                prompt: "Now look at the region <strong>below the time axis</strong> between t = 3.0 s and t = 10.0 s. It is made of a triangle (t = 3.0 to 6.0 s) and a rectangle (t = 6.0 to 10.0 s). What is the car's <strong>net displacement</strong> for the full 10.0 s trip?",
+                options: [
+                    "-33.0 m (33.0 m West)",
+                    "+42.0 m (42.0 m East)",
+                    "+9.0 m (9.0 m East)",
+                    "-24.0 m (24.0 m West)"
+                ],
+                correct: 3,
+                hint: "Triangle below = 1/2 &times; 3.0 &times; (&minus;6.0) = &minus;9.0 m. Rectangle below = 4.0 &times; (&minus;6.0) = &minus;24.0 m. Total below = &minus;33.0 m. Net disp = +9.0 m + (&minus;33.0 m).",
+                explanation: "<strong>Brilliant!</strong> Total Area Below = &minus;9.0 m + (&minus;24.0 m) = &minus;33.0 m.<br><strong>Net Displacement:</strong> +9.0 m + (&minus;33.0 m) = <strong>&minus;24.0 m [West]</strong>!",
+                highlight: 'all_areas'
+            },
+            {
+                prompt: "What was the car's <strong>total distance travelled</strong> during the entire 10.0 s trip?",
+                options: [
+                    "24.0 m",
+                    "42.0 m",
+                    "33.0 m",
+                    "9.0 m"
+                ],
+                correct: 1,
+                hint: "Total distance ignores direction—add the positive magnitudes: |+9.0 m| + |&minus;33.0 m| = 9.0 + 33.0.",
+                explanation: "<strong>Exactly!</strong> Total distance = 9.0 m + 33.0 m = <strong>42.0 m</strong>.",
+                highlight: 'all_areas'
+            }
+        ]
+    },
+    {
+        id: 2,
+        scenarioText: "<strong>Scenario:</strong> An automated delivery cart moves on an East (+) and West (-) track. Its motion is recorded on the <strong>Velocity vs. Time graph</strong> below. Use the graph's <strong>slope</strong> to find acceleration and <strong>geometric area</strong> to find displacement.",
+        velData: [{ t: 0, v: 10 }, { t: 5, v: 0 }, { t: 7, v: -4 }, { t: 10, v: -4 }],
+        yMin: -6, yMax: 12,
+        turnaroundT: 5,
+        slopeT1: 0, slopeV1: 10, slopeT2: 5, slopeV2: 0,
+        triPos: { t1: 0, t2: 5, v: 10, label: '' },
+        triNeg: { t1: 5, t2: 7, v: -4, label: '' },
+        rectNeg: { t1: 7, t2: 10, v: -4, label: '' },
+        questions: [
+            {
+                prompt: "Look at the point where the green line crosses the horizontal time axis at <strong>t = 5.0 s (v = 0 m/s)</strong>. What is the cart physically doing at this exact moment?",
+                options: [
+                    "It has stopped momentarily and is reversing its direction of motion.",
+                    "It has returned to its initial starting location at the reference origin.",
+                    "Its acceleration has dropped to zero while continuing at steady speed.",
+                    "It has reached its maximum velocity in the positive East direction."
+                ],
+                correct: 0,
+                hint: "When velocity crosses 0 m/s from positive to negative, the speed drops to zero and motion proceeds in reverse.",
+                explanation: "<strong>Crucial Distinction!</strong> When velocity crosses the time axis (<i>v</i> = 0), the cart stops for an instant and <strong>reverses direction</strong>.",
+                highlight: 'turnaround'
+            },
+            {
+                prompt: "Calculate the cart's <strong>acceleration</strong> during the first 5.0 seconds (t = 0 s to 5.0 s) using the slope formula: <span class=\"vec\">a</span> = <span class=\"frac\"><span class=\"num\">&Delta;<span class=\"vec\">v</span></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\"><span class=\"vec\">v</span><sub>2</sub> &minus; <span class=\"vec\">v</span><sub>1</sub></span><span class=\"den\"><i>t</i><sub>2</sub> &minus; <i>t</i><sub>1</sub></span></span>.",
+                options: [
+                    "+2.0 m/s² (2.0 m/s² East)",
+                    "-0.50 m/s² (0.50 m/s² West)",
+                    "-2.0 m/s² (2.0 m/s² West)",
+                    "-10.0 m/s² (10.0 m/s² West)"
+                ],
+                correct: 2,
+                hint: "Slope = (v2 - v1) / (t2 - t1) = (0 - 10.0 m/s) / (5.0 s - 0 s) = -10.0 / 5.0.",
+                explanation: "<strong>Correct!</strong><br><span class=\"vec\">a</span> = <span class=\"frac\"><span class=\"num\">0 m/s &minus; (+10.0 m/s)</span><span class=\"den\">5.0 s &minus; 0 s</span></span> = <strong>&minus;2.0 m/s<sup>2</sup></strong>.",
+                highlight: 'slope'
+            },
+            {
+                prompt: "On a Velocity-Time graph, <strong>Area under the curve = Displacement</strong>. Calculate the area of the green triangle <strong>above the time axis</strong> between t = 0 s and t = 5.0 s: Area = &frac12; &times; base &times; height.",
+                options: [
+                    "+25.0 m (25.0 m East)",
+                    "+50.0 m (50.0 m East)",
+                    "-25.0 m (25.0 m West)",
+                    "+12.5 m (12.5 m East)"
+                ],
+                correct: 0,
+                hint: "Triangle Area = 1/2 &times; base &times; height = 1/2 &times; 5.0 s &times; 10.0 m/s.",
+                explanation: "<strong>Great work!</strong><br>Area = &frac12; &times; (5.0 s) &times; (10.0 m/s) = <strong>+25.0 m [East]</strong>.",
+                highlight: 'pos_area'
+            },
+            {
+                prompt: "Now look at the region <strong>below the time axis</strong> between t = 5.0 s and t = 10.0 s. It is made of a triangle (t = 5.0 to 7.0 s) and a rectangle (t = 7.0 to 10.0 s). What is the cart's <strong>net displacement</strong> for the full 10.0 s trip?",
+                options: [
+                    "-16.0 m (16.0 m West)",
+                    "+41.0 m (41.0 m East)",
+                    "+25.0 m (25.0 m East)",
+                    "+9.0 m (9.0 m East)"
+                ],
+                correct: 3,
+                hint: "Triangle below = 1/2 &times; 2.0 &times; (-4.0) = -4.0 m. Rectangle below = 3.0 &times; (-4.0) = -12.0 m. Total below = -16.0 m. Net displacement = +25.0 m + (-16.0 m).",
+                explanation: "<strong>Brilliant!</strong> Total Area Below = &minus;4.0 m + (&minus;12.0 m) = &minus;16.0 m.<br><strong>Net Displacement:</strong> +25.0 m + (&minus;16.0 m) = <strong>+9.0 m [East]</strong>!",
+                highlight: 'all_areas'
+            },
+            {
+                prompt: "What was the cart's <strong>total distance travelled</strong> during the entire 10.0 s trip?",
+                options: [
+                    "25.0 m",
+                    "41.0 m",
+                    "16.0 m",
+                    "9.0 m"
+                ],
+                correct: 1,
+                hint: "Total distance ignores direction—add magnitudes: |+25.0 m| + |&minus;16.0 m| = 25.0 + 16.0.",
+                explanation: "<strong>Exactly!</strong> Total distance = 25.0 m + 16.0 m = <strong>41.0 m</strong>.",
+                highlight: 'all_areas'
+            }
+        ]
+    },
+    {
+        id: 3,
+        scenarioText: "<strong>Scenario:</strong> A motorized glider taxies along an East (+) and West (-) strip. Its motion is recorded on the <strong>Velocity vs. Time graph</strong> below. Use the graph's <strong>slope</strong> to find acceleration and <strong>geometric area</strong> to find displacement.",
+        velData: [{ t: 0, v: 8 }, { t: 2, v: 0 }, { t: 4, v: -2 }, { t: 10, v: -2 }],
+        yMin: -4, yMax: 10,
+        turnaroundT: 2,
+        slopeT1: 0, slopeV1: 8, slopeT2: 2, slopeV2: 0,
+        triPos: { t1: 0, t2: 2, v: 8, label: '' },
+        triNeg: { t1: 2, t2: 4, v: -2, label: '' },
+        rectNeg: { t1: 4, t2: 10, v: -2, label: '' },
+        questions: [
+            {
+                prompt: "Look at the point where the green line crosses the horizontal time axis at <strong>t = 2.0 s (v = 0 m/s)</strong>. What is the glider physically doing at this exact moment?",
+                options: [
+                    "It has stopped momentarily and is reversing its direction of motion.",
+                    "It has returned to its initial starting location at the reference origin.",
+                    "Its acceleration has dropped to zero while continuing at steady speed.",
+                    "It has reached its maximum velocity in the positive East direction."
+                ],
+                correct: 0,
+                hint: "When velocity crosses 0 m/s from positive to negative, the speed drops to zero and motion proceeds in reverse.",
+                explanation: "<strong>Crucial Distinction!</strong> When velocity crosses the time axis (<i>v</i> = 0), the glider stops for an instant and <strong>reverses direction</strong>.",
+                highlight: 'turnaround'
+            },
+            {
+                prompt: "Calculate the glider's <strong>acceleration</strong> during the first 2.0 seconds (t = 0 s to 2.0 s) using the slope formula: <span class=\"vec\">a</span> = <span class=\"frac\"><span class=\"num\">&Delta;<span class=\"vec\">v</span></span><span class=\"den\">&Delta;<i>t</i></span></span> = <span class=\"frac\"><span class=\"num\"><span class=\"vec\">v</span><sub>2</sub> &minus; <span class=\"vec\">v</span><sub>1</sub></span><span class=\"den\"><i>t</i><sub>2</sub> &minus; <i>t</i><sub>1</sub></span></span>.",
+                options: [
+                    "-4.0 m/s² (4.0 m/s² West)",
+                    "+4.0 m/s² (4.0 m/s² East)",
+                    "-0.25 m/s² (0.25 m/s² West)",
+                    "-8.0 m/s² (8.0 m/s² West)"
+                ],
+                correct: 0,
+                hint: "Slope = (v2 - v1) / (t2 - t1) = (0 - 8.0 m/s) / (2.0 s - 0 s) = -8.0 / 2.0.",
+                explanation: "<strong>Correct!</strong><br><span class=\"vec\">a</span> = <span class=\"frac\"><span class=\"num\">0 m/s &minus; (+8.0 m/s)</span><span class=\"den\">2.0 s &minus; 0 s</span></span> = <strong>&minus;4.0 m/s<sup>2</sup></strong>.",
+                highlight: 'slope'
+            },
+            {
+                prompt: "On a Velocity-Time graph, <strong>Area under the curve = Displacement</strong>. Calculate the area of the green triangle <strong>above the time axis</strong> between t = 0 s and t = 2.0 s: Area = &frac12; &times; base &times; height.",
+                options: [
+                    "+16.0 m (16.0 m East)",
+                    "+4.0 m (4.0 m East)",
+                    "-8.0 m (8.0 m West)",
+                    "+8.0 m (8.0 m East)"
+                ],
+                correct: 3,
+                hint: "Triangle Area = 1/2 &times; base &times; height = 1/2 &times; 2.0 s &times; 8.0 m/s.",
+                explanation: "<strong>Great work!</strong><br>Area = &frac12; &times; (2.0 s) &times; (8.0 m/s) = <strong>+8.0 m [East]</strong>.",
+                highlight: 'pos_area'
+            },
+            {
+                prompt: "Now look at the region <strong>below the time axis</strong> between t = 2.0 s and t = 10.0 s. It is made of a triangle (t = 2.0 to 4.0 s) and a rectangle (t = 4.0 to 10.0 s). What is the glider's <strong>net displacement</strong> for the full 10.0 s trip?",
+                options: [
+                    "-6.0 m (6.0 m West)",
+                    "-14.0 m (14.0 m West)",
+                    "+22.0 m (22.0 m East)",
+                    "+6.0 m (6.0 m East)"
+                ],
+                correct: 0,
+                hint: "Triangle below = 1/2 &times; 2.0 &times; (-2.0) = -2.0 m. Rectangle below = 6.0 &times; (-2.0) = -12.0 m. Total below = -14.0 m. Net displacement = +8.0 m + (-14.0 m).",
+                explanation: "<strong>Brilliant!</strong> Total Area Below = &minus;2.0 m + (&minus;12.0 m) = &minus;14.0 m.<br><strong>Net Displacement:</strong> +8.0 m + (&minus;14.0 m) = <strong>&minus;6.0 m [West]</strong>!",
+                highlight: 'all_areas'
+            },
+            {
+                prompt: "What was the glider's <strong>total distance travelled</strong> during the entire 10.0 s trip?",
+                options: [
+                    "8.0 m",
+                    "14.0 m",
+                    "22.0 m",
+                    "6.0 m"
+                ],
+                correct: 2,
+                hint: "Total distance ignores direction—add magnitudes: |+8.0 m| + |&minus;14.0 m| = 8.0 + 14.0.",
+                explanation: "<strong>Exactly!</strong> Total distance = 8.0 m + 14.0 m = <strong>22.0 m</strong>.",
+                highlight: 'all_areas'
+            }
+        ]
+    }
+
+];
+
+let p2VariantIdx = 0;
+let p2ActiveQuestions = [];
+let p2CurrentQ = 0;
+let p2Answers = {};
+let p2HasMistake = false;
+
+function initP2() {
+    p2VariantIdx = Math.floor(Math.random() * P2_VARIANTS.length);
+    p2ActiveQuestions = prepareShuffledQuestions(P2_VARIANTS[p2VariantIdx].questions);
+    p2CurrentQ = 0;
+    p2Answers = {};
+    p2HasMistake = false;
+    document.getElementById('p2-intro-box').innerHTML = P2_VARIANTS[p2VariantIdx].scenarioText;
+    updateP2MasteryBadge();
+    renderP2Pills();
+    loadP2Question(0);
+    renderP2Graph();
+}
+
+function updateP2MasteryBadge() {
+    const banner = document.getElementById('p2-mastery-banner');
+    const total = P2_VARIANTS[p2VariantIdx].questions.length;
+    const correctCount = Object.values(p2Answers).filter(Boolean).length;
+    if (p2HasMistake) {
+        banner.className = 'mastery-indicator error';
+        banner.innerHTML = `⚠️ Mastery Attempt Failed: <strong>${correctCount} / ${total} Correct</strong> (New graph required to unlock Part 3)`;
+    } else if (PROGRESS.p2Completed) {
+        banner.className = 'mastery-indicator';
+        banner.style.background = '#dcfce7';
+        banner.style.color = '#15803d';
+        banner.style.borderColor = '#15803d';
+        banner.innerHTML = `✅ Section Mastered: <strong>${total} / ${total} (100%)</strong> • Part 3 is Unlocked!`;
+    } else {
+        banner.className = 'mastery-indicator';
+        banner.style.background = '';
+        banner.style.color = '';
+        banner.style.borderColor = '';
+        banner.innerHTML = `🎯 Section Mastery: <strong>${correctCount} / ${total} Correct</strong> (${total}/${total} needed to unlock Part 3)`;
+    }
+}
+
+function renderP2Pills() {
+    const container = document.getElementById('p2-pills');
+    container.innerHTML = '';
+    const questions = p2ActiveQuestions;
+    questions.forEach((_, idx) => {
+        const pill = document.createElement('button');
+        pill.className = 'q-pill' + (idx === p2CurrentQ ? ' active' : '');
+        if (p2Answers[idx] !== undefined) {
+            pill.classList.add(p2Answers[idx] ? 'answered-correct' : 'answered-wrong');
+        }
+        pill.textContent = (idx + 1).toString();
+        pill.onclick = () => loadP2Question(idx);
+        container.appendChild(pill);
+    });
+}
+
+function loadP2Question(idx) {
+    p2CurrentQ = idx;
+    const variant = P2_VARIANTS[p2VariantIdx];
+    const q = p2ActiveQuestions[idx];
+
+    document.getElementById('p2-counter').textContent = `Question ${idx + 1} of ${variant.questions.length}`;
+    document.getElementById('p2-prompt').innerHTML = q.prompt;
+
+    const optContainer = document.getElementById('p2-options');
+    optContainer.innerHTML = '';
+
+    const isAnswered = p2Answers[idx] !== undefined;
+
+    q.options.forEach((opt, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<span class="option-letter">${String.fromCharCode(65 + optIdx)}.</span> <span>${opt}</span>`;
+        if (isAnswered) {
+            btn.disabled = true;
+            if (p2Answers[idx] === true && optIdx === q.correct) {
+                btn.classList.add('selected-correct');
+            }
+        } else {
+            btn.onclick = () => answerP2(optIdx);
+        }
+        optContainer.appendChild(btn);
+    });
+
+    const fb = document.getElementById('p2-feedback');
+    fb.style.display = isAnswered ? 'block' : 'none';
+
+    document.getElementById('p2-prev-btn').disabled = (idx === 0);
+    const nextBtn = document.getElementById('p2-next-btn');
+
+    if (idx === variant.questions.length - 1) {
+        if (PROGRESS.p2Completed) {
+            nextBtn.disabled = false;
+            nextBtn.innerHTML = 'Advance to Part 3: Practice Checkpoint 🎯 →';
+            nextBtn.classList.add('btn-advance');
+        } else if (p2HasMistake) {
+            nextBtn.disabled = true;
+            nextBtn.innerHTML = '5/5 Required (Restart Below)';
+            nextBtn.classList.remove('btn-advance');
+        } else {
+            nextBtn.disabled = false;
+            nextBtn.innerHTML = 'Advance to Part 3: Practice Checkpoint 🎯 →';
+            nextBtn.classList.add('btn-advance');
+        }
+    } else {
+        nextBtn.disabled = false;
+        nextBtn.innerHTML = 'Next Question →';
+        nextBtn.classList.remove('btn-advance');
+    }
+
+    renderP2Pills();
+    renderP2Graph();
+    updateP2MasteryBadge();
+}
+
+function answerP2(optIdx) {
+    const variant = P2_VARIANTS[p2VariantIdx];
+    const q = p2ActiveQuestions[p2CurrentQ];
+    const isCorrect = (optIdx === q.correct);
+
+    p2Answers[p2CurrentQ] = isCorrect;
+    if (!isCorrect) {
+        p2HasMistake = true;
+    }
+
+    const buttons = document.querySelectorAll('#p2-options .option-btn');
+    buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === optIdx) {
+            btn.classList.add(isCorrect ? 'selected-correct' : 'selected-wrong');
+        }
+    });
+
+    const fb = document.getElementById('p2-feedback');
+    fb.style.display = 'block';
+
+    if (isCorrect) {
+        fb.className = 'feedback-box feedback-correct';
+        const isLast = (p2CurrentQ === variant.questions.length - 1);
+        const correctCount = Object.values(p2Answers).filter(Boolean).length;
+        let advanceHtml = '';
+
+        if (isLast && correctCount === variant.questions.length && !p2HasMistake) {
+            PROGRESS.p2Completed = true;
+            PROGRESS.p3Unlocked = true;
+            updateLockUI();
+            if (CURRENT_STUDENT) {
+                CURRENT_STUDENT.p2Mastered = true;
+                if (!CURRENT_STUDENT.p3Attempts) CURRENT_STUDENT.p3Attempts = 1;
+                CURRENT_STUDENT.status = 'Parts 1 & 2 Mastered';
+                syncActiveStudent();
+            }
+            advanceHtml = `
+                <div style="margin-top: 0.85rem; padding-top: 0.65rem; border-top: 1px dashed currentColor;">
+                    <div style="font-weight: 800; color: #15803d; margin-bottom: 0.35rem;">🎉 5/5 Perfect Score! Part 2 Mastered!</div>
+                    <button class="action-btn btn-advance" onclick="switchSection('part3'); window.scrollTo({ top: 0, behavior: 'smooth' });">
+                        Part 3 Unlocked! Advance to Checkpoint 🎯 →
+                    </button>
+                </div>
+            `;
+        }
+
+        fb.innerHTML = `
+            <div class="feedback-title">✅ Excellent!</div>
+            <div>${q.explanation}</div>
+            ${advanceHtml}
+        `;
+    } else {
+        fb.className = 'feedback-box feedback-wrong';
+        fb.innerHTML = `
+            <div class="feedback-title">❌ Incorrect Answer</div>
+            <div style="margin-bottom: 0.5rem; line-height: 1.45;">${q.hint}</div>
+            <div class="retry-card">
+                <div style="font-weight: 700; margin-bottom: 0.25rem; color: var(--accent-rose);">⚠️ 5/5 Required to Unlock Part 3</div>
+                <p style="font-size: 0.84rem; margin-bottom: 0.65rem; color: var(--text-main);">
+                    To advance to Part 3, Alberta Physics 20 requires 100% mastery. Click below to load a fresh graph with new numbers and try again!
+                </p>
+                <button class="action-btn btn-advance" style="background: var(--accent-rose);" onclick="resetP2WithNewGraph()">
+                    🔄 Load New Graph & Try Again
+                </button>
+            </div>
+        `;
+    }
+
+    updateP2MasteryBadge();
+    renderP2Pills();
+    renderP2Graph();
+
+    const nextBtn = document.getElementById('p2-next-btn');
+    if (p2CurrentQ === variant.questions.length - 1) {
+        if (PROGRESS.p2Completed) {
+            nextBtn.disabled = false;
+            nextBtn.innerHTML = 'Advance to Part 3: Practice Checkpoint 🎯 →';
+            nextBtn.classList.add('btn-advance');
+        } else if (p2HasMistake) {
+            nextBtn.disabled = true;
+            nextBtn.innerHTML = '5/5 Required (Restart Below)';
+            nextBtn.classList.remove('btn-advance');
+        }
+    }
+}
+
+function resetP2WithNewGraph() {
+    p2VariantIdx = getDifferentRandomIndex(p2VariantIdx, P2_VARIANTS.length);
+    const variant = P2_VARIANTS[p2VariantIdx];
+    p2ActiveQuestions = prepareShuffledQuestions(variant.questions);
+    document.getElementById('p2-intro-box').innerHTML = variant.scenarioText;
+    p2CurrentQ = 0;
+    p2Answers = {};
+    p2HasMistake = false;
+
+    if (CURRENT_STUDENT) {
+        CURRENT_STUDENT.p2Attempts = (CURRENT_STUDENT.p2Attempts || 1) + 1;
+        CURRENT_STUDENT.totalAttempts = (CURRENT_STUDENT.totalAttempts || 1) + 1;
+        syncActiveStudent();
+    }
+    updateP2MasteryBadge();
+    renderP2Pills();
+    loadP2Question(0);
+    renderP2Graph();
+    showToast('⏱️ New Velocity-Time graph loaded with randomized answers!');
+}
+
+function prevP2() {
+    if (p2CurrentQ > 0) loadP2Question(p2CurrentQ - 1);
+}
+
+function nextP2() {
+    const variant = P2_VARIANTS[p2VariantIdx];
+    if (p2CurrentQ < variant.questions.length - 1) {
+        loadP2Question(p2CurrentQ + 1);
+    } else {
+        if (PROGRESS.p2Completed) {
+            switchSection('part3');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            showToast('⚠️ 5/5 score required to unlock Part 3. Click "Load New Graph & Try Again"');
+        }
+    }
+}
+
+function renderP2Graph() {
+    const canvas = document.getElementById('canvas-m2-vel');
+    if (!canvas) return;
+    const variant = P2_VARIANTS[p2VariantIdx];
+    const { ctx, w, h } = initCanvas(canvas);
+    const col = getColors();
+    const { toX, toY } = drawGrid(ctx, w, h, 0, 10, variant.yMin, variant.yMax, 'Time t (s)', 'Velocity v⃗ (m/s)', {
+        xStep: 1,
+        yStep: 2
+    });
+
+    const q = p2ActiveQuestions[p2CurrentQ];
+    const highlight = q ? q.highlight : 'none';
+
+    // Shading Areas if appropriate (geometric regions highlighted without printing answers)
+    if (highlight === 'pos_area' || highlight === 'all_areas') {
+        const tp = variant.triPos;
+        ctx.fillStyle = isDarkTheme ? 'rgba(16, 185, 129, 0.35)' : 'rgba(5, 150, 105, 0.25)';
+        ctx.beginPath();
+        ctx.moveTo(toX(tp.t1), toY(0));
+        ctx.lineTo(toX(tp.t1), toY(tp.v));
+        ctx.lineTo(toX(tp.t2), toY(0));
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    if (highlight === 'all_areas') {
+        const tn = variant.triNeg;
+        ctx.fillStyle = isDarkTheme ? 'rgba(244, 63, 94, 0.35)' : 'rgba(225, 29, 72, 0.22)';
+        ctx.beginPath();
+        ctx.moveTo(toX(tn.t1), toY(0));
+        ctx.lineTo(toX(tn.t2), toY(tn.v));
+        ctx.lineTo(toX(tn.t2), toY(0));
+        ctx.closePath();
+        ctx.fill();
+
+        const rn = variant.rectNeg;
+        ctx.fillRect(toX(rn.t1), toY(0), toX(rn.t2) - toX(rn.t1), toY(rn.v) - toY(0));
+    }
+
+    // Zero velocity axis line highlight
+    ctx.strokeStyle = col.axisZero;
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(toX(0), toY(0));
+    ctx.lineTo(toX(10), toY(0));
+    ctx.stroke();
+
+    // Plot Velocity Curve
+    ctx.strokeStyle = col.vel;
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    variant.velData.forEach((pt, i) => {
+        const x = toX(pt.t);
+        const y = toY(pt.v);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Dots
+    variant.velData.forEach(pt => {
+        ctx.fillStyle = col.vel;
+        ctx.beginPath();
+        ctx.arc(toX(pt.t), toY(pt.v), 4.5, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    // Highlights
+    if (highlight === 'turnaround') {
+        const x0 = toX(variant.turnaroundT);
+        const y0 = toY(0);
+        ctx.fillStyle = col.rose;
+        ctx.beginPath();
+        ctx.arc(x0, y0, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    } else if (highlight === 'slope') {
+        const x1 = toX(variant.slopeT1), y1 = toY(variant.slopeV1);
+        const x2 = toX(variant.slopeT2), y2 = toY(variant.slopeV2);
+
+        ctx.strokeStyle = col.pos;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(x1, y2);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        ctx.strokeStyle = col.rose;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x1, y2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.font = 'bold 11px sans-serif';
+        ctx.fillStyle = col.pos;
+        ctx.textAlign = 'center';
+        ctx.fillText(`Run = ${(variant.slopeT2 - variant.slopeT1).toFixed(1)} s`, (x1 + x2) / 2, y2 + 14);
+
+        ctx.fillStyle = col.rose;
+        ctx.textAlign = 'right';
+        ctx.fillText(`Rise = ${(variant.slopeV2 - variant.slopeV1).toFixed(1)} m/s`, x1 - 6, (y1 + y2) / 2);
+    }
+}
+
+
+/* =====================================================================
+   PART 3: PRACTICE CHECKPOINT (Mastery Challenge)
+   ===================================================================== */
+const P3_VARIANTS = [
+    {
+        id: 0,
+        scenarioText: "<strong>Checkpoint Challenge:</strong> Apply everything you have learned! A student sprinter runs on a track. Analyze the Velocity vs. Time graph below and answer the 4 questions (4/4 required to complete the checkpoint).",
+        velData: [{ t: 0, v: 0 }, { t: 3, v: 6 }, { t: 7, v: 6 }, { t: 10, v: 0 }],
+        yMax: 8,
+        rectT1: 3, rectT2: 7, rectV: 6,
+        tri1T: 3, tri2T: 7,
+        questions: [
+            {
+                prompt: "What is the sprinter's <strong>acceleration</strong> during the initial sprint between t = 0 s and t = 3.0 s?",
+                options: [
+                    "+0.50 m/s² (0.50 m/s² forward)",
+                    "+2.0 m/s² (2.0 m/s² forward)",
+                    "+6.0 m/s² (6.0 m/s² forward)",
+                    "-2.0 m/s² (2.0 m/s² backward)"
+                ],
+                correct: 1,
+                hint: "Acceleration is the slope of the v-t graph: (v2 - v1) / (t2 - t1) = (6.0 m/s - 0 m/s) / (3.0 s - 0 s).",
+                explanation: "<strong>Correct!</strong> <span class=\"vec\">a</span> = <span class=\"frac\"><span class=\"num\">Rise</span><span class=\"den\">Run</span></span> = <span class=\"frac\"><span class=\"num\">6.0 m/s &minus; 0 m/s</span><span class=\"den\">3.0 s &minus; 0 s</span></span> = <strong>+2.0 m/s<sup>2</sup></strong>."
+            },
+            {
+                prompt: "Between t = 3.0 s and t = 7.0 s, the velocity line is flat and horizontal. What is the sprinter's acceleration during this interval?",
+                options: [
+                    "+6.0 m/s² (accelerating at a steady rate)",
+                    "The sprinter has stopped at rest (v = 0 m/s)",
+                    "+1.5 m/s² (velocity divided by elapsed time)",
+                    "0.0 m/s² (velocity is constant at 6.0 m/s)"
+                ],
+                correct: 3,
+                hint: "Acceleration is the rate of change of velocity. If velocity remains steady at 6.0 m/s, how much is velocity changing?",
+                explanation: "<strong>Exactly!</strong> On a <em>velocity-time</em> graph, a flat line means velocity is not changing (<i>v</i> = 6.0 m/s constant). Therefore, acceleration is <strong>0.0 m/s<sup>2</sup></strong>!"
+            },
+            {
+                prompt: "Calculate how far the sprinter travelled during the middle constant speed section (between t = 3.0 s and t = 7.0 s) using the area of the rectangle: Area = base &times; height.",
+                options: [
+                    "24.0 m",
+                    "42.0 m",
+                    "12.0 m",
+                    "18.0 m"
+                ],
+                correct: 0,
+                hint: "Area = base &times; height. Base = 7.0 s &minus; 3.0 s = 4.0 s. Height = 6.0 m/s. Multiply base by height.",
+                explanation: "<strong>Correct!</strong> The rectangle has a base of 7.0 s &minus; 3.0 s = 4.0 s and a height of 6.0 m/s.<br>Area = (4.0 s) &times; (6.0 m/s) = <strong>24.0 m</strong>."
+            },
+            {
+                prompt: "Calculate the sprinter's <strong>total displacement</strong> for the entire 10.0 s run by adding the areas of the two triangles and the rectangle.",
+                options: [
+                    "60.0 m",
+                    "33.0 m",
+                    "42.0 m",
+                    "24.0 m"
+                ],
+                correct: 2,
+                hint: "Add the areas of all 3 shapes: Triangle 1 (1/2 &times; 3 &times; 6 = 9 m) + Rectangle (4 &times; 6 = 24 m) + Triangle 2 (1/2 &times; 3 &times; 6 = 9 m).",
+                explanation: "<strong>Mastery Achieved!</strong><br>• Triangle 1 (0 to 3 s): &frac12; &times; (3.0 s) &times; (6.0 m/s) = 9.0 m.<br>• Middle Rectangle (3 to 7 s): (4.0 s) &times; (6.0 m/s) = 24.0 m.<br>• Triangle 2 (7 to 10 s): &frac12; &times; (3.0 s) &times; (6.0 m/s) = 9.0 m.<br>• <strong>Total Displacement:</strong> 9.0 m + 24.0 m + 9.0 m = <strong>42.0 m</strong>."
+            }
+        ]
+    },
+    {
+        id: 1,
+        scenarioText: "<strong>Checkpoint Challenge:</strong> Apply everything you have learned! A cyclist accelerates, cruises, and brakes. Analyze the Velocity vs. Time graph below and answer the 4 questions (4/4 required to complete the checkpoint).",
+        velData: [{ t: 0, v: 0 }, { t: 2, v: 8 }, { t: 6, v: 8 }, { t: 10, v: 0 }],
+        yMax: 10,
+        rectT1: 2, rectT2: 6, rectV: 8,
+        tri1T: 2, tri2T: 6,
+        questions: [
+            {
+                prompt: "What is the cyclist's <strong>acceleration</strong> during the initial pedal sprint between t = 0 s and t = 2.0 s?",
+                options: [
+                    "+4.0 m/s² (4.0 m/s² forward)",
+                    "+0.25 m/s² (0.25 m/s² forward)",
+                    "+8.0 m/s² (8.0 m/s² forward)",
+                    "-4.0 m/s² (4.0 m/s² backward)"
+                ],
+                correct: 0,
+                hint: "Acceleration is the slope of the v-t graph: (8.0 m/s - 0 m/s) / (2.0 s - 0 s).",
+                explanation: "<strong>Correct!</strong> <span class=\"vec\">a</span> = Rise / Run = (8.0 m/s &minus; 0 m/s) / (2.0 s &minus; 0 s) = <strong>+4.0 m/s<sup>2</sup></strong>."
+            },
+            {
+                prompt: "Between t = 2.0 s and t = 6.0 s, the velocity line is flat and horizontal. What is the cyclist's acceleration during this interval?",
+                options: [
+                    "+8.0 m/s² (accelerating at a steady rate)",
+                    "+2.0 m/s² (velocity divided by elapsed time)",
+                    "0.0 m/s² (velocity is constant at 8.0 m/s)",
+                    "The cyclist has stopped at rest (v = 0 m/s)"
+                ],
+                correct: 2,
+                hint: "Acceleration is change in velocity over time. If velocity remains steady at 8.0 m/s, acceleration is zero.",
+                explanation: "<strong>Exactly!</strong> On a <em>velocity-time</em> graph, a flat line means velocity is constant (8.0 m/s), so acceleration is <strong>0.0 m/s<sup>2</sup></strong>!"
+            },
+            {
+                prompt: "Calculate how far the cyclist travelled during the middle constant speed section (between t = 2.0 s and t = 6.0 s) using the area of the rectangle: Area = base &times; height.",
+                options: [
+                    "16.0 m",
+                    "32.0 m",
+                    "48.0 m",
+                    "8.0 m"
+                ],
+                correct: 1,
+                hint: "Base = 6.0 s &minus; 2.0 s = 4.0 s. Height = 8.0 m/s. Area = 4.0 &times; 8.0.",
+                explanation: "<strong>Correct!</strong> Area = (4.0 s) &times; (8.0 m/s) = <strong>32.0 m</strong>."
+            },
+            {
+                prompt: "Calculate the cyclist's <strong>total displacement</strong> for the entire 10.0 s ride by adding the areas of the two triangles and the rectangle.",
+                options: [
+                    "56.0 m",
+                    "40.0 m",
+                    "72.0 m",
+                    "32.0 m"
+                ],
+                correct: 0,
+                hint: "Triangle 1 = 1/2 &times; 2 &times; 8 = 8.0 m. Rectangle = 4 &times; 8 = 32.0 m. Triangle 2 = 1/2 &times; 4 &times; 8 = 16.0 m. Add all three!",
+                explanation: "<strong>Mastery Achieved!</strong> 8.0 m + 32.0 m + 16.0 m = <strong>56.0 m</strong>."
+            }
+        ]
+    },
+    {
+        id: 2,
+        scenarioText: "<strong>Checkpoint Challenge:</strong> Apply everything you have learned! A skateboarder rolls down a ramp, coasts, and stops. Analyze the Velocity vs. Time graph below and answer the 4 questions (4/4 required to complete the checkpoint).",
+        velData: [{ t: 0, v: 0 }, { t: 2, v: 4 }, { t: 8, v: 4 }, { t: 10, v: 0 }],
+        yMax: 6,
+        rectT1: 2, rectT2: 8, rectV: 4,
+        tri1T: 2, tri2T: 8,
+        questions: [
+            {
+                prompt: "What is the skateboarder's <strong>acceleration</strong> during the initial acceleration between t = 0 s and t = 2.0 s?",
+                options: [
+                    "+0.50 m/s² (0.50 m/s² forward)",
+                    "+2.0 m/s² (2.0 m/s² forward)",
+                    "+4.0 m/s² (4.0 m/s² forward)",
+                    "-2.0 m/s² (2.0 m/s² backward)"
+                ],
+                correct: 1,
+                hint: "Acceleration is the slope: (4.0 m/s - 0 m/s) / (2.0 s - 0 s).",
+                explanation: "<strong>Correct!</strong> <span class=\"vec\">a</span> = (4.0 m/s &minus; 0 m/s) / (2.0 s &minus; 0 s) = <strong>+2.0 m/s<sup>2</sup></strong>."
+            },
+            {
+                prompt: "Between t = 2.0 s and t = 8.0 s, the velocity line is flat and horizontal. What is the skateboarder's acceleration during this interval?",
+                options: [
+                    "+4.0 m/s² (accelerating steadily)",
+                    "The skateboarder has stopped at rest (v = 0 m/s)",
+                    "0.0 m/s² (velocity is constant at 4.0 m/s)",
+                    "+0.67 m/s² (velocity divided by elapsed time)"
+                ],
+                correct: 2,
+                hint: "Acceleration is rate of velocity change. When velocity is constant, acceleration is zero.",
+                explanation: "<strong>Exactly!</strong> On a velocity-time graph, a horizontal line means constant velocity, so acceleration is <strong>0.0 m/s<sup>2</sup></strong>!"
+            },
+            {
+                prompt: "Calculate how far the skateboarder travelled during the middle constant speed section (between t = 2.0 s and t = 8.0 s) using the area of the rectangle: Area = base &times; height.",
+                options: [
+                    "24.0 m",
+                    "32.0 m",
+                    "12.0 m",
+                    "8.0 m"
+                ],
+                correct: 0,
+                hint: "Base = 8.0 s &minus; 2.0 s = 6.0 s. Height = 4.0 m/s. Multiply 6.0 &times; 4.0.",
+                explanation: "<strong>Correct!</strong> Area = (6.0 s) &times; (4.0 m/s) = <strong>24.0 m</strong>."
+            },
+            {
+                prompt: "Calculate the skateboarder's <strong>total displacement</strong> for the entire 10.0 s run by adding the areas of the two triangles and the rectangle.",
+                options: [
+                    "40.0 m",
+                    "24.0 m",
+                    "32.0 m",
+                    "16.0 m"
+                ],
+                correct: 2,
+                hint: "Triangle 1 = 1/2 &times; 2 &times; 4 = 4.0 m. Rectangle = 6 &times; 4 = 24.0 m. Triangle 2 = 1/2 &times; 2 &times; 4 = 4.0 m. Add all 3!",
+                explanation: "<strong>Mastery Achieved!</strong> 4.0 m + 24.0 m + 4.0 m = <strong>32.0 m</strong>."
+            }
+        ]
+    },
+    {
+        id: 3,
+        scenarioText: "<strong>Checkpoint Challenge:</strong> Apply everything you have learned! An electric scooter accelerates, cruises, and brakes. Analyze the Velocity vs. Time graph below and answer the 4 questions (4/4 required to complete the checkpoint).",
+        velData: [{ t: 0, v: 0 }, { t: 3, v: 9 }, { t: 7, v: 9 }, { t: 10, v: 0 }],
+        yMax: 12,
+        rectT1: 3, rectT2: 7, rectV: 9,
+        tri1T: 3, tri2T: 7,
+        questions: [
+            {
+                prompt: "What is the scooter's <strong>acceleration</strong> during the initial acceleration between t = 0 s and t = 3.0 s?",
+                options: [
+                    "+3.0 m/s² (3.0 m/s² forward)",
+                    "+0.33 m/s² (0.33 m/s² forward)",
+                    "+9.0 m/s² (9.0 m/s² forward)",
+                    "-3.0 m/s² (3.0 m/s² backward)"
+                ],
+                correct: 0,
+                hint: "Slope: (9.0 m/s - 0 m/s) / (3.0 s - 0 s) = 9.0 / 3.0 = 3.0.",
+                explanation: "<strong>Correct!</strong> <span class=\"vec\">a</span> = (9.0 m/s &minus; 0 m/s) / (3.0 s &minus; 0 s) = <strong>+3.0 m/s<sup>2</sup></strong>."
+            },
+            {
+                prompt: "Between t = 3.0 s and t = 7.0 s, the velocity line is flat and horizontal. What is the scooter's acceleration during this interval?",
+                options: [
+                    "+9.0 m/s² (steady acceleration)",
+                    "+2.25 m/s² (velocity divided by time)",
+                    "0.0 m/s² (velocity is constant at 9.0 m/s)",
+                    "The scooter is stationary (v = 0 m/s)"
+                ],
+                correct: 2,
+                hint: "If velocity is steady at 9.0 m/s, acceleration is 0.0 m/s².",
+                explanation: "<strong>Exactly!</strong> On a velocity-time graph, a flat line means velocity is constant, so acceleration is <strong>0.0 m/s<sup>2</sup></strong>!"
+            },
+            {
+                prompt: "Calculate how far the scooter travelled during the middle constant speed section (between t = 3.0 s and t = 7.0 s) using the area of the rectangle: Area = base &times; height.",
+                options: [
+                    "27.0 m",
+                    "36.0 m",
+                    "45.0 m",
+                    "18.0 m"
+                ],
+                correct: 1,
+                hint: "Base = 7.0 s &minus; 3.0 s = 4.0 s. Height = 9.0 m/s. Area = 4.0 &times; 9.0.",
+                explanation: "<strong>Correct!</strong> Area = (4.0 s) &times; (9.0 m/s) = <strong>36.0 m</strong>."
+            },
+            {
+                prompt: "Calculate the scooter's <strong>total displacement</strong> for the entire 10.0 s ride by adding the areas of the two triangles and the rectangle.",
+                options: [
+                    "63.0 m",
+                    "45.0 m",
+                    "72.0 m",
+                    "36.0 m"
+                ],
+                correct: 0,
+                hint: "Triangle 1 = 1/2 &times; 3 &times; 9 = 13.5 m. Rectangle = 4 &times; 9 = 36.0 m. Triangle 2 = 1/2 &times; 3 &times; 9 = 13.5 m. Total = 13.5 + 36.0 + 13.5.",
+                explanation: "<strong>Mastery Achieved!</strong> 13.5 m + 36.0 m + 13.5 m = <strong>63.0 m</strong>."
+            }
+        ]
+    }
+
+];
+
+let p3VariantIdx = 0;
+let p3ActiveQuestions = [];
+let p3CurrentQ = 0;
+let p3Answers = {};
+let p3HasMistake = false;
+
+function initP3() {
+    p3VariantIdx = Math.floor(Math.random() * P3_VARIANTS.length);
+    p3ActiveQuestions = prepareShuffledQuestions(P3_VARIANTS[p3VariantIdx].questions);
+    p3CurrentQ = 0;
+    p3Answers = {};
+    p3HasMistake = false;
+    document.getElementById('p3-intro-box').innerHTML = P3_VARIANTS[p3VariantIdx].scenarioText;
+    updateP3MasteryBadge();
+    renderP3Pills();
+    loadP3Question(0);
+    renderP3Graph();
+}
+
+function updateP3MasteryBadge() {
+    const banner = document.getElementById('p3-mastery-banner');
+    const total = P3_VARIANTS[p3VariantIdx].questions.length;
+    const correctCount = Object.values(p3Answers).filter(Boolean).length;
+    if (p3HasMistake) {
+        banner.className = 'mastery-indicator error';
+        banner.innerHTML = `⚠️ Checkpoint Attempt Failed: <strong>${correctCount} / ${total} Correct</strong> (New graph required to complete)`;
+    } else if (PROGRESS.p3Completed) {
+        banner.className = 'mastery-indicator';
+        banner.style.background = '#dcfce7';
+        banner.style.color = '#15803d';
+        banner.style.borderColor = '#15803d';
+        banner.innerHTML = `🎉 Checkpoint Mastered: <strong>${total} / ${total} (100%)</strong> • Course Day 5 Complete!`;
+    } else {
+        banner.className = 'mastery-indicator';
+        banner.style.background = '';
+        banner.style.color = '';
+        banner.style.borderColor = '';
+        banner.innerHTML = `🎯 Checkpoint Mastery: <strong>${correctCount} / ${total} Correct</strong> (${total}/${total} needed to complete checkpoint)`;
+    }
+}
+
+function renderP3Pills() {
+    const container = document.getElementById('p3-pills');
+    container.innerHTML = '';
+    const questions = p3ActiveQuestions;
+    questions.forEach((_, idx) => {
+        const pill = document.createElement('button');
+        pill.className = 'q-pill' + (idx === p3CurrentQ ? ' active' : '');
+        if (p3Answers[idx] !== undefined) {
+            pill.classList.add(p3Answers[idx] ? 'answered-correct' : 'answered-wrong');
+        }
+        pill.textContent = (idx + 1).toString();
+        pill.onclick = () => loadP3Question(idx);
+        container.appendChild(pill);
+    });
+}
+
+function loadP3Question(idx) {
+    p3CurrentQ = idx;
+    const variant = P3_VARIANTS[p3VariantIdx];
+    const q = p3ActiveQuestions[idx];
+
+    document.getElementById('p3-counter').textContent = `Question ${idx + 1} of ${variant.questions.length}`;
+    document.getElementById('p3-prompt').innerHTML = q.prompt;
+
+    const optContainer = document.getElementById('p3-options');
+    optContainer.innerHTML = '';
+
+    const isAnswered = p3Answers[idx] !== undefined;
+
+    q.options.forEach((opt, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<span class="option-letter">${String.fromCharCode(65 + optIdx)}.</span> <span>${opt}</span>`;
+        if (isAnswered) {
+            btn.disabled = true;
+            if (p3Answers[idx] === true && optIdx === q.correct) {
+                btn.classList.add('selected-correct');
+            }
+        } else {
+            btn.onclick = () => answerP3(optIdx);
+        }
+        optContainer.appendChild(btn);
+    });
+
+    const fb = document.getElementById('p3-feedback');
+    fb.style.display = isAnswered ? 'block' : 'none';
+
+    document.getElementById('p3-prev-btn').disabled = (idx === 0);
+    const nextBtn = document.getElementById('p3-next-btn');
+
+    if (idx === variant.questions.length - 1) {
+        if (PROGRESS.p3Completed) {
+            nextBtn.disabled = false;
+            nextBtn.innerHTML = 'View Quick Reference Summary 📋 →';
+            nextBtn.classList.add('btn-advance');
+        } else if (p3HasMistake) {
+            nextBtn.disabled = true;
+            nextBtn.innerHTML = '4/4 Required (Restart Below)';
+            nextBtn.classList.remove('btn-advance');
+        } else {
+            nextBtn.disabled = false;
+            nextBtn.innerHTML = 'View Quick Reference Summary 📋 →';
+            nextBtn.classList.add('btn-advance');
+        }
+    } else {
+        nextBtn.disabled = false;
+        nextBtn.innerHTML = 'Next Question →';
+        nextBtn.classList.remove('btn-advance');
+    }
+
+    renderP3Pills();
+    renderP3Graph();
+    updateP3MasteryBadge();
+}
+
+function answerP3(optIdx) {
+    const variant = P3_VARIANTS[p3VariantIdx];
+    const q = p3ActiveQuestions[p3CurrentQ];
+    const isCorrect = (optIdx === q.correct);
+
+    p3Answers[p3CurrentQ] = isCorrect;
+    if (!isCorrect) {
+        p3HasMistake = true;
+    }
+
+    const buttons = document.querySelectorAll('#p3-options .option-btn');
+    buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === optIdx) {
+            btn.classList.add(isCorrect ? 'selected-correct' : 'selected-wrong');
+        }
+    });
+
+    const fb = document.getElementById('p3-feedback');
+    fb.style.display = 'block';
+
+    if (isCorrect) {
+        fb.className = 'feedback-box feedback-correct';
+        const isLast = (p3CurrentQ === variant.questions.length - 1);
+        const correctCount = Object.values(p3Answers).filter(Boolean).length;
+        let advanceHtml = '';
+
+        if (isLast && correctCount === variant.questions.length && !p3HasMistake) {
+            PROGRESS.p3Completed = true;
+            updateLockUI();
+            if (CURRENT_STUDENT) {
+                CURRENT_STUDENT.p3Mastered = true;
+                CURRENT_STUDENT.status = 'Course Day 5 Complete (Mastered)';
+                syncActiveStudent();
+            }
+            advanceHtml = `
+                <div style="margin-top: 0.85rem; padding-top: 0.65rem; border-top: 1px dashed currentColor;">
+                    <div style="font-weight: 800; color: #15803d; margin-bottom: 0.35rem;">🎉 4/4 Perfect Score! Day 5 Checkpoint Complete!</div>
+                    <button class="action-btn btn-advance" onclick="switchSection('summary'); window.scrollTo({ top: 0, behavior: 'smooth' });">
+                        View Quick Reference Summary 📋 →
+                    </button>
+                </div>
+            `;
+        }
+
+        fb.innerHTML = `
+            <div class="feedback-title">🎉 Correct!</div>
+            <div>${q.explanation}</div>
+            ${advanceHtml}
+        `;
+    } else {
+        fb.className = 'feedback-box feedback-wrong';
+        fb.innerHTML = `
+            <div class="feedback-title">❌ Incorrect Answer</div>
+            <div style="margin-bottom: 0.5rem; line-height: 1.45;">${q.hint}</div>
+            <div class="retry-card">
+                <div style="font-weight: 700; margin-bottom: 0.25rem; color: var(--accent-rose);">⚠️ 4/4 Required to Complete Checkpoint</div>
+                <p style="font-size: 0.84rem; margin-bottom: 0.65rem; color: var(--text-main);">
+                    To verify complete mastery of kinematics graph analysis, answer all checkpoint questions correctly. Click below to load a fresh graph and try again!
+                </p>
+                <button class="action-btn btn-advance" style="background: var(--accent-rose);" onclick="resetP3WithNewGraph()">
+                    🔄 Load New Graph & Try Again
+                </button>
+            </div>
+        `;
+    }
+
+    updateP3MasteryBadge();
+    renderP3Pills();
+    renderP3Graph();
+
+    const nextBtn = document.getElementById('p3-next-btn');
+    if (p3CurrentQ === variant.questions.length - 1) {
+        if (PROGRESS.p3Completed) {
+            nextBtn.disabled = false;
+            nextBtn.innerHTML = 'View Quick Reference Summary 📋 →';
+            nextBtn.classList.add('btn-advance');
+        } else if (p3HasMistake) {
+            nextBtn.disabled = true;
+            nextBtn.innerHTML = '4/4 Required (Restart Below)';
+            nextBtn.classList.remove('btn-advance');
+        }
+    }
+}
+
+function resetP3WithNewGraph() {
+    p3VariantIdx = getDifferentRandomIndex(p3VariantIdx, P3_VARIANTS.length);
+    const variant = P3_VARIANTS[p3VariantIdx];
+    p3ActiveQuestions = prepareShuffledQuestions(variant.questions);
+    document.getElementById('p3-intro-box').innerHTML = variant.scenarioText;
+    p3CurrentQ = 0;
+    p3Answers = {};
+    p3HasMistake = false;
+
+    if (CURRENT_STUDENT) {
+        CURRENT_STUDENT.p3Attempts = (CURRENT_STUDENT.p3Attempts || 1) + 1;
+        CURRENT_STUDENT.totalAttempts = (CURRENT_STUDENT.totalAttempts || 1) + 1;
+        syncActiveStudent();
+    }
+    updateP3MasteryBadge();
+    renderP3Pills();
+    loadP3Question(0);
+    renderP3Graph();
+    showToast('🏃 New Checkpoint graph loaded with randomized answers!');
+}
+
+function prevP3() {
+    if (p3CurrentQ > 0) loadP3Question(p3CurrentQ - 1);
+}
+
+function nextP3() {
+    const variant = P3_VARIANTS[p3VariantIdx];
+    if (p3CurrentQ < variant.questions.length - 1) {
+        loadP3Question(p3CurrentQ + 1);
+    } else {
+        switchSection('summary');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function renderP3Graph() {
+    const canvas = document.getElementById('canvas-m3-quiz');
+    if (!canvas) return;
+    const variant = P3_VARIANTS[p3VariantIdx];
+    const { ctx, w, h } = initCanvas(canvas);
+    const col = getColors();
+    const { toX, toY } = drawGrid(ctx, w, h, 0, 10, 0, variant.yMax, 'Time t (s)', 'Velocity v⃗ (m/s)', {
+        xStep: 1,
+        yStep: 2
+    });
+
+    // Shading if question 3 or 4
+    if (p3CurrentQ === 2) {
+        ctx.fillStyle = isDarkTheme ? 'rgba(56, 189, 248, 0.25)' : 'rgba(2, 132, 199, 0.2)';
+        ctx.fillRect(toX(variant.rectT1), toY(variant.rectV), toX(variant.rectT2) - toX(variant.rectT1), toY(0) - toY(variant.rectV));
+    } else if (p3CurrentQ === 3) {
+        ctx.fillStyle = isDarkTheme ? 'rgba(16, 185, 129, 0.25)' : 'rgba(5, 150, 105, 0.2)';
+        ctx.beginPath();
+        ctx.moveTo(toX(0), toY(0));
+        ctx.lineTo(toX(variant.tri1T), toY(variant.rectV));
+        ctx.lineTo(toX(variant.tri1T), toY(0));
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillRect(toX(variant.rectT1), toY(variant.rectV), toX(variant.rectT2) - toX(variant.rectT1), toY(0) - toY(variant.rectV));
+
+        ctx.beginPath();
+        ctx.moveTo(toX(variant.tri2T), toY(0));
+        ctx.lineTo(toX(variant.tri2T), toY(variant.rectV));
+        ctx.lineTo(toX(10), toY(0));
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    // Curve
+    ctx.strokeStyle = col.vel;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    variant.velData.forEach((pt, i) => {
+        const x = toX(pt.t);
+        const y = toY(pt.v);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Dots
+    variant.velData.forEach(pt => {
+        ctx.fillStyle = col.vel;
+        ctx.beginPath();
+        ctx.arc(toX(pt.t), toY(pt.v), 4.5, 0, Math.PI * 2);
+        ctx.fill();
+    });
+}
+
+
+/* =====================================================================
+   INITIALIZATION ON LOAD
+   ===================================================================== */
+window.addEventListener('DOMContentLoaded', () => {
+    // Key listeners for Enter key submission
+    const studentInput = document.getElementById('student-name-input');
+    if (studentInput) {
+        studentInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submitStudentName();
+        });
+    }
+
+    const teacherPassInput = document.getElementById('teacher-pass-input');
+    if (teacherPassInput) {
+        teacherPassInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submitTeacherPassword();
+        });
+    }
+
+    // Always start with the loading page active
+    initStudentSession();
+});
+
+    </script>
+</body>
+</html>
