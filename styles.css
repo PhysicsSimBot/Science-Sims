@@ -35,7 +35,9 @@ body.theme-phys30{--accent:var(--phys30)}
 .mark{width:26px;height:26px;flex:none}
 .mark ellipse{fill:none;stroke:var(--sci10);stroke-width:1.4}
 .mark .nucleus{fill:var(--phys30);stroke:none}
-.brand{font-family:var(--display);font-weight:600;font-size:1.02rem;letter-spacing:-0.01em}
+.brand{font-family:var(--display);font-weight:600;font-size:1.02rem;letter-spacing:-0.01em;text-decoration:none;color:var(--text);transition:opacity .18s ease}
+.brand:hover{opacity:.75}
+.brand:focus-visible{outline:2px solid var(--text);outline-offset:3px;border-radius:4px}
 .brand span{color:var(--muted);font-weight:400}
 .topbar .back{
   margin-left:auto;text-decoration:none;color:var(--muted);font-size:0.92rem;font-weight:500;

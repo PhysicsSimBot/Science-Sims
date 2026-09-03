@@ -24,7 +24,7 @@
    Unit names (use these exact spellings so grouping stays tidy):
      Science 10 : "Chemistry"  "Physics"  "Biology"
      Physics 20 : "Skills & Measurement"  "Kinematics"  "Dynamics"  "Circular Motion"  "Oscillatory Motion & Waves"
-     Physics 30 : "Review"  "Skills & Measurement"  "Momentum"  (more to be added as you build them out)
+     Physics 30 : "Review"  "Momentum"  (more to be added as you build them out)
 
    TO ADD A SIMULATION: copy an existing line, paste it inside the [ ] brackets,
    and change the fields. Keep the comma at the end of each line.
@@ -43,7 +43,7 @@ const SIMS = [
   /* ---- Physics 30 ---- */
   { course:"phys30", unit:"Review", title:"Physics 20 Review", desc:"Brush up on key Physics 20 concepts before diving into Physics 30.", file:"sims/physics30/physics20review.html" },
   { course:"phys30", unit:"Momentum", title:"Collision Lab", desc:"Explore 2D disc collisions, momentum conservation, and restitution.", file:"sims/physics30/collisionlab.html" },
-  { course:"phys30", unit:"Skills & Measurement", title:"Significant Digits", desc:"Practice reading and rounding to the correct number of significant figures.", file:"sims/physics20/sigdig.html" },
+  { course:"phys30", unit:"Review", title:"Significant Digits", desc:"Practice reading and rounding to the correct number of significant figures.", file:"sims/physics20/sigdig.html" },
 
 ];
 
@@ -56,5 +56,5 @@ const SIMS = [
 const UNIT_ORDER = {
   sci10:  ["Chemistry", "Physics", "Biology"],
   phys20: ["Skills & Measurement", "Kinematics", "Dynamics", "Circular Motion", "Oscillatory Motion & Waves"],
-  phys30: ["Review", "Skills & Measurement", "Momentum"],
+  phys30: ["Review", "Momentum"],
 };
