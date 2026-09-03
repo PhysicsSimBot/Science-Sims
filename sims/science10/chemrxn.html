@@ -1,0 +1,3486 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chemical Reaction Balancing & Classification | Alberta Science 10 & Chemistry 20</title>
+  <style>
+    :root, [data-theme="dark"] {
+      --bg-primary: #0b1120;
+      --bg-surface: #131d33;
+      --bg-card: #18233f;
+      --bg-accent: #223259;
+      --bg-input: #0e172a;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-subtle: #64748b;
+      --border-color: #24355c;
+      --border-focus: #3b82f6;
+
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-subtle: rgba(59, 130, 246, 0.15);
+
+      --success: #10b981;
+      --success-hover: #059669;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --success-border: rgba(16, 185, 129, 0.35);
+
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --danger-border: rgba(239, 68, 68, 0.35);
+
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.15);
+      --warning-border: rgba(245, 158, 11, 0.35);
+
+      --info: #06b6d4;
+      --info-bg: rgba(6, 182, 212, 0.15);
+      --info-border: rgba(6, 182, 212, 0.35);
+
+      /* Reaction Type Colors */
+      --type-formation: #10b981;
+      --type-formation-bg: rgba(16, 185, 129, 0.12);
+      --type-decomposition: #a855f7;
+      --type-decomposition-bg: rgba(168, 85, 247, 0.12);
+      --type-single: #3b82f6;
+      --type-single-bg: rgba(59, 130, 246, 0.12);
+      --type-double: #f59e0b;
+      --type-double-bg: rgba(245, 158, 11, 0.12);
+      --type-combustion: #f97316;
+      --type-combustion-bg: rgba(249, 115, 22, 0.12);
+
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 8px -1px rgba(0,0,0,0.4);
+      --shadow-lg: 0 10px 25px -3px rgba(0,0,0,0.5);
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --bg-accent: #e2e8f0;
+      --bg-input: #f8fafc;
+      
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-subtle: #94a3b8;
+      --border-color: #cbd5e1;
+      --border-focus: #2563eb;
+
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-subtle: rgba(37, 99, 235, 0.1);
+
+      --success: #059669;
+      --success-hover: #047857;
+      --success-bg: rgba(5, 150, 105, 0.1);
+      --success-border: rgba(5, 150, 105, 0.3);
+
+      --danger: #dc2626;
+      --danger-bg: rgba(220, 38, 38, 0.1);
+      --danger-border: rgba(220, 38, 38, 0.3);
+
+      --warning: #d97706;
+      --warning-bg: rgba(217, 119, 6, 0.1);
+      --warning-border: rgba(217, 119, 6, 0.3);
+
+      --info: #0891b2;
+      --info-bg: rgba(8, 145, 178, 0.1);
+      --info-border: rgba(8, 145, 178, 0.3);
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* Top Navbar */
+    .navbar {
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--text-main);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .brand-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .badge-curriculum {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      background-color: var(--primary-subtle);
+      color: var(--primary);
+      border: 1px solid var(--border-focus);
+      border-radius: var(--radius-full);
+      letter-spacing: 0.02em;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-icon {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+    }
+
+    .btn-icon:hover {
+      background-color: var(--bg-accent);
+      border-color: var(--border-focus);
+    }
+
+    .btn-teacher {
+      border-color: var(--warning-border);
+      color: var(--warning);
+      background: var(--warning-bg);
+      font-weight: 600;
+    }
+
+    .btn-teacher:hover {
+      background: rgba(245, 158, 11, 0.25);
+    }
+
+    /* Container */
+    .container {
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem 1.25rem;
+      flex: 1;
+    }
+
+    /* Views */
+    .view {
+      display: none;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Card styling */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Hero / Header Section */
+    .hero-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .form-sublabel {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: -0.3rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .input-text {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background-color: var(--bg-input);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .input-text:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--primary-subtle);
+    }
+
+    /* Selection Grids */
+    .selection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .toggle-card {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+
+    .toggle-card:hover {
+      border-color: var(--text-subtle);
+      background: var(--bg-accent);
+    }
+
+    .toggle-card.selected {
+      border-color: var(--primary);
+      background: var(--primary-subtle);
+    }
+
+    .toggle-card input[type="checkbox"] {
+      margin-top: 0.2rem;
+      width: 1.15rem;
+      height: 1.15rem;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    .toggle-info h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.15rem;
+    }
+
+    .toggle-info p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    .type-pill {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+
+    /* Count toggle row */
+    .count-selector {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn-count {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 1.05rem;
+      font-weight: 700;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+
+    .btn-count:hover {
+      background: var(--bg-accent);
+      border-color: var(--text-subtle);
+    }
+
+    .btn-count.active {
+      background: var(--primary-subtle);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Alert / Notice box */
+    .alert {
+      padding: 0.9rem 1.1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.45;
+    }
+
+    .alert-info {
+      background-color: var(--info-bg);
+      border: 1px solid var(--info-border);
+      color: var(--text-main);
+    }
+
+    .alert-warning {
+      background-color: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      color: var(--text-main);
+    }
+
+    /* Primary Action Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: #ffffff;
+    }
+
+    .btn-success:hover {
+      background-color: var(--success-hover);
+    }
+
+    .btn-secondary {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-accent);
+      border-color: var(--text-subtle);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: #ffffff;
+    }
+
+    .btn-lg {
+      padding: 0.95rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    /* Practice Quiz View */
+    .quiz-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .student-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 0.4rem 0.85rem;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-accent);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--info));
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    /* Equation Card */
+    .equation-container {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .equation-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.65rem 0.5rem;
+      font-size: 1.45rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .species-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .coef-input {
+      width: 3.25rem;
+      height: 3.25rem;
+      text-align: center;
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: inherit;
+      background: var(--bg-input);
+      border: 2px solid var(--border-color);
+      color: var(--primary);
+      border-radius: var(--radius-md);
+      transition: all 0.15s ease;
+    }
+
+    .coef-input:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      background: var(--bg-card);
+      box-shadow: 0 0 0 3px var(--primary-subtle);
+    }
+
+    .coef-input::placeholder {
+      color: var(--text-subtle);
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    .formula {
+      white-space: nowrap;
+      color: var(--text-main);
+    }
+
+    .formula sub {
+      font-size: 0.75em;
+      bottom: -0.2em;
+      position: relative;
+    }
+
+    .reaction-arrow {
+      color: var(--info);
+      font-size: 1.7rem;
+      margin: 0 0.5rem;
+      user-select: none;
+    }
+
+    .plus-sign {
+      color: var(--text-subtle);
+      font-size: 1.25rem;
+      user-select: none;
+    }
+
+    /* Hint section */
+    .hint-container {
+      margin-top: 1.25rem;
+      border-top: 1px dashed var(--border-color);
+      padding-top: 1.25rem;
+    }
+
+    .btn-hint {
+      background: transparent;
+      border: 1px solid var(--warning-border);
+      color: var(--warning);
+      padding: 0.45rem 0.9rem;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+      font-weight: 600;
+    }
+
+    .btn-hint:hover {
+      background: var(--warning-bg);
+    }
+
+    .hint-box {
+      margin-top: 0.75rem;
+      background: var(--warning-bg);
+      border-left: 3px solid var(--warning);
+      padding: 0.85rem 1rem;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+      font-size: 0.92rem;
+      text-align: left;
+      line-height: 1.45;
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    /* Reaction Identification Question (Conditional) */
+    .identification-card {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .ident-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 0.25rem;
+      color: var(--text-main);
+    }
+
+    .ident-sub {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .mc-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.65rem;
+    }
+
+    .mc-option {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.8rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+
+    .mc-option:hover {
+      background: var(--bg-accent);
+      border-color: var(--text-subtle);
+    }
+
+    .mc-option.selected {
+      border-color: var(--primary);
+      background: var(--primary-subtle);
+    }
+
+    .mc-option input[type="radio"] {
+      width: 1.15rem;
+      height: 1.15rem;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .mc-label {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    /* Quiz Navigation Footer */
+    .quiz-nav-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .question-dots {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .dot-btn {
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .dot-btn:hover {
+      border-color: var(--primary);
+      color: var(--text-main);
+    }
+
+    .dot-btn.current {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 0 0 2px var(--primary-subtle);
+    }
+
+    .dot-btn.answered {
+      border-color: var(--success);
+      color: var(--success);
+      background: var(--success-bg);
+    }
+
+    .dot-btn.answered.current {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    /* Results Screen */
+    .results-hero {
+      text-align: center;
+      padding: 1.5rem 0 2rem;
+    }
+
+    .results-badge {
+      font-size: 3rem;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .results-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+
+    .results-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    .scores-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .score-card {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .score-card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .score-value {
+      font-size: 2.75rem;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 0.25rem;
+    }
+
+    .score-val-balancing {
+      color: var(--primary);
+    }
+
+    .score-val-ident {
+      color: var(--info);
+    }
+
+    .score-detail {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .badge-na {
+      display: inline-block;
+      padding: 0.35rem 0.85rem;
+      background: var(--bg-accent);
+      color: var(--text-subtle);
+      border-radius: var(--radius-full);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0.75rem 0;
+    }
+
+    /* Breakdown list */
+    .breakdown-section {
+      margin-top: 2rem;
+    }
+
+    .breakdown-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .breakdown-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.15s ease;
+    }
+
+    .breakdown-item.correct {
+      border-left: 4px solid var(--success);
+    }
+
+    .breakdown-item.incorrect {
+      border-left: 4px solid var(--danger);
+    }
+
+    .breakdown-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .question-tag {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+
+    .equation-review {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      padding: 0.6rem 0.8rem;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+    }
+
+    .answer-comparison {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .atom-inventory-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .atom-inventory-table th, .atom-inventory-table td {
+      padding: 0.4rem 0.75rem;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .atom-inventory-table th {
+      background: var(--bg-accent);
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* Teacher View */
+    .teacher-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.1rem;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .stat-number {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-top: 0.2rem;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      margin-bottom: 1.5rem;
+    }
+
+    .grade-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.92rem;
+    }
+
+    .grade-table th {
+      background: var(--bg-card);
+      padding: 0.85rem 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    .grade-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+
+    .grade-table tr:hover {
+      background: var(--bg-accent);
+    }
+
+    .badge-grade {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .badge-grade-high {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid var(--success-border);
+    }
+
+    .badge-grade-mid {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border: 1px solid var(--warning-border);
+    }
+
+    .badge-grade-low {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+    }
+
+    .badge-grade-na {
+      background: var(--bg-accent);
+      color: var(--text-subtle);
+      border: 1px solid var(--border-color);
+    }
+
+    /* Modal dialogs */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 1.25rem;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .modal-card-lg {
+      max-width: 780px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.2rem;
+    }
+
+    .btn-close:hover {
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      overflow-y: auto;
+      flex: 1;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      .navbar, .btn, .quiz-nav-footer, .btn-count, .hint-container {
+        display: none !important;
+      }
+      .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+      .card, .score-card, .breakdown-item, .table-container {
+        border: 1px solid #cccccc !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-brand" onclick="app.showLanding()">
+      <span class="brand-icon">⚗️</span>
+      <span>Reaction Lab</span>
+      <span class="badge-curriculum">Alberta Sci 10 & Chem 20</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-icon" id="theme-toggle" onclick="app.toggleTheme()" title="Toggle Dark / Light Mode">
+        <span id="theme-icon">☀️</span>
+        <span id="theme-text">Light</span>
+      </button>
+      <button class="btn-icon btn-teacher" onclick="app.openTeacherAuthModal()" title="Teacher Grade Portal">
+        <span>🔒</span>
+        <span>Teacher Portal</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+
+    <!-- ==================== VIEW 1: LANDING & SETUP ==================== -->
+    <section id="view-landing" class="view active">
+      <div class="card">
+        <h1 class="hero-title">Chemical Reaction Balancing & Classification</h1>
+        <p class="hero-subtitle">Practice balancing chemical equations and classifying reaction types aligned with Alberta Science 10 (Unit 1) and Chemistry 20.</p>
+
+        <!-- Student Name -->
+        <div class="form-group">
+          <label class="form-label" for="student-name">Student Full Name <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="student-name" class="input-text" placeholder="e.g., Alex Mercer" autocomplete="name" required>
+        </div>
+
+        <!-- Reaction Types Selection -->
+        <div class="form-group">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+            <label class="form-label" style="margin-bottom:0;">Reaction Types to Practice</label>
+            <div style="display:flex; gap:0.4rem;">
+              <button type="button" class="btn-icon" style="padding:0.25rem 0.55rem; font-size:0.78rem;" onclick="app.selectAllTypes(true)">Select All</button>
+              <button type="button" class="btn-icon" style="padding:0.25rem 0.55rem; font-size:0.78rem;" onclick="app.selectAllTypes(false)">Clear</button>
+            </div>
+          </div>
+          <span class="form-sublabel">Select at least one reaction type. If you select <strong>two or more</strong>, you will also identify the reaction type on each question.</span>
+
+          <div class="selection-grid">
+            <!-- Formation -->
+            <label class="toggle-card" id="card-type-formation">
+              <input type="checkbox" name="reaction-type" value="formation" checked onchange="app.updateLandingSummary()">
+              <div class="toggle-info">
+                <h4><span class="type-pill" style="background:var(--type-formation)"></span> Formation (Synthesis)</h4>
+                <p>A + B → AB (elements or simple compounds combine)</p>
+              </div>
+            </label>
+
+            <!-- Decomposition -->
+            <label class="toggle-card" id="card-type-decomposition">
+              <input type="checkbox" name="reaction-type" value="decomposition" checked onchange="app.updateLandingSummary()">
+              <div class="toggle-info">
+                <h4><span class="type-pill" style="background:var(--type-decomposition)"></span> Decomposition</h4>
+                <p>AB → A + B (compound breaks down into parts)</p>
+              </div>
+            </label>
+
+            <!-- Single Replacement -->
+            <label class="toggle-card" id="card-type-single_replacement">
+              <input type="checkbox" name="reaction-type" value="single_replacement" checked onchange="app.updateLandingSummary()">
+              <div class="toggle-info">
+                <h4><span class="type-pill" style="background:var(--type-single)"></span> Single Replacement</h4>
+                <p>A + BC → AC + B (an element displaces an ion)</p>
+              </div>
+            </label>
+
+            <!-- Double Replacement -->
+            <label class="toggle-card" id="card-type-double_replacement">
+              <input type="checkbox" name="reaction-type" value="double_replacement" checked onchange="app.updateLandingSummary()">
+              <div class="toggle-info">
+                <h4><span class="type-pill" style="background:var(--type-double)"></span> Double Replacement</h4>
+                <p>AB + CD → AD + CB (exchange of positive ions)</p>
+              </div>
+            </label>
+
+            <!-- Combustion -->
+            <label class="toggle-card" id="card-type-combustion">
+              <input type="checkbox" name="reaction-type" value="combustion" checked onchange="app.updateLandingSummary()">
+              <div class="toggle-info">
+                <h4><span class="type-pill" style="background:var(--type-combustion)"></span> Combustion</h4>
+                <p>Fuel + O₂(g) → CO₂(g) + H₂O(g)</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Question Count Selector -->
+        <div class="form-group">
+          <label class="form-label">Number of Reactions</label>
+          <div class="count-selector">
+            <button type="button" class="btn-count" data-count="5" onclick="app.setQuestionCount(5)">5 Reactions</button>
+            <button type="button" class="btn-count active" data-count="10" onclick="app.setQuestionCount(10)">10 Reactions</button>
+            <button type="button" class="btn-count" data-count="15" onclick="app.setQuestionCount(15)">15 Reactions</button>
+          </div>
+        </div>
+
+        <!-- Dynamic Rule Notice -->
+        <div id="landing-mode-notice" class="alert alert-info">
+          <span>ℹ️</span>
+          <div id="notice-text">
+            <strong>Multiple Types Selected:</strong> You will be tested on <em>both</em> balancing coefficients and identifying each reaction type.
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-lg btn-block" onclick="app.startQuiz()">
+          🚀 Begin Practice Session
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: ACTIVE QUIZ ==================== -->
+    <section id="view-quiz" class="view">
+      <!-- Quiz Header -->
+      <div class="quiz-header">
+        <div class="student-badge">
+          <span>👤</span>
+          <span id="quiz-student-name">Student</span>
+        </div>
+        <div style="font-weight:700; color:var(--text-main); font-size:1.05rem;" id="quiz-progress-text">
+          Reaction 1 of 10
+        </div>
+        <button class="btn btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.85rem;" onclick="app.confirmQuitQuiz()">
+          Exit Practice
+        </button>
+      </div>
+
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="quiz-progress-fill"></div>
+      </div>
+
+      <!-- Chemical Equation Card -->
+      <div class="equation-container">
+        <div style="margin-bottom: 1.25rem;">
+          <span class="badge-curriculum" id="quiz-question-type-badge" style="display:none;"></span>
+          <div style="font-size:0.9rem; color:var(--text-muted); margin-top:0.25rem;">
+            Enter the lowest whole-number coefficients. (Leave blank or type <strong>1</strong> for a coefficient of 1)
+          </div>
+        </div>
+
+        <!-- The Equation Inputs -->
+        <div class="equation-display" id="equation-display">
+          <!-- Dynamically generated equation species and inputs -->
+        </div>
+
+        <!-- Pedagogical Hint Button & Box -->
+        <div class="hint-container">
+          <button type="button" class="btn-hint" onclick="app.toggleHint()">
+            <span>💡</span>
+            <span>Need a Hint? (Atom balance strategy)</span>
+          </button>
+          <div class="hint-box" id="hint-box">
+            <!-- Hint text injected here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Multiple Choice: Reaction Type Identification (Only if >1 type selected) -->
+      <div class="identification-card" id="identification-section">
+        <div class="ident-header">
+          <span>🏷️</span>
+          <span>Classify the Reaction Type</span>
+        </div>
+        <p class="ident-sub">Select the classification that best describes this chemical change:</p>
+
+        <div class="mc-options" id="mc-options-container">
+          <!-- Dynamically populated options -->
+        </div>
+      </div>
+
+      <!-- Quiz Navigation Footer -->
+      <div class="quiz-nav-footer">
+        <button type="button" class="btn btn-secondary" id="btn-prev" onclick="app.prevQuestion()">
+          ← Previous
+        </button>
+
+        <div class="question-dots" id="question-dots">
+          <!-- Jump dots injected here -->
+        </div>
+
+        <button type="button" class="btn btn-primary" id="btn-next" onclick="app.nextQuestion()">
+          Next →
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: RESULTS & REVIEW ==================== -->
+    <section id="view-results" class="view">
+      <div class="card">
+        <div class="results-hero">
+          <div class="results-badge" id="results-icon">🎉</div>
+          <h1 class="results-title" id="results-headline">Practice Complete!</h1>
+          <p class="results-subtitle" id="results-subheadline">Here is your performance breakdown.</p>
+        </div>
+
+        <!-- Score Breakdown Cards -->
+        <div class="scores-grid">
+          <!-- Balancing Score -->
+          <div class="score-card">
+            <div class="score-card-title">Balancing Score</div>
+            <div class="score-value score-val-balancing" id="res-balance-score">0 / 0</div>
+            <div class="score-detail" id="res-balance-pct">0% Accuracy</div>
+          </div>
+
+          <!-- Type Identification Score -->
+          <div class="score-card">
+            <div class="score-card-title">Reaction Type Score</div>
+            <div id="res-type-wrapper">
+              <div class="score-value score-val-ident" id="res-type-score">0 / 0</div>
+              <div class="score-detail" id="res-type-pct">0% Accuracy</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-info" id="results-storage-status">
+          <span>💾</span>
+          <span>Your score has been saved to the Teacher Gradebook on this device.</span>
+        </div>
+
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1.5rem;">
+          <button class="btn btn-primary" onclick="app.showLanding()">
+            🔄 Practice Another Set
+          </button>
+          <button class="btn btn-secondary" onclick="window.print()">
+            🖨️ Print / Save PDF Report
+          </button>
+          <button class="btn btn-secondary btn-teacher" onclick="app.openTeacherAuthModal()">
+            🔒 Teacher Portal
+          </button>
+        </div>
+
+        <!-- Detailed Question Breakdown -->
+        <div class="breakdown-section">
+          <div class="breakdown-title">
+            <span>Detailed Question Review</span>
+            <span style="font-size:0.85rem; font-weight:normal; color:var(--text-muted);" id="breakdown-summary-tag"></span>
+          </div>
+          <div id="breakdown-list">
+            <!-- Injected question breakdown cards -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: TEACHER GRADEBOOK ==================== -->
+    <section id="view-teacher" class="view">
+      <div class="card">
+        <div class="teacher-header">
+          <div>
+            <h1 class="hero-title" style="margin-bottom:0.2rem;">
+              <span>📊</span> Teacher Gradebook Portal
+            </h1>
+            <p class="hero-subtitle" style="margin-bottom:0;">Medicine Hat High School & Alberta Science Curriculum Records</p>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn btn-secondary" onclick="app.exportToCSV()">
+              📥 Export CSV
+            </button>
+            <button class="btn btn-secondary" onclick="window.print()">
+              🖨️ Print Grades
+            </button>
+            <button class="btn btn-secondary" onclick="app.showLanding()">
+              ← Student Practice Mode
+            </button>
+          </div>
+        </div>
+
+        <!-- Teacher Stats -->
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-label">Total Submissions</div>
+            <div class="stat-number" id="t-stat-count">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Balancing Average</div>
+            <div class="stat-number" id="t-stat-bal-avg">0%</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Reaction Type Avg</div>
+            <div class="stat-number" id="t-stat-type-avg">N/A</div>
+          </div>
+        </div>
+
+        <!-- Search / Filter Bar -->
+        <div style="display:flex; gap:0.75rem; margin-bottom:1rem; flex-wrap:wrap;">
+          <input type="text" id="teacher-search" class="input-text" style="flex:1; min-width:200px;" placeholder="Search student name..." oninput="app.renderTeacherTable()">
+          <button class="btn btn-secondary btn-icon" onclick="app.addSampleSubmission()" title="Add sample record for testing">
+            <span>+</span> Add Sample Demo
+          </button>
+          <button class="btn btn-secondary btn-icon" style="color:var(--danger); border-color:var(--danger-border);" onclick="app.clearAllGrades()">
+            <span>🗑️</span> Clear All Records
+          </button>
+        </div>
+
+        <!-- Grades Table -->
+        <div class="table-container">
+          <table class="grade-table">
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>Date & Time</th>
+                <th>Mode / Types</th>
+                <th>Count</th>
+                <th>Balancing Score</th>
+                <th>Type ID Score</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="teacher-table-body">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODAL: TEACHER AUTH ==================== -->
+  <div class="modal-backdrop" id="modal-teacher-auth">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🔒</span>
+          <span>Teacher Portal Access</span>
+        </div>
+        <button class="btn-close" onclick="app.closeModals()">&times;</button>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.25rem;">
+        Enter the teacher administrative password to view student scores and download grade records.
+      </p>
+      <form onsubmit="event.preventDefault(); app.verifyTeacherPassword();">
+        <div class="form-group">
+          <label class="form-label" for="teacher-password">Password</label>
+          <input type="password" id="teacher-password" class="input-text" placeholder="Enter password" autofocus>
+          <div id="teacher-auth-error" style="color:var(--danger); font-size:0.85rem; margin-top:0.4rem; display:none;">
+            Incorrect password. Please try again.
+          </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModals()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Unlock Portal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: SUBMISSION DETAILS ==================== -->
+  <div class="modal-backdrop" id="modal-submission-details">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>📋</span>
+          <span id="sub-modal-title">Student Submission Details</span>
+        </div>
+        <button class="btn-close" onclick="app.closeModals()">&times;</button>
+      </div>
+      <div class="modal-body" id="sub-modal-body">
+        <!-- Details injected dynamically -->
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem; border-top:1px solid var(--border-color); padding-top:0.75rem;">
+        <button type="button" class="btn btn-secondary" onclick="app.closeModals()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
+  <script>
+    /* =========================================================================
+     * ALBERTA SCIENCE 10 & CHEMISTRY 20 CURRICULUM REACTION BANK
+     * 55 Authentic Chemical Reactions with Balanced Coefficients, Formulas, 
+     * States of Matter, and Pedagogical Guidance Hints
+     * ========================================================================= */
+    const REACTION_BANK = [
+      // -------------------------------------------------------------
+      // 1. FORMATION (SYNTHESIS)
+      // -------------------------------------------------------------
+      {
+        id: "form-01",
+        type: "formation",
+        typeName: "Formation (Synthesis)",
+        equationDisplay: "Mg(s) + O₂(g) → MgO(s)",
+        reactants: [
+          { formulaHtml: "Mg(s)", coef: 2, atoms: { Mg: 1 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 1, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "MgO(s)", coef: 2, atoms: { Mg: 1, O: 1 } }
+        ],
+        hint: "Start by balancing the oxygen atoms between the diatomic reactant O₂(g) and the product MgO(s). Once oxygen is balanced, balance the magnesium.",
+        explanation: "Two elements (magnesium and oxygen gas) combine directly to form a single binary ionic compound (magnesium oxide)."
+      },
+      {
+        id: "form-02",
+        type: "formation",
+        typeName: "Formation (Synthesis)",
+        equationDisplay: "Fe(s) + O₂(g) → Fe₂O₃(s)",
+        reactants: [
+          { formulaHtml: "Fe(s)", coef: 4, atoms: { Fe: 1 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 3, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "Fe<sub>2</sub>O<sub>3</sub>(s)", coef: 2, atoms: { Fe: 2, O: 3 } }
+        ],
+        hint: "Notice that oxygen has a subscript of 2 on the left and 3 on the right. Find the lowest common multiple of 2 and 3 for oxygen before balancing iron.",
+        explanation: "Iron metal oxidizes in the presence of oxygen gas to synthesize rust (iron(III) oxide)."
+      },
+      {
+        id: "form-03",
+        type: "formation",
+        typeName: "Formation (Synthesis)",
+        equationDisplay: "N₂(g) + H₂(g) → NH₃(g)",
+        reactants: [
+          { formulaHtml: "N<sub>2</sub>(g)", coef: 1, atoms: { N: 2 } },
+          { formulaHtml: "H<sub>2</sub>(g)", coef: 3, atoms: { H: 2 } }
+        ],
+        products: [
+          { formulaHtml: "NH<sub>3</sub>(g)", coef: 2, atoms: { N: 1, H: 3 } }
+        ],
+        hint: "Balance the diatomic nitrogen first by adjusting the coefficient for NH₃(g). Then determine how many H₂(g) molecules are required to provide 6 hydrogens.",
+        explanation: "The Haber-Bosch synthesis combines nitrogen and hydrogen gas to produce ammonia."
+      },
+      {
+        id: "form-04",
+        type: "formation",
+        typeName: "Formation (Synthesis)",
+        equationDisplay: "Al(s) + Cl₂(g) → AlCl₃(s)",
+        reactants: [
+          { formulaHtml: "Al(s)", coef: 2, atoms: { Al: 1 } },
+          { formulaHtml: "Cl<sub>2</sub>(g)", coef: 3, atoms: { Cl: 2 } }
+        ],
+        products: [
+          { formulaHtml: "AlCl<sub>3</sub>(s)", coef: 2, atoms: { Al: 1, Cl: 3 } }
+        ],
+        hint: "Chlorine appears as Cl₂ on the left and Cl₃ on the right. Use the least common multiple of 2 and 3 (which is 6) to balance chlorine first, then balance aluminum.",
+        explanation: "Aluminum metal reacts directly with chlorine gas to synthesize aluminum chloride."
+      },
+      {
+        id: "form-05",
+        type: "formation",
+        typeName: "Formation (Synthesis)",
+        equationDisplay: "Na(s) + Cl₂(g) → NaCl(s)",
+        reactants: [
+          { formulaHtml: "Na(s)", coef: 2, atoms: { Na: 1 } },
+          { formulaHtml: "Cl<sub>2</sub>(g)", coef: 1, atoms: { Cl: 2 } }
+        ],
+        products: [
+          { formulaHtml: "NaCl(s)", coef: 2, atoms: { Na: 1, Cl: 1 } }
+        ],
+        hint: "Diatomic chlorine on the left has 2 chlorine atoms. Place a coefficient of 2 in front of NaCl(s) first, then balance the sodium metal.",
+        explanation: "Sodium metal combines with toxic chlorine gas to produce ordinary table salt (sodium chloride)."
+      },
+      {
+        id: "form-06",
+        type: "formation",
+        typeName: "Formation (Synthesis)",
+        equationDisplay: "Zn(s) + S₈(s) → ZnS(s)",
+        reactants: [
+          { formulaHtml: "Zn(s)", coef: 8, atoms: { Zn: 1 } },
+          { formulaHtml: "S<sub>8</sub>(s)", coef: 1, atoms: { S: 8 } }
+        ],
+        products: [
+          { formulaHtml: "ZnS(s)", coef: 8, atoms: { Zn: 1, S: 1 } }
+        ],
+        hint: "In Alberta Chemistry 20, sulfur in standard state is polyatomic S₈(s). Balance the 8 sulfur atoms in the product first, then match the zinc.",
+        explanation: "Elemental zinc and octasulfur combine to form zinc sulfide."
+      },
+      {
+        id: "form-07",
+        type: "formation",
+        typeName: "Formation (Synthesis)",
+        equationDisplay: "H₂(g) + O₂(g) → H₂O(l)",
+        reactants: [
+          { formulaHtml: "H<sub>2</sub>(g)", coef: 2, atoms: { H: 2 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 1, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "H<sub>2</sub>O(l)", coef: 2, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "Oxygen has 2 atoms on the reactant side but only 1 in water. Balance oxygen first by adding a coefficient of 2 to H₂O(l), then recount the hydrogens.",
+        explanation: "Hydrogen and oxygen gases react vigorously to synthesize liquid water."
+      },
+      {
+        id: "form-08",
+        type: "formation",
+        typeName: "Formation (Synthesis)",
+        equationDisplay: "Cu(s) + O₂(g) → CuO(s)",
+        reactants: [
+          { formulaHtml: "Cu(s)", coef: 2, atoms: { Cu: 1 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 1, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "CuO(s)", coef: 2, atoms: { Cu: 1, O: 1 } }
+        ],
+        hint: "Balance the 2 oxygen atoms from O₂(g) on the reactant side by giving copper(II) oxide a coefficient of 2, then balance copper.",
+        explanation: "Copper metal oxidizes when heated to form black copper(II) oxide."
+      },
+      {
+        id: "form-09",
+        type: "formation",
+        typeName: "Formation (Synthesis)",
+        equationDisplay: "P₄(s) + O₂(g) → P₄O₁₀(s)",
+        reactants: [
+          { formulaHtml: "P<sub>4</sub>(s)", coef: 1, atoms: { P: 4 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 5, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "P<sub>4</sub>O<sub>10</sub>(s)", coef: 1, atoms: { P: 4, O: 10 } }
+        ],
+        hint: "Tetraphosphorus P₄ is already balanced with 4 phosphorus atoms on both sides. Focus on supplying 10 oxygen atoms using pairs of O₂ molecules.",
+        explanation: "White phosphorus reacts with excess oxygen to form tetraphosphorus decaoxide."
+      },
+      {
+        id: "form-10",
+        type: "formation",
+        typeName: "Formation (Synthesis)",
+        equationDisplay: "K(s) + Br₂(l) → KBr(s)",
+        reactants: [
+          { formulaHtml: "K(s)", coef: 2, atoms: { K: 1 } },
+          { formulaHtml: "Br<sub>2</sub>(l)", coef: 1, atoms: { Br: 2 } }
+        ],
+        products: [
+          { formulaHtml: "KBr(s)", coef: 2, atoms: { K: 1, Br: 1 } }
+        ],
+        hint: "Liquid bromine is diatomic (Br₂). Give KBr(s) a coefficient of 2 to balance bromine, then balance the potassium metal.",
+        explanation: "Potassium reacts with liquid bromine in a synthesis reaction to produce potassium bromide."
+      },
+      {
+        id: "form-11",
+        type: "formation",
+        typeName: "Formation (Synthesis)",
+        equationDisplay: "Li(s) + S(s) → Li₂S(s)",
+        reactants: [
+          { formulaHtml: "Li(s)", coef: 2, atoms: { Li: 1 } },
+          { formulaHtml: "S(s)", coef: 1, atoms: { S: 1 } }
+        ],
+        products: [
+          { formulaHtml: "Li<sub>2</sub>S(s)", coef: 1, atoms: { Li: 2, S: 1 } }
+        ],
+        hint: "Notice that lithium sulfide requires 2 lithium ions for every sulfide ion. Balance lithium by inspecting the subscript in the product.",
+        explanation: "Lithium metal combines with sulfur to form lithium sulfide."
+      },
+
+      // -------------------------------------------------------------
+      // 2. DECOMPOSITION
+      // -------------------------------------------------------------
+      {
+        id: "decomp-01",
+        type: "decomposition",
+        typeName: "Decomposition",
+        equationDisplay: "H₂O(l) → H₂(g) + O₂(g)",
+        reactants: [
+          { formulaHtml: "H<sub>2</sub>O(l)", coef: 2, atoms: { H: 2, O: 1 } }
+        ],
+        products: [
+          { formulaHtml: "H<sub>2</sub>(g)", coef: 2, atoms: { H: 2 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 1, atoms: { O: 2 } }
+        ],
+        hint: "Oxygen gas on the right has 2 atoms, so you need 2 water molecules to supply them. Then recount and balance hydrogen gas.",
+        explanation: "Electrolysis breaks water down into its constituent elements: hydrogen and oxygen gases."
+      },
+      {
+        id: "decomp-02",
+        type: "decomposition",
+        typeName: "Decomposition",
+        equationDisplay: "HgO(s) → Hg(l) + O₂(g)",
+        reactants: [
+          { formulaHtml: "HgO(s)", coef: 2, atoms: { Hg: 1, O: 1 } }
+        ],
+        products: [
+          { formulaHtml: "Hg(l)", coef: 2, atoms: { Hg: 1 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 1, atoms: { O: 2 } }
+        ],
+        hint: "Oxygen gas on the product side is diatomic (O₂). Start by doubling mercury(II) oxide so you have 2 oxygen atoms, then balance mercury metal.",
+        explanation: "Heating red mercury(II) oxide decomposes it into liquid mercury and oxygen gas (Lavoisier's classic experiment)."
+      },
+      {
+        id: "decomp-03",
+        type: "decomposition",
+        typeName: "Decomposition",
+        equationDisplay: "KClO₃(s) → KCl(s) + O₂(g)",
+        reactants: [
+          { formulaHtml: "KClO<sub>3</sub>(s)", coef: 2, atoms: { K: 1, Cl: 1, O: 3 } }
+        ],
+        products: [
+          { formulaHtml: "KCl(s)", coef: 2, atoms: { K: 1, Cl: 1 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 3, atoms: { O: 2 } }
+        ],
+        hint: "Oxygen has a subscript of 3 in KClO₃ and 2 in O₂. Use the lowest common multiple of 6 for oxygen atoms, then balance potassium and chlorine.",
+        explanation: "Potassium chlorate decomposes upon heating into potassium chloride salt and oxygen gas."
+      },
+      {
+        id: "decomp-04",
+        type: "decomposition",
+        typeName: "Decomposition",
+        equationDisplay: "H₂O₂(aq) → H₂O(l) + O₂(g)",
+        reactants: [
+          { formulaHtml: "H<sub>2</sub>O<sub>2</sub>(aq)", coef: 2, atoms: { H: 2, O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "H<sub>2</sub>O(l)", coef: 2, atoms: { H: 2, O: 1 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 1, atoms: { O: 2 } }
+        ],
+        hint: "The right side currently has an odd total of oxygen atoms (1 in H₂O + 2 in O₂ = 3). Make the oxygen in water even by placing a 2 before H₂O(l), then balance the reactant.",
+        explanation: "Hydrogen peroxide decomposes into liquid water and oxygen gas (catalytic elephant toothpaste reaction)."
+      },
+      {
+        id: "decomp-05",
+        type: "decomposition",
+        typeName: "Decomposition",
+        equationDisplay: "CaCO₃(s) → CaO(s) + CO₂(g)",
+        reactants: [
+          { formulaHtml: "CaCO<sub>3</sub>(s)", coef: 1, atoms: { Ca: 1, C: 1, O: 3 } }
+        ],
+        products: [
+          { formulaHtml: "CaO(s)", coef: 1, atoms: { Ca: 1, O: 1 } },
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 1, atoms: { C: 1, O: 2 } }
+        ],
+        hint: "Count each element carefully on both sides: 1 Ca, 1 C, and (1 + 2 = 3) O on the right. Check if any coefficients need changing or if they are already 1.",
+        explanation: "Thermal decomposition of calcium carbonate (limestone) yields quicklime (calcium oxide) and carbon dioxide."
+      },
+      {
+        id: "decomp-06",
+        type: "decomposition",
+        typeName: "Decomposition",
+        equationDisplay: "Ag₂O(s) → Ag(s) + O₂(g)",
+        reactants: [
+          { formulaHtml: "Ag<sub>2</sub>O(s)", coef: 2, atoms: { Ag: 2, O: 1 } }
+        ],
+        products: [
+          { formulaHtml: "Ag(s)", coef: 4, atoms: { Ag: 1 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 1, atoms: { O: 2 } }
+        ],
+        hint: "Diatomic O₂(g) on the right requires 2 Ag₂O units on the left. Once you multiply Ag₂O by 2, count how many silver atoms you now have to balance.",
+        explanation: "Silver(I) oxide breaks down when heated into pure silver metal and oxygen gas."
+      },
+      {
+        id: "decomp-07",
+        type: "decomposition",
+        typeName: "Decomposition",
+        equationDisplay: "NaN₃(s) → Na(s) + N₂(g)",
+        reactants: [
+          { formulaHtml: "NaN<sub>3</sub>(s)", coef: 2, atoms: { Na: 1, N: 3 } }
+        ],
+        products: [
+          { formulaHtml: "Na(s)", coef: 2, atoms: { Na: 1 } },
+          { formulaHtml: "N<sub>2</sub>(g)", coef: 3, atoms: { N: 2 } }
+        ],
+        hint: "Nitrogen has 3 atoms in the azide ion on the left and 2 atoms in N₂ on the right. Use the least common multiple (6) to balance nitrogen first.",
+        explanation: "Sodium azide rapidly decomposes into sodium metal and nitrogen gas inside automotive airbags."
+      },
+      {
+        id: "decomp-08",
+        type: "decomposition",
+        typeName: "Decomposition",
+        equationDisplay: "Fe(OH)₃(s) → Fe₂O₃(s) + H₂O(g)",
+        reactants: [
+          { formulaHtml: "Fe(OH)<sub>3</sub>(s)", coef: 2, atoms: { Fe: 1, O: 3, H: 3 } }
+        ],
+        products: [
+          { formulaHtml: "Fe<sub>2</sub>O<sub>3</sub>(s)", coef: 1, atoms: { Fe: 2, O: 3 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 3, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "Start with the metal: iron has a subscript of 2 in Fe₂O₃, so place a 2 before Fe(OH)₃. Then count the hydrogens (2 × 3 = 6) to balance water.",
+        explanation: "Iron(III) hydroxide dehydrates thermally into iron(III) oxide and steam."
+      },
+      {
+        id: "decomp-09",
+        type: "decomposition",
+        typeName: "Decomposition",
+        equationDisplay: "NI₃(s) → N₂(g) + I₂(s)",
+        reactants: [
+          { formulaHtml: "NI<sub>3</sub>(s)", coef: 2, atoms: { N: 1, I: 3 } }
+        ],
+        products: [
+          { formulaHtml: "N<sub>2</sub>(g)", coef: 1, atoms: { N: 2 } },
+          { formulaHtml: "I<sub>2</sub>(s)", coef: 3, atoms: { I: 2 } }
+        ],
+        hint: "Balance the nitrogen first using the diatomic N₂ on the product side. Then use the least common multiple between iodine's subscript of 3 and diatomic I₂.",
+        explanation: "Nitrogen triiodide is an unstable contact explosive that decomposes violently into nitrogen gas and purple iodine vapor."
+      },
+      {
+        id: "decomp-10",
+        type: "decomposition",
+        typeName: "Decomposition",
+        equationDisplay: "Al₂O₃(s) → Al(s) + O₂(g)",
+        reactants: [
+          { formulaHtml: "Al<sub>2</sub>O<sub>3</sub>(s)", coef: 2, atoms: { Al: 2, O: 3 } }
+        ],
+        products: [
+          { formulaHtml: "Al(s)", coef: 4, atoms: { Al: 1 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 3, atoms: { O: 2 } }
+        ],
+        hint: "Oxygen has 3 atoms in Al₂O₃ and 2 in O₂. Target 6 oxygen atoms on both sides (LCM = 6), which requires 2 Al₂O₃. Then balance aluminum.",
+        explanation: "Bauxite (aluminum oxide) undergoes industrial electrolysis to produce aluminum metal and oxygen gas."
+      },
+      {
+        id: "decomp-11",
+        type: "decomposition",
+        typeName: "Decomposition",
+        equationDisplay: "Mg(OH)₂(s) → MgO(s) + H₂O(g)",
+        reactants: [
+          { formulaHtml: "Mg(OH)<sub>2</sub>(s)", coef: 1, atoms: { Mg: 1, O: 2, H: 2 } }
+        ],
+        products: [
+          { formulaHtml: "MgO(s)", coef: 1, atoms: { Mg: 1, O: 1 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 1, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "Count each element: 1 Mg on each side, 2 H on each side, and 2 O on the left vs (1 + 1 = 2) O on the right. Is it already balanced?",
+        explanation: "Magnesium hydroxide (milk of magnesia) decomposes when heated to release water vapor and magnesium oxide."
+      },
+
+      // -------------------------------------------------------------
+      // 3. SINGLE REPLACEMENT
+      // -------------------------------------------------------------
+      {
+        id: "single-01",
+        type: "single_replacement",
+        typeName: "Single Replacement",
+        equationDisplay: "Zn(s) + HCl(aq) → ZnCl₂(aq) + H₂(g)",
+        reactants: [
+          { formulaHtml: "Zn(s)", coef: 1, atoms: { Zn: 1 } },
+          { formulaHtml: "HCl(aq)", coef: 2, atoms: { H: 1, Cl: 1 } }
+        ],
+        products: [
+          { formulaHtml: "ZnCl<sub>2</sub>(aq)", coef: 1, atoms: { Zn: 1, Cl: 2 } },
+          { formulaHtml: "H<sub>2</sub>(g)", coef: 1, atoms: { H: 2 } }
+        ],
+        hint: "ZnCl₂ has 2 chlorines and H₂ has 2 hydrogens. How many molecules of HCl are needed to provide both?",
+        explanation: "Zinc metal displaces hydrogen from hydrochloric acid to produce aqueous zinc chloride and hydrogen gas bubbles."
+      },
+      {
+        id: "single-02",
+        type: "single_replacement",
+        typeName: "Single Replacement",
+        equationDisplay: "Al(s) + CuCl₂(aq) → AlCl₃(aq) + Cu(s)",
+        reactants: [
+          { formulaHtml: "Al(s)", coef: 2, atoms: { Al: 1 } },
+          { formulaHtml: "CuCl<sub>2</sub>(aq)", coef: 3, atoms: { Cu: 1, Cl: 2 } }
+        ],
+        products: [
+          { formulaHtml: "AlCl<sub>3</sub>(aq)", coef: 2, atoms: { Al: 1, Cl: 3 } },
+          { formulaHtml: "Cu(s)", coef: 3, atoms: { Cu: 1 } }
+        ],
+        hint: "Focus on chlorine first: it has a subscript of 2 in CuCl₂ and 3 in AlCl₃. Balance chlorine to 6 on both sides using the LCM, then balance the single metals.",
+        explanation: "More active aluminum metal displaces copper from copper(II) chloride solution."
+      },
+      {
+        id: "single-03",
+        type: "single_replacement",
+        typeName: "Single Replacement",
+        equationDisplay: "Cl₂(g) + NaBr(aq) → NaCl(aq) + Br₂(l)",
+        reactants: [
+          { formulaHtml: "Cl<sub>2</sub>(g)", coef: 1, atoms: { Cl: 2 } },
+          { formulaHtml: "NaBr(aq)", coef: 2, atoms: { Na: 1, Br: 1 } }
+        ],
+        products: [
+          { formulaHtml: "NaCl(aq)", coef: 2, atoms: { Na: 1, Cl: 1 } },
+          { formulaHtml: "Br<sub>2</sub>(l)", coef: 1, atoms: { Br: 2 } }
+        ],
+        hint: "Both halogens (Cl₂ and Br₂) exist as diatomic molecules. Use a coefficient of 2 in front of the ionic compounds containing sodium to balance both halogens.",
+        explanation: "Higher activity chlorine gas displaces bromide ions from sodium bromide solution (halogen single replacement)."
+      },
+      {
+        id: "single-04",
+        type: "single_replacement",
+        typeName: "Single Replacement",
+        equationDisplay: "Mg(s) + AgNO₃(aq) → Mg(NO₃)₂(aq) + Ag(s)",
+        reactants: [
+          { formulaHtml: "Mg(s)", coef: 1, atoms: { Mg: 1 } },
+          { formulaHtml: "AgNO<sub>3</sub>(aq)", coef: 2, atoms: { Ag: 1, N: 1, O: 3 } }
+        ],
+        products: [
+          { formulaHtml: "Mg(NO<sub>3</sub>)<sub>2</sub>(aq)", coef: 1, atoms: { Mg: 1, N: 2, O: 6 } },
+          { formulaHtml: "Ag(s)", coef: 2, atoms: { Ag: 1 } }
+        ],
+        hint: "Notice the nitrate polyatomic ion (NO₃⁻) stays together on both sides. Balance the entire NO₃ group as a single unit before balancing silver.",
+        explanation: "Magnesium ribbon displaces silver ions from silver nitrate, depositing shiny silver crystals."
+      },
+      {
+        id: "single-05",
+        type: "single_replacement",
+        typeName: "Single Replacement",
+        equationDisplay: "Na(s) + H₂O(l) → NaOH(aq) + H₂(g)",
+        reactants: [
+          { formulaHtml: "Na(s)", coef: 2, atoms: { Na: 1 } },
+          { formulaHtml: "H<sub>2</sub>O(l)", coef: 2, atoms: { H: 2, O: 1 } }
+        ],
+        products: [
+          { formulaHtml: "NaOH(aq)", coef: 2, atoms: { Na: 1, O: 1, H: 1 } },
+          { formulaHtml: "H<sub>2</sub>(g)", coef: 1, atoms: { H: 2 } }
+        ],
+        hint: "Think of water as H-OH. The hydroxide ion (OH⁻) stays intact in NaOH, while one hydrogen is released as H₂(g). Balance the hydrogens to an even count.",
+        explanation: "Alkali metals react vigorously with water, displacing hydrogen gas and forming a strongly basic hydroxide solution."
+      },
+      {
+        id: "single-06",
+        type: "single_replacement",
+        typeName: "Single Replacement",
+        equationDisplay: "Fe(s) + CuSO₄(aq) → FeSO₄(aq) + Cu(s)",
+        reactants: [
+          { formulaHtml: "Fe(s)", coef: 1, atoms: { Fe: 1 } },
+          { formulaHtml: "CuSO<sub>4</sub>(aq)", coef: 1, atoms: { Cu: 1, S: 1, O: 4 } }
+        ],
+        products: [
+          { formulaHtml: "FeSO<sub>4</sub>(aq)", coef: 1, atoms: { Fe: 1, S: 1, O: 4 } },
+          { formulaHtml: "Cu(s)", coef: 1, atoms: { Cu: 1 } }
+        ],
+        hint: "The sulfate ion (SO₄²⁻) is balanced 1:1 on both sides, as are iron and copper. Check if all coefficients are already 1.",
+        explanation: "An iron nail placed in blue copper(II) sulfate displaces copper metal in a 1:1 mole ratio."
+      },
+      {
+        id: "single-07",
+        type: "single_replacement",
+        typeName: "Single Replacement",
+        equationDisplay: "Al(s) + HCl(aq) → AlCl₃(aq) + H₂(g)",
+        reactants: [
+          { formulaHtml: "Al(s)", coef: 2, atoms: { Al: 1 } },
+          { formulaHtml: "HCl(aq)", coef: 6, atoms: { H: 1, Cl: 1 } }
+        ],
+        products: [
+          { formulaHtml: "AlCl<sub>3</sub>(aq)", coef: 2, atoms: { Al: 1, Cl: 3 } },
+          { formulaHtml: "H<sub>2</sub>(g)", coef: 3, atoms: { H: 2 } }
+        ],
+        hint: "In AlCl₃ chlorine is 3, while in H₂ hydrogen is 2. The lowest common multiple between 3 chlorines and 2 hydrogens in single HCl units is 6!",
+        explanation: "Aluminum dissolves in hydrochloric acid releasing hydrogen gas and forming aluminum chloride."
+      },
+      {
+        id: "single-08",
+        type: "single_replacement",
+        typeName: "Single Replacement",
+        equationDisplay: "Cu(s) + AgNO₃(aq) → Cu(NO₃)₂(aq) + Ag(s)",
+        reactants: [
+          { formulaHtml: "Cu(s)", coef: 1, atoms: { Cu: 1 } },
+          { formulaHtml: "AgNO<sub>3</sub>(aq)", coef: 2, atoms: { Ag: 1, N: 1, O: 3 } }
+        ],
+        products: [
+          { formulaHtml: "Cu(NO<sub>3</sub>)<sub>2</sub>(aq)", coef: 1, atoms: { Cu: 1, N: 2, O: 6 } },
+          { formulaHtml: "Ag(s)", coef: 2, atoms: { Ag: 1 } }
+        ],
+        hint: "Balance the polyatomic nitrate group (NO₃⁻) first: the product has 2 nitrate groups, so you need 2 AgNO₃ units. Then balance silver.",
+        explanation: "Copper wire placed in clear silver nitrate displaces silver, turning the solution blue from Cu²⁺ ions."
+      },
+      {
+        id: "single-09",
+        type: "single_replacement",
+        typeName: "Single Replacement",
+        equationDisplay: "Br₂(l) + KI(aq) → KBr(aq) + I₂(s)",
+        reactants: [
+          { formulaHtml: "Br<sub>2</sub>(l)", coef: 1, atoms: { Br: 2 } },
+          { formulaHtml: "KI(aq)", coef: 2, atoms: { K: 1, I: 1 } }
+        ],
+        products: [
+          { formulaHtml: "KBr(aq)", coef: 2, atoms: { K: 1, Br: 1 } },
+          { formulaHtml: "I<sub>2</sub>(s)", coef: 1, atoms: { I: 2 } }
+        ],
+        hint: "Both bromine and iodine are diatomic non-metals. Balance potassium and the halogens using a coefficient of 2 for both ionic salts.",
+        explanation: "Bromine liquid oxidizes iodide ions into elemental iodine, forming potassium bromide."
+      },
+      {
+        id: "single-10",
+        type: "single_replacement",
+        typeName: "Single Replacement",
+        equationDisplay: "Ca(s) + H₂O(l) → Ca(OH)₂(aq) + H₂(g)",
+        reactants: [
+          { formulaHtml: "Ca(s)", coef: 1, atoms: { Ca: 1 } },
+          { formulaHtml: "H<sub>2</sub>O(l)", coef: 2, atoms: { H: 2, O: 1 } }
+        ],
+        products: [
+          { formulaHtml: "Ca(OH)<sub>2</sub>(aq)", coef: 1, atoms: { Ca: 1, O: 2, H: 2 } },
+          { formulaHtml: "H<sub>2</sub>(g)", coef: 1, atoms: { H: 2 } }
+        ],
+        hint: "Ca(OH)₂ has 2 oxygen atoms and 2 hydrogens, plus 2 hydrogens in H₂ (total of 4 H on the right). How many water molecules are needed?",
+        explanation: "Calcium metal reacts steadily with water to displace hydrogen gas and form calcium hydroxide (limewater)."
+      },
+      {
+        id: "single-11",
+        type: "single_replacement",
+        typeName: "Single Replacement",
+        equationDisplay: "Pb(s) + AgNO₃(aq) → Pb(NO₃)₂(aq) + Ag(s)",
+        reactants: [
+          { formulaHtml: "Pb(s)", coef: 1, atoms: { Pb: 1 } },
+          { formulaHtml: "AgNO<sub>3</sub>(aq)", coef: 2, atoms: { Ag: 1, N: 1, O: 3 } }
+        ],
+        products: [
+          { formulaHtml: "Pb(NO<sub>3</sub>)<sub>2</sub>(aq)", coef: 1, atoms: { Pb: 1, N: 2, O: 6 } },
+          { formulaHtml: "Ag(s)", coef: 2, atoms: { Ag: 1 } }
+        ],
+        hint: "Treat the nitrate group (NO₃) as a whole unit. There are 2 nitrates in the product, requiring 2 AgNO₃ on the left. Then balance Ag.",
+        explanation: "Lead displaces silver from solution, creating lead(II) nitrate and pure silver."
+      },
+
+      // -------------------------------------------------------------
+      // 4. DOUBLE REPLACEMENT
+      // -------------------------------------------------------------
+      {
+        id: "double-01",
+        type: "double_replacement",
+        typeName: "Double Replacement",
+        equationDisplay: "AgNO₃(aq) + NaCl(aq) → AgCl(s) + NaNO₃(aq)",
+        reactants: [
+          { formulaHtml: "AgNO<sub>3</sub>(aq)", coef: 1, atoms: { Ag: 1, N: 1, O: 3 } },
+          { formulaHtml: "NaCl(aq)", coef: 1, atoms: { Na: 1, Cl: 1 } }
+        ],
+        products: [
+          { formulaHtml: "AgCl(s)", coef: 1, atoms: { Ag: 1, Cl: 1 } },
+          { formulaHtml: "NaNO<sub>3</sub>(aq)", coef: 1, atoms: { Na: 1, N: 1, O: 3 } }
+        ],
+        hint: "Check the cation-anion swap. Notice each ion has a +1 or -1 charge, so every species is in a 1:1 ratio. Verify if all coefficients are 1.",
+        explanation: "Silver ions combine with chloride ions to precipitate insoluble white silver chloride (AgCl) while sodium nitrate remains in solution."
+      },
+      {
+        id: "double-02",
+        type: "double_replacement",
+        typeName: "Double Replacement",
+        equationDisplay: "BaCl₂(aq) + Na₂SO₄(aq) → BaSO₄(s) + NaCl(aq)",
+        reactants: [
+          { formulaHtml: "BaCl<sub>2</sub>(aq)", coef: 1, atoms: { Ba: 1, Cl: 2 } },
+          { formulaHtml: "Na<sub>2</sub>SO<sub>4</sub>(aq)", coef: 1, atoms: { Na: 2, S: 1, O: 4 } }
+        ],
+        products: [
+          { formulaHtml: "BaSO<sub>4</sub>(s)", coef: 1, atoms: { Ba: 1, S: 1, O: 4 } },
+          { formulaHtml: "NaCl(aq)", coef: 2, atoms: { Na: 1, Cl: 1 } }
+        ],
+        hint: "Look at the reactants: you have 2 sodiums in Na₂SO₄ and 2 chlorines in BaCl₂. A single coefficient for NaCl balances both!",
+        explanation: "Barium sulfate precipitates as a dense white solid in this diagnostic double replacement reaction."
+      },
+      {
+        id: "double-03",
+        type: "double_replacement",
+        typeName: "Double Replacement",
+        equationDisplay: "HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)",
+        reactants: [
+          { formulaHtml: "HCl(aq)", coef: 1, atoms: { H: 1, Cl: 1 } },
+          { formulaHtml: "NaOH(aq)", coef: 1, atoms: { Na: 1, O: 1, H: 1 } }
+        ],
+        products: [
+          { formulaHtml: "NaCl(aq)", coef: 1, atoms: { Na: 1, Cl: 1 } },
+          { formulaHtml: "H<sub>2</sub>O(l)", coef: 1, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "This is an acid-base neutralization (a special type of double replacement). H⁺ from the acid pairs with OH⁻ from the base to make water in a 1:1 ratio.",
+        explanation: "Hydrochloric acid and sodium hydroxide neutralize each other completely to produce aqueous sodium chloride and water."
+      },
+      {
+        id: "double-04",
+        type: "double_replacement",
+        typeName: "Double Replacement",
+        equationDisplay: "Pb(NO₃)₂(aq) + KI(aq) → PbI₂(s) + KNO₃(aq)",
+        reactants: [
+          { formulaHtml: "Pb(NO<sub>3</sub>)<sub>2</sub>(aq)", coef: 1, atoms: { Pb: 1, N: 2, O: 6 } },
+          { formulaHtml: "KI(aq)", coef: 2, atoms: { K: 1, I: 1 } }
+        ],
+        products: [
+          { formulaHtml: "PbI<sub>2</sub>(s)", coef: 1, atoms: { Pb: 1, I: 2 } },
+          { formulaHtml: "KNO<sub>3</sub>(aq)", coef: 2, atoms: { K: 1, N: 1, O: 3 } }
+        ],
+        hint: "There are 2 nitrates in Pb(NO₃)₂ and 2 iodides in PbI₂. Use coefficients of 2 for both KI and KNO₃ to balance these ions simultaneously.",
+        explanation: "Mixing colorless solutions of lead(II) nitrate and potassium iodide precipitates vibrant yellow lead(II) iodide."
+      },
+      {
+        id: "double-05",
+        type: "double_replacement",
+        typeName: "Double Replacement",
+        equationDisplay: "NaOH(aq) + CuSO₄(aq) → Cu(OH)₂(s) + Na₂SO₄(aq)",
+        reactants: [
+          { formulaHtml: "NaOH(aq)", coef: 2, atoms: { Na: 1, O: 1, H: 1 } },
+          { formulaHtml: "CuSO<sub>4</sub>(aq)", coef: 1, atoms: { Cu: 1, S: 1, O: 4 } }
+        ],
+        products: [
+          { formulaHtml: "Cu(OH)<sub>2</sub>(s)", coef: 1, atoms: { Cu: 1, O: 2, H: 2 } },
+          { formulaHtml: "Na<sub>2</sub>SO<sub>4</sub>(aq)", coef: 1, atoms: { Na: 2, S: 1, O: 4 } }
+        ],
+        hint: "The precipitate Cu(OH)₂ has 2 hydroxide ions, and Na₂SO₄ has 2 sodium ions. Place a coefficient of 2 in front of NaOH to balance both.",
+        explanation: "Sodium hydroxide precipitates gelatinous blue copper(II) hydroxide from copper(II) sulfate solution."
+      },
+      {
+        id: "double-06",
+        type: "double_replacement",
+        typeName: "Double Replacement",
+        equationDisplay: "H₂SO₄(aq) + KOH(aq) → K₂SO₄(aq) + H₂O(l)",
+        reactants: [
+          { formulaHtml: "H<sub>2</sub>SO<sub>4</sub>(aq)", coef: 1, atoms: { H: 2, S: 1, O: 4 } },
+          { formulaHtml: "KOH(aq)", coef: 2, atoms: { K: 1, O: 1, H: 1 } }
+        ],
+        products: [
+          { formulaHtml: "K<sub>2</sub>SO<sub>4</sub>(aq)", coef: 1, atoms: { K: 2, S: 1, O: 4 } },
+          { formulaHtml: "H<sub>2</sub>O(l)", coef: 2, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "Sulfuric acid is diprotic (has 2 H⁺). It requires 2 moles of potassium hydroxide (KOH) to neutralize, forming potassium sulfate and 2 water molecules.",
+        explanation: "Neutralization between diprotic sulfuric acid and potassium hydroxide produces potassium sulfate and water."
+      },
+      {
+        id: "double-07",
+        type: "double_replacement",
+        typeName: "Double Replacement",
+        equationDisplay: "CaCl₂(aq) + Na₃PO₄(aq) → Ca₃(PO₄)₂(s) + NaCl(aq)",
+        reactants: [
+          { formulaHtml: "CaCl<sub>2</sub>(aq)", coef: 3, atoms: { Ca: 1, Cl: 2 } },
+          { formulaHtml: "Na<sub>3</sub>PO<sub>4</sub>(aq)", coef: 2, atoms: { Na: 3, P: 1, O: 4 } }
+        ],
+        products: [
+          { formulaHtml: "Ca<sub>3</sub>(PO<sub>4</sub>)<sub>2</sub>(s)", coef: 1, atoms: { Ca: 3, P: 2, O: 8 } },
+          { formulaHtml: "NaCl(aq)", coef: 6, atoms: { Na: 1, Cl: 1 } }
+        ],
+        hint: "Start with the precipitate: Ca₃(PO₄)₂ has 3 Ca²⁺ and 2 PO₄³⁻. Balance those on the left first (3 CaCl₂ and 2 Na₃PO₄). Then check how many NaCl you get!",
+        explanation: "Calcium chloride reacts with sodium phosphate to precipitate insoluble calcium phosphate (the mineral in bone tissue)."
+      },
+      {
+        id: "double-08",
+        type: "double_replacement",
+        typeName: "Double Replacement",
+        equationDisplay: "FeCl₃(aq) + NaOH(aq) → Fe(OH)₃(s) + NaCl(aq)",
+        reactants: [
+          { formulaHtml: "FeCl<sub>3</sub>(aq)", coef: 1, atoms: { Fe: 1, Cl: 3 } },
+          { formulaHtml: "NaOH(aq)", coef: 3, atoms: { Na: 1, O: 1, H: 1 } }
+        ],
+        products: [
+          { formulaHtml: "Fe(OH)<sub>3</sub>(s)", coef: 1, atoms: { Fe: 1, O: 3, H: 3 } },
+          { formulaHtml: "NaCl(aq)", coef: 3, atoms: { Na: 1, Cl: 1 } }
+        ],
+        hint: "Iron(III) hydroxide requires 3 OH⁻ ions, and FeCl₃ provides 3 Cl⁻ ions. Use a coefficient of 3 for both NaOH and NaCl.",
+        explanation: "Iron(III) chloride precipitates rusty brown iron(III) hydroxide when mixed with aqueous sodium hydroxide."
+      },
+      {
+        id: "double-09",
+        type: "double_replacement",
+        typeName: "Double Replacement",
+        equationDisplay: "Al₂(SO₄)₃(aq) + Ba(NO₃)₂(aq) → Al(NO₃)₃(aq) + BaSO₄(s)",
+        reactants: [
+          { formulaHtml: "Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>(aq)", coef: 1, atoms: { Al: 2, S: 3, O: 12 } },
+          { formulaHtml: "Ba(NO<sub>3</sub>)<sub>2</sub>(aq)", coef: 3, atoms: { Ba: 1, N: 2, O: 6 } }
+        ],
+        products: [
+          { formulaHtml: "Al(NO<sub>3</sub>)<sub>3</sub>(aq)", coef: 2, atoms: { Al: 1, N: 3, O: 9 } },
+          { formulaHtml: "BaSO<sub>4</sub>(s)", coef: 3, atoms: { Ba: 1, S: 1, O: 4 } }
+        ],
+        hint: "Balance the polyatomic ions as whole groups: balance the 2 Al ions to get 2 Al(NO₃)₃ (giving 6 nitrates). Then balance barium and sulfate.",
+        explanation: "Aluminum sulfate and barium nitrate exchange ion partners to precipitate barium sulfate."
+      },
+      {
+        id: "double-10",
+        type: "double_replacement",
+        typeName: "Double Replacement",
+        equationDisplay: "Na₂S(aq) + AgNO₃(aq) → Ag₂S(s) + NaNO₃(aq)",
+        reactants: [
+          { formulaHtml: "Na<sub>2</sub>S(aq)", coef: 1, atoms: { Na: 2, S: 1 } },
+          { formulaHtml: "AgNO<sub>3</sub>(aq)", coef: 2, atoms: { Ag: 1, N: 1, O: 3 } }
+        ],
+        products: [
+          { formulaHtml: "Ag<sub>2</sub>S(s)", coef: 1, atoms: { Ag: 2, S: 1 } },
+          { formulaHtml: "NaNO<sub>3</sub>(aq)", coef: 2, atoms: { Na: 1, N: 1, O: 3 } }
+        ],
+        hint: "Ag₂S requires 2 silver ions, and Na₂S provides 2 sodium ions. Place a coefficient of 2 before both AgNO₃ and NaNO₃.",
+        explanation: "Sodium sulfide reacts with silver nitrate to precipitate black silver sulfide (silver tarnish)."
+      },
+      {
+        id: "double-11",
+        type: "double_replacement",
+        typeName: "Double Replacement",
+        equationDisplay: "CuSO₄(aq) + Ba(NO₃)₂(aq) → BaSO₄(s) + Cu(NO₃)₂(aq)",
+        reactants: [
+          { formulaHtml: "CuSO<sub>4</sub>(aq)", coef: 1, atoms: { Cu: 1, S: 1, O: 4 } },
+          { formulaHtml: "Ba(NO<sub>3</sub>)<sub>2</sub>(aq)", coef: 1, atoms: { Ba: 1, N: 2, O: 6 } }
+        ],
+        products: [
+          { formulaHtml: "BaSO<sub>4</sub>(s)", coef: 1, atoms: { Ba: 1, S: 1, O: 4 } },
+          { formulaHtml: "Cu(NO<sub>3</sub>)<sub>2</sub>(aq)", coef: 1, atoms: { Cu: 1, N: 2, O: 6 } }
+        ],
+        hint: "Inspect each ion pair: both copper and barium are +2 cations, while sulfate and two nitrates balance 1:1. Check if all coefficients are 1.",
+        explanation: "Copper(II) sulfate and barium nitrate exchange anions to precipitate insoluble barium sulfate."
+      },
+
+      // -------------------------------------------------------------
+      // 5. COMBUSTION (HYDROCARBON & ORGANIC COMBUSTION)
+      // -------------------------------------------------------------
+      {
+        id: "comb-01",
+        type: "combustion",
+        typeName: "Combustion",
+        equationDisplay: "CH₄(g) + O₂(g) → CO₂(g) + H₂O(g)",
+        reactants: [
+          { formulaHtml: "CH<sub>4</sub>(g)", coef: 1, atoms: { C: 1, H: 4 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 2, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 1, atoms: { C: 1, O: 2 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 2, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "Follow the golden rule of hydrocarbon combustion: balance Carbon first, Hydrogen second, and Oxygen last. 4 hydrogens in methane make 2 H₂O molecules.",
+        explanation: "Natural gas (methane) combusts completely in oxygen to produce carbon dioxide and water vapor."
+      },
+      {
+        id: "comb-02",
+        type: "combustion",
+        typeName: "Combustion",
+        equationDisplay: "C₃H₈(g) + O₂(g) → CO₂(g) + H₂O(g)",
+        reactants: [
+          { formulaHtml: "C<sub>3</sub>H<sub>8</sub>(g)", coef: 1, atoms: { C: 3, H: 8 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 5, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 3, atoms: { C: 1, O: 2 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 4, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "Balance C first (3 CO₂), then H (8 H makes 4 H₂O). Now sum total oxygens on the right: (3 × 2) + (4 × 1) = 10. How many O₂ molecules give 10 oxygens?",
+        explanation: "Propane gas burns cleanly in barbecue tanks and heating systems, releasing energy with CO₂ and H₂O."
+      },
+      {
+        id: "comb-03",
+        type: "combustion",
+        typeName: "Combustion",
+        equationDisplay: "C₄H₁₀(g) + O₂(g) → CO₂(g) + H₂O(g)",
+        reactants: [
+          { formulaHtml: "C<sub>4</sub>H<sub>10</sub>(g)", coef: 2, atoms: { C: 4, H: 10 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 13, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 8, atoms: { C: 1, O: 2 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 10, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "If you try 1 butane, you get 4 CO₂ and 5 H₂O = 13 oxygen atoms (an odd number that cannot be made with O₂). Double the butane to 2 to make oxygen even!",
+        explanation: "Butane lighter fluid combustion requires doubling all coefficients to avoid fractional oxygen fractions."
+      },
+      {
+        id: "comb-04",
+        type: "combustion",
+        typeName: "Combustion",
+        equationDisplay: "C₂H₆(g) + O₂(g) → CO₂(g) + H₂O(g)",
+        reactants: [
+          { formulaHtml: "C<sub>2</sub>H<sub>6</sub>(g)", coef: 2, atoms: { C: 2, H: 6 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 7, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 4, atoms: { C: 1, O: 2 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 6, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "Balancing 1 ethane yields 2 CO₂ and 3 H₂O = 7 oxygen atoms (odd). Double the fuel coefficient to 2, then recount carbons and hydrogens.",
+        explanation: "Ethane gas combusts with oxygen in a rapid exothermic reaction producing carbon dioxide and steam."
+      },
+      {
+        id: "comb-05",
+        type: "combustion",
+        typeName: "Combustion",
+        equationDisplay: "C₂H₄(g) + O₂(g) → CO₂(g) + H₂O(g)",
+        reactants: [
+          { formulaHtml: "C<sub>2</sub>H<sub>4</sub>(g)", coef: 1, atoms: { C: 2, H: 4 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 3, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 2, atoms: { C: 1, O: 2 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 2, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "Balance C first (2 CO₂), then H (4 H gives 2 H₂O). Total oxygens on the right: (2 × 2) + 2 = 6. Divide by 2 for the O₂ coefficient.",
+        explanation: "Ethene (ethylene) combusts completely in oxygen gas."
+      },
+      {
+        id: "comb-06",
+        type: "combustion",
+        typeName: "Combustion",
+        equationDisplay: "C₂H₂(g) + O₂(g) → CO₂(g) + H₂O(g)",
+        reactants: [
+          { formulaHtml: "C<sub>2</sub>H<sub>2</sub>(g)", coef: 2, atoms: { C: 2, H: 2 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 5, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 4, atoms: { C: 1, O: 2 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 2, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "Acetylene has 2 carbons and 2 hydrogens. 1 acetylene produces 2 CO₂ and 1 H₂O = 5 O atoms (odd). Double the acetylene to 2, yielding 4 CO₂ and 2 H₂O.",
+        explanation: "Oxy-acetylene welding torches reach temperatures over 3000°C by combusting acetylene in pure oxygen."
+      },
+      {
+        id: "comb-07",
+        type: "combustion",
+        typeName: "Combustion",
+        equationDisplay: "C₂H₅OH(l) + O₂(g) → CO₂(g) + H₂O(g)",
+        reactants: [
+          { formulaHtml: "C<sub>2</sub>H<sub>5</sub>OH(l)", coef: 1, atoms: { C: 2, H: 6, O: 1 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 3, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 2, atoms: { C: 1, O: 2 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 3, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "CRITICAL: Ethanol already contains 1 oxygen atom! When summing oxygen, you need 7 total on the right (4 from CO₂ + 3 from H₂O). Subtract the 1 oxygen in ethanol before finding O₂.",
+        explanation: "Ethanol (biofuel) combustion in oxygen produces carbon dioxide and water vapor."
+      },
+      {
+        id: "comb-08",
+        type: "combustion",
+        typeName: "Combustion",
+        equationDisplay: "C₆H₁₂O₆(s) + O₂(g) → CO₂(g) + H₂O(l)",
+        reactants: [
+          { formulaHtml: "C<sub>6</sub>H<sub>12</sub>O<sub>6</sub>(s)", coef: 1, atoms: { C: 6, H: 12, O: 6 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 6, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 6, atoms: { C: 1, O: 2 } },
+          { formulaHtml: "H<sub>2</sub>O(l)", coef: 6, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "This is cellular respiration / combustion of glucose. Balance C to 6 CO₂ and H to 6 H₂O. Remember glucose already provides 6 of the 18 total oxygens needed!",
+        explanation: "The complete combustion or metabolic oxidation of glucose yields carbon dioxide and water."
+      },
+      {
+        id: "comb-09",
+        type: "combustion",
+        typeName: "Combustion",
+        equationDisplay: "C₈H₁₈(l) + O₂(g) → CO₂(g) + H₂O(g)",
+        reactants: [
+          { formulaHtml: "C<sub>8</sub>H<sub>18</sub>(l)", coef: 2, atoms: { C: 8, H: 18 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 25, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 16, atoms: { C: 1, O: 2 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 18, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "Octane has 8 carbons and 18 hydrogens. 1 octane gives 8 CO₂ and 9 H₂O = 25 O atoms (odd). Double the octane to 2, producing 16 CO₂ and 18 H₂O.",
+        explanation: "Octane (standard gasoline reference) burns inside car combustion engines."
+      },
+      {
+        id: "comb-10",
+        type: "combustion",
+        typeName: "Combustion",
+        equationDisplay: "C₅H₁₂(l) + O₂(g) → CO₂(g) + H₂O(g)",
+        reactants: [
+          { formulaHtml: "C<sub>5</sub>H<sub>12</sub>(l)", coef: 1, atoms: { C: 5, H: 12 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 8, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 5, atoms: { C: 1, O: 2 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 6, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "Balance C first (5 CO₂), then H (12 H gives 6 H₂O). Total oxygens on the right: (5 × 2) + 6 = 16. Divide 16 by 2 to get the coefficient for O₂.",
+        explanation: "Pentane liquid combusts smoothly in oxygen."
+      },
+      {
+        id: "comb-11",
+        type: "combustion",
+        typeName: "Combustion",
+        equationDisplay: "CH₃OH(l) + O₂(g) → CO₂(g) + H₂O(g)",
+        reactants: [
+          { formulaHtml: "CH<sub>3</sub>OH(l)", coef: 2, atoms: { C: 1, H: 4, O: 1 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 3, atoms: { O: 2 } }
+        ],
+        products: [
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 2, atoms: { C: 1, O: 2 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 4, atoms: { H: 2, O: 1 } }
+        ],
+        hint: "Methanol has 4 hydrogens (3+1) and 1 oxygen. If you balance 1 methanol you get 1 CO₂ and 2 H₂O (4 O total, minus 1 from methanol = 3/2 O₂). Double everything to 2 methanol!",
+        explanation: "Combustion of methanol (wood alcohol) fuel produces carbon dioxide and water."
+      }
+    ];
+
+    /* =========================================================================
+     * APP CONTROLLER & STATE
+     * ========================================================================= */
+    const app = {
+      TEACHER_PASSWORD: "mhhsphysics",
+      STORAGE_KEY: "mhhs_chem_balancing_grades_v1",
+
+      // Current Session Configuration
+      config: {
+        studentName: "",
+        selectedTypes: ["formation", "decomposition", "single_replacement", "double_replacement", "combustion"],
+        questionCount: 10,
+        isMultiTypeMode: true // true if > 1 reaction type selected
+      },
+
+      // Active Quiz State
+      quiz: {
+        questions: [],
+        currentIndex: 0,
+        studentAnswers: [] // [{ coefs: [n, n...], selectedType: 'type' }]
+      },
+
+      // Initializer
+      init() {
+        this.loadTheme();
+        this.updateLandingSummary();
+        this.renderTeacherTable();
+      },
+
+      // View Navigation
+      showView(viewId) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        const target = document.getElementById(viewId);
+        if (target) target.classList.add('active');
+        window.scrollTo(0, 0);
+      },
+
+      showLanding() {
+        this.showView('view-landing');
+      },
+
+      // Theme Management
+      toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('chem_app_theme', newTheme);
+        this.updateThemeButton(newTheme);
+      },
+
+      loadTheme() {
+        const savedTheme = localStorage.getItem('chem_app_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        this.updateThemeButton(savedTheme);
+      },
+
+      updateThemeButton(theme) {
+        const icon = document.getElementById('theme-icon');
+        const text = document.getElementById('theme-text');
+        if (theme === 'dark') {
+          icon.textContent = '☀️';
+          text.textContent = 'Light';
+        } else {
+          icon.textContent = '🌙';
+          text.textContent = 'Dark';
+        }
+      },
+
+      // Setup / Landing Controls
+      selectAllTypes(select) {
+        const checkboxes = document.querySelectorAll('input[name="reaction-type"]');
+        checkboxes.forEach(cb => {
+          cb.checked = select;
+          const card = document.getElementById(`card-type-${cb.value}`);
+          if (card) {
+            if (select) card.classList.add('selected');
+            else card.classList.remove('selected');
+          }
+        });
+        this.updateLandingSummary();
+      },
+
+      setQuestionCount(count) {
+        this.config.questionCount = count;
+        document.querySelectorAll('.btn-count').forEach(btn => {
+          if (parseInt(btn.getAttribute('data-count')) === count) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+      },
+
+      updateLandingSummary() {
+        const selected = Array.from(document.querySelectorAll('input[name="reaction-type"]:checked')).map(cb => cb.value);
+        this.config.selectedTypes = selected;
+        this.config.isMultiTypeMode = selected.length > 1;
+
+        // Highlight cards
+        document.querySelectorAll('input[name="reaction-type"]').forEach(cb => {
+          const card = document.getElementById(`card-type-${cb.value}`);
+          if (card) {
+            if (cb.checked) card.classList.add('selected');
+            else card.classList.remove('selected');
+          }
+        });
+
+        const noticeBox = document.getElementById('landing-mode-notice');
+        const noticeText = document.getElementById('notice-text');
+
+        if (selected.length === 0) {
+          noticeBox.className = 'alert alert-warning';
+          noticeText.innerHTML = '<strong>⚠️ No Reaction Types Selected:</strong> Please select at least one reaction type to practice.';
+        } else if (selected.length === 1) {
+          const typeNames = {
+            formation: 'Formation (Synthesis)',
+            decomposition: 'Decomposition',
+            single_replacement: 'Single Replacement',
+            double_replacement: 'Double Replacement',
+            combustion: 'Combustion'
+          };
+          noticeBox.className = 'alert alert-info';
+          noticeText.innerHTML = `<strong>Single Reaction Mode (${typeNames[selected[0]]}):</strong> You will focus exclusively on balancing coefficients. Reaction type identification will be <strong>omitted</strong> and not evaluated on your grade.`;
+        } else {
+          noticeBox.className = 'alert alert-info';
+          noticeText.innerHTML = `<strong>Multiple Types Selected (${selected.length} types):</strong> You will be evaluated on <strong>both</strong> (1) balancing coefficients and (2) identifying each reaction type right below each equation.`;
+        }
+      },
+
+      // Start Quiz Session
+      startQuiz() {
+        const nameInput = document.getElementById('student-name');
+        const studentName = nameInput.value.trim();
+
+        if (!studentName) {
+          alert("Please enter your student name before starting the practice session.");
+          nameInput.focus();
+          return;
+        }
+
+        if (this.config.selectedTypes.length === 0) {
+          alert("Please select at least one reaction type to practice.");
+          return;
+        }
+
+        this.config.studentName = studentName;
+        this.config.isMultiTypeMode = this.config.selectedTypes.length > 1;
+
+        // Filter pool by selected types
+        const eligibleBank = REACTION_BANK.filter(r => this.config.selectedTypes.includes(r.type));
+
+        if (eligibleBank.length === 0) {
+          alert("No equations found matching the selected types.");
+          return;
+        }
+
+        // Shuffle pool
+        const shuffled = [...eligibleBank].sort(() => 0.5 - Math.random());
+
+        // Select exact count
+        const totalToPick = Math.min(this.config.questionCount, shuffled.length);
+        this.quiz.questions = shuffled.slice(0, totalToPick);
+        this.quiz.currentIndex = 0;
+
+        // Initialize student answer slots
+        this.quiz.studentAnswers = this.quiz.questions.map(q => {
+          const totalSpecies = q.reactants.length + q.products.length;
+          return {
+            coefs: new Array(totalSpecies).fill(""),
+            selectedType: null,
+            hintShown: false
+          };
+        });
+
+        // Set UI
+        document.getElementById('quiz-student-name').textContent = studentName;
+        this.renderQuestion();
+        this.showView('view-quiz');
+      },
+
+      // Render Current Question
+      renderQuestion() {
+        const index = this.quiz.currentIndex;
+        const total = this.quiz.questions.length;
+        const q = this.quiz.questions[index];
+        const studentAns = this.quiz.studentAnswers[index];
+
+        // Progress Text & Bar
+        document.getElementById('quiz-progress-text').textContent = `Reaction ${index + 1} of ${total}`;
+        const pct = ((index) / (total)) * 100;
+        document.getElementById('quiz-progress-fill').style.width = `${pct}%`;
+
+        // Type Badge (if single mode, show tag; if multi mode, hide so they have to identify it!)
+        const typeBadge = document.getElementById('quiz-question-type-badge');
+        if (!this.config.isMultiTypeMode) {
+          typeBadge.style.display = 'inline-block';
+          typeBadge.textContent = q.typeName;
+        } else {
+          typeBadge.style.display = 'none';
+        }
+
+        // Render Equation Inputs
+        const eqContainer = document.getElementById('equation-display');
+        eqContainer.innerHTML = '';
+
+        let speciesGlobalIdx = 0;
+
+        // Reactants
+        q.reactants.forEach((species, rIdx) => {
+          if (rIdx > 0) {
+            const plus = document.createElement('span');
+            plus.className = 'plus-sign';
+            plus.textContent = '+';
+            eqContainer.appendChild(plus);
+          }
+
+          const group = document.createElement('div');
+          group.className = 'species-group';
+
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.min = '1';
+          input.max = '99';
+          input.className = 'coef-input';
+          input.placeholder = '1';
+          input.value = studentAns.coefs[speciesGlobalIdx] || '';
+          
+          const currentIdx = speciesGlobalIdx;
+          input.addEventListener('input', (e) => {
+            const val = e.target.value.replace(/[^0-9]/g, '');
+            e.target.value = val;
+            studentAns.coefs[currentIdx] = val;
+            app.updateDots();
+          });
+
+          const formulaSpan = document.createElement('span');
+          formulaSpan.className = 'formula';
+          formulaSpan.innerHTML = species.formulaHtml;
+
+          group.appendChild(input);
+          group.appendChild(formulaSpan);
+          eqContainer.appendChild(group);
+
+          speciesGlobalIdx++;
+        });
+
+        // Reaction Arrow
+        const arrow = document.createElement('span');
+        arrow.className = 'reaction-arrow';
+        arrow.textContent = '→';
+        eqContainer.appendChild(arrow);
+
+        // Products
+        q.products.forEach((species, pIdx) => {
+          if (pIdx > 0) {
+            const plus = document.createElement('span');
+            plus.className = 'plus-sign';
+            plus.textContent = '+';
+            eqContainer.appendChild(plus);
+          }
+
+          const group = document.createElement('div');
+          group.className = 'species-group';
+
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.min = '1';
+          input.max = '99';
+          input.className = 'coef-input';
+          input.placeholder = '1';
+          input.value = studentAns.coefs[speciesGlobalIdx] || '';
+
+          const currentIdx = speciesGlobalIdx;
+          input.addEventListener('input', (e) => {
+            const val = e.target.value.replace(/[^0-9]/g, '');
+            e.target.value = val;
+            studentAns.coefs[currentIdx] = val;
+            app.updateDots();
+          });
+
+          const formulaSpan = document.createElement('span');
+          formulaSpan.className = 'formula';
+          formulaSpan.innerHTML = species.formulaHtml;
+
+          group.appendChild(input);
+          group.appendChild(formulaSpan);
+          eqContainer.appendChild(group);
+
+          speciesGlobalIdx++;
+        });
+
+        // Hint Reset
+        const hintBox = document.getElementById('hint-box');
+        hintBox.textContent = q.hint;
+        hintBox.style.display = studentAns.hintShown ? 'block' : 'none';
+
+        // Identification Section (Conditional)
+        const identSection = document.getElementById('identification-section');
+        const mcContainer = document.getElementById('mc-options-container');
+
+        if (this.config.isMultiTypeMode) {
+          identSection.style.display = 'block';
+          mcContainer.innerHTML = '';
+
+          const allOptions = [
+            { key: 'formation', name: 'Formation (Synthesis)' },
+            { key: 'decomposition', name: 'Decomposition' },
+            { key: 'single_replacement', name: 'Single Replacement' },
+            { key: 'double_replacement', name: 'Double Replacement' },
+            { key: 'combustion', name: 'Combustion' }
+          ];
+
+          // Filter options to those selected on the landing page
+          allOptions.forEach(opt => {
+            if (this.config.selectedTypes.includes(opt.key)) {
+              const label = document.createElement('label');
+              label.className = `mc-option ${studentAns.selectedType === opt.key ? 'selected' : ''}`;
+
+              const radio = document.createElement('input');
+              radio.type = 'radio';
+              radio.name = `question-type-${index}`;
+              radio.value = opt.key;
+              radio.checked = studentAns.selectedType === opt.key;
+
+              radio.addEventListener('change', () => {
+                studentAns.selectedType = opt.key;
+                document.querySelectorAll('.mc-option').forEach(el => el.classList.remove('selected'));
+                label.classList.add('selected');
+                app.updateDots();
+              });
+
+              const span = document.createElement('span');
+              span.className = 'mc-label';
+              span.textContent = opt.name;
+
+              label.appendChild(radio);
+              label.appendChild(span);
+              mcContainer.appendChild(label);
+            }
+          });
+        } else {
+          identSection.style.display = 'none';
+        }
+
+        // Navigation Buttons
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+
+        btnPrev.disabled = index === 0;
+        btnPrev.style.opacity = index === 0 ? '0.4' : '1';
+
+        if (index === total - 1) {
+          btnNext.textContent = 'Submit Assignment ✓';
+          btnNext.className = 'btn btn-success';
+        } else {
+          btnNext.textContent = 'Next →';
+          btnNext.className = 'btn btn-primary';
+        }
+
+        this.renderDots();
+      },
+
+      // Hint Toggle
+      toggleHint() {
+        const studentAns = this.quiz.studentAnswers[this.quiz.currentIndex];
+        const hintBox = document.getElementById('hint-box');
+        const isCurrentlyShown = hintBox.style.display === 'block';
+        hintBox.style.display = isCurrentlyShown ? 'none' : 'block';
+        studentAns.hintShown = !isCurrentlyShown;
+      },
+
+      // Question Jump Dots
+      renderDots() {
+        const container = document.getElementById('question-dots');
+        container.innerHTML = '';
+        this.quiz.questions.forEach((_, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'dot-btn';
+          btn.textContent = idx + 1;
+
+          if (idx === this.quiz.currentIndex) {
+            btn.classList.add('current');
+          }
+
+          // Check if answered
+          const ans = this.quiz.studentAnswers[idx];
+          const hasEnteredAnyCoef = ans && ans.coefs.some(c => c !== "");
+          const hasIdentified = !this.config.isMultiTypeMode || (ans && ans.selectedType !== null);
+          if (hasEnteredAnyCoef && hasIdentified) {
+            btn.classList.add('answered');
+          }
+
+          btn.addEventListener('click', () => {
+            app.quiz.currentIndex = idx;
+            app.renderQuestion();
+          });
+
+          container.appendChild(btn);
+        });
+      },
+
+      updateDots() {
+        this.renderDots();
+      },
+
+      // Navigation
+      prevQuestion() {
+        if (this.quiz.currentIndex > 0) {
+          this.quiz.currentIndex--;
+          this.renderQuestion();
+        }
+      },
+
+      nextQuestion() {
+        const total = this.quiz.questions.length;
+        if (this.quiz.currentIndex < total - 1) {
+          this.quiz.currentIndex++;
+          this.renderQuestion();
+        } else {
+          this.submitQuiz();
+        }
+      },
+
+      confirmQuitQuiz() {
+        if (confirm("Are you sure you want to leave this practice session? Your current session progress will not be saved.")) {
+          this.showLanding();
+        }
+      },
+
+      // Grade & Submit
+      submitQuiz() {
+        // Check for any blank answers
+        let unansweredCount = 0;
+        this.quiz.studentAnswers.forEach((ans, idx) => {
+          const hasCoefs = ans.coefs.some(c => c !== "");
+          const hasIdent = !this.config.isMultiTypeMode || ans.selectedType !== null;
+          if (!hasCoefs || !hasIdent) {
+            unansweredCount++;
+          }
+        });
+
+        if (unansweredCount > 0) {
+          const proceed = confirm(`You have ${unansweredCount} question(s) that appear incomplete or left with default coefficients. Are you ready to submit anyway?`);
+          if (!proceed) return;
+        }
+
+        this.calculateAndShowResults();
+      },
+
+      // Calculation Engine
+      calculateAndShowResults() {
+        const totalQuestions = this.quiz.questions.length;
+        let balanceCorrectCount = 0;
+        let typeCorrectCount = 0;
+        const breakdownDetails = [];
+
+        this.quiz.questions.forEach((q, idx) => {
+          const ans = this.quiz.studentAnswers[idx];
+
+          // 1. Evaluate Balancing
+          // In standard high school chemistry: leaving a blank input evaluates to 1
+          const studentParsedCoefs = ans.coefs.map(c => {
+            const num = parseInt(c, 10);
+            return isNaN(num) || num <= 0 ? 1 : num;
+          });
+
+          const correctCoefs = [
+            ...q.reactants.map(r => r.coef),
+            ...q.products.map(p => p.coef)
+          ];
+
+          // Check exact match with lowest whole numbers
+          const isBalancingExact = studentParsedCoefs.every((c, i) => c === correctCoefs[i]);
+
+          // Also check if it's a multiple (e.g. 2, 4 instead of 1, 2)
+          let isMultiple = false;
+          if (!isBalancingExact && studentParsedCoefs.length === correctCoefs.length) {
+            const ratio = studentParsedCoefs[0] / correctCoefs[0];
+            if (ratio > 1 && studentParsedCoefs.every((c, i) => c / correctCoefs[i] === ratio)) {
+              isMultiple = true;
+            }
+          }
+
+          if (isBalancingExact) {
+            balanceCorrectCount++;
+          }
+
+          // 2. Evaluate Reaction Type (if multi-type mode active)
+          let isTypeCorrect = false;
+          if (this.config.isMultiTypeMode) {
+            isTypeCorrect = ans.selectedType === q.type;
+            if (isTypeCorrect) {
+              typeCorrectCount++;
+            }
+          }
+
+          breakdownDetails.push({
+            questionNumber: idx + 1,
+            equationDisplay: q.equationDisplay,
+            reactants: q.reactants,
+            products: q.products,
+            correctType: q.type,
+            correctTypeName: q.typeName,
+            explanation: q.explanation,
+            studentCoefs: studentParsedCoefs,
+            rawInputCoefs: ans.coefs,
+            correctCoefs: correctCoefs,
+            isBalancingCorrect: isBalancingExact,
+            isMultiple: isMultiple,
+            studentType: ans.selectedType,
+            isTypeCorrect: isTypeCorrect,
+            hintWasUsed: ans.hintShown
+          });
+        });
+
+        const balancingPct = Math.round((balanceCorrectCount / totalQuestions) * 100);
+        let typePct = null;
+        if (this.config.isMultiTypeMode) {
+          typePct = Math.round((typeCorrectCount / totalQuestions) * 100);
+        }
+
+        // Build Submission Record for Teacher Database
+        const submissionRecord = {
+          id: 'sub_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+          studentName: this.config.studentName,
+          timestamp: new Date().toISOString(),
+          formattedDate: new Date().toLocaleString("en-CA", {
+            timeZone: "America/Edmonton", // Alberta Mountain Time
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+          }),
+          questionCount: totalQuestions,
+          selectedTypes: this.config.selectedTypes,
+          isMultiTypeMode: this.config.isMultiTypeMode,
+          balancingScore: `${balanceCorrectCount} / ${totalQuestions}`,
+          balancingCorrect: balanceCorrectCount,
+          balancingTotal: totalQuestions,
+          balancingPct: balancingPct,
+          // CRITICAL: If only one reaction type was selected, left blank or NA!
+          typeScore: this.config.isMultiTypeMode ? `${typeCorrectCount} / ${totalQuestions}` : 'N/A',
+          typeCorrect: this.config.isMultiTypeMode ? typeCorrectCount : null,
+          typeTotal: this.config.isMultiTypeMode ? totalQuestions : null,
+          typePct: typePct,
+          breakdown: breakdownDetails
+        };
+
+        // Save to LocalStorage
+        this.saveSubmissionToStorage(submissionRecord);
+
+        // Render Student Results Screen
+        this.renderResultsView(submissionRecord);
+        this.showView('view-results');
+      }
+    };
+
+    /* =========================================================================
+     * RESULTS RENDERING
+     * ========================================================================= */
+    app.renderResultsView = function(record) {
+      // Headline & Icons
+      const total = record.questionCount;
+      const balPct = record.balancingPct;
+      const headline = document.getElementById('results-headline');
+      const subheadline = document.getElementById('results-subheadline');
+      const icon = document.getElementById('results-icon');
+
+      if (balPct >= 80) {
+        icon.textContent = '🏆';
+        headline.textContent = `Outstanding Work, ${record.studentName}!`;
+        subheadline.textContent = 'Excellent mastery of Alberta chemical reaction balancing.';
+      } else if (balPct >= 60) {
+        icon.textContent = '🧪';
+        headline.textContent = `Solid Effort, ${record.studentName}!`;
+        subheadline.textContent = 'Good practice. Review the equations below to perfect your balancing skills.';
+      } else {
+        icon.textContent = '📝';
+        headline.textContent = `Practice Makes Progress, ${record.studentName}!`;
+        subheadline.textContent = 'Review the atom inventory breakdown below to see where atoms were missing.';
+      }
+
+      // 1. Balancing Card
+      document.getElementById('res-balance-score').textContent = `${record.balancingCorrect} / ${record.balancingTotal}`;
+      document.getElementById('res-balance-pct').textContent = `${record.balancingPct}% Accuracy`;
+
+      // 2. Type Identification Card
+      const typeWrapper = document.getElementById('res-type-wrapper');
+      if (record.isMultiTypeMode) {
+        typeWrapper.innerHTML = `
+          <div class="score-value score-val-ident">${record.typeCorrect} / ${record.typeTotal}</div>
+          <div class="score-detail">${record.typePct}% Accuracy</div>
+        `;
+      } else {
+        typeWrapper.innerHTML = `
+          <div class="badge-na">N/A</div>
+          <div class="score-detail" style="font-size:0.82rem;">Single reaction type chosen on landing page (classification omitted).</div>
+        `;
+      }
+
+      document.getElementById('breakdown-summary-tag').textContent = `${record.formattedDate} • ${record.studentName}`;
+
+      // 3. Question-by-Question Detailed Breakdown
+      const listContainer = document.getElementById('breakdown-list');
+      listContainer.innerHTML = '';
+
+      record.breakdown.forEach((item, idx) => {
+        const itemCard = document.createElement('div');
+        const isOverallGood = item.isBalancingCorrect && (!record.isMultiTypeMode || item.isTypeCorrect);
+        itemCard.className = `breakdown-item ${isOverallGood ? 'correct' : 'incorrect'}`;
+
+        // Header
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'breakdown-header';
+
+        const title = document.createElement('span');
+        title.className = 'question-tag';
+        title.innerHTML = `Question ${item.questionNumber}: <strong>${item.correctTypeName}</strong>`;
+
+        const statusBadges = document.createElement('div');
+        statusBadges.style.display = 'flex';
+        statusBadges.style.gap = '0.4rem';
+
+        // Balancing Badge
+        const balBadge = document.createElement('span');
+        balBadge.className = `badge-grade ${item.isBalancingCorrect ? 'badge-grade-high' : 'badge-grade-low'}`;
+        balBadge.textContent = item.isBalancingCorrect ? 'Balancing: Correct ✓' : (item.isMultiple ? 'Balancing: Not Lowest Ratio ⚠' : 'Balancing: Incorrect ✗');
+        statusBadges.appendChild(balBadge);
+
+        // Type Identification Badge (if multi mode)
+        if (record.isMultiTypeMode) {
+          const typeBadge = document.createElement('span');
+          typeBadge.className = `badge-grade ${item.isTypeCorrect ? 'badge-grade-high' : 'badge-grade-low'}`;
+          typeBadge.textContent = item.isTypeCorrect ? 'Classification: Correct ✓' : 'Classification: Incorrect ✗';
+          statusBadges.appendChild(typeBadge);
+        }
+
+        headerDiv.appendChild(title);
+        headerDiv.appendChild(statusBadges);
+        itemCard.appendChild(headerDiv);
+
+        // Format Correct Equation with Coefficients
+        const buildEquationString = (coefArray) => {
+          let str = '';
+          let cIdx = 0;
+          item.reactants.forEach((r, i) => {
+            if (i > 0) str += ' + ';
+            const c = coefArray[cIdx];
+            str += `<strong>${c > 1 ? c : (c === 1 ? '' : '')}</strong> ${r.formulaHtml}`;
+            cIdx++;
+          });
+          str += ' → ';
+          item.products.forEach((p, i) => {
+            if (i > 0) str += ' + ';
+            const c = coefArray[cIdx];
+            str += `<strong>${c > 1 ? c : (c === 1 ? '' : '')}</strong> ${p.formulaHtml}`;
+            cIdx++;
+          });
+          return str;
+        };
+
+        const eqReviewDiv = document.createElement('div');
+        eqReviewDiv.className = 'equation-review';
+        eqReviewDiv.innerHTML = `<span style="color:var(--text-muted); font-size:0.85rem; display:block; margin-bottom:0.2rem;">Correct Balanced Equation:</span> ${buildEquationString(item.correctCoefs)}`;
+        itemCard.appendChild(eqReviewDiv);
+
+        // Comparison Table / Info
+        const compDiv = document.createElement('div');
+        compDiv.className = 'answer-comparison';
+
+        // Student's Coefficients
+        const studentCoefText = item.studentCoefs.map((c, i) => {
+          const raw = item.rawInputCoefs[i];
+          return raw === "" ? '1 (blank)' : c;
+        }).join(', ');
+
+        const correctCoefText = item.correctCoefs.join(', ');
+
+        compDiv.innerHTML = `
+          <div>
+            <strong style="color:var(--text-muted);">Your Coefficients:</strong> [ ${studentCoefText} ]
+          </div>
+          <div>
+            <strong style="color:var(--text-muted);">Correct Coefficients:</strong> [ ${correctCoefText} ]
+          </div>
+        `;
+
+        // If multi type mode, also show chosen vs correct type
+        if (record.isMultiTypeMode) {
+          const typeNamesMap = {
+            formation: 'Formation (Synthesis)',
+            decomposition: 'Decomposition',
+            single_replacement: 'Single Replacement',
+            double_replacement: 'Double Replacement',
+            combustion: 'Combustion'
+          };
+          const studentChosenName = item.studentType ? (typeNamesMap[item.studentType] || item.studentType) : 'None Selected';
+          const typeComp = document.createElement('div');
+          typeComp.style.gridColumn = '1 / -1';
+          typeComp.innerHTML = `
+            <span style="color:var(--text-muted);">Your Classification:</span> <strong>${studentChosenName}</strong> 
+            ${item.isTypeCorrect ? '✓' : `(Correct: <strong>${item.correctTypeName}</strong>)`}
+          `;
+          compDiv.appendChild(typeComp);
+        }
+
+        itemCard.appendChild(compDiv);
+
+        // Atom Inventory Table Verification
+        const atomCounts = app.calculateAtomInventory(item.reactants, item.products, item.studentCoefs, item.correctCoefs);
+        const table = document.createElement('table');
+        table.className = 'atom-inventory-table';
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>Element</th>
+              <th>Your Reactants</th>
+              <th>Your Products</th>
+              <th>Balanced Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${Object.keys(atomCounts).map(el => {
+              const data = atomCounts[el];
+              const match = data.studentReactants === data.studentProducts;
+              return `
+                <tr>
+                  <td><strong>${el}</strong></td>
+                  <td style="color:${match ? 'inherit' : 'var(--danger)'}">${data.studentReactants}</td>
+                  <td style="color:${match ? 'inherit' : 'var(--danger)'}">${data.studentProducts}</td>
+                  <td style="color:var(--success); font-weight:600;">${data.correctCount}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        `;
+        itemCard.appendChild(table);
+
+        // Explanation text
+        const expDiv = document.createElement('p');
+        expDiv.style.cssText = 'color:var(--text-muted); font-size:0.85rem; margin-top:0.75rem; line-height:1.4;';
+        expDiv.innerHTML = `💡 <em>${item.explanation}</em>`;
+        itemCard.appendChild(expDiv);
+
+        listContainer.appendChild(itemCard);
+      });
+    };
+
+    // Calculate atom inventories for Reactants vs Products given coefficients
+    app.calculateAtomInventory = function(reactants, products, studentCoefs, correctCoefs) {
+      const elements = {};
+
+      // Register elements
+      reactants.forEach(r => Object.keys(r.atoms).forEach(el => elements[el] = true));
+      products.forEach(p => Object.keys(p.atoms).forEach(el => elements[el] = true));
+
+      const result = {};
+
+      Object.keys(elements).forEach(el => {
+        let studentR = 0;
+        let studentP = 0;
+        let correctCount = 0;
+
+        let cIdx = 0;
+        reactants.forEach(r => {
+          const coef = studentCoefs[cIdx] || 1;
+          const atoms = r.atoms[el] || 0;
+          studentR += coef * atoms;
+
+          const cCorrect = correctCoefs[cIdx] || 1;
+          correctCount += cCorrect * atoms;
+          cIdx++;
+        });
+
+        products.forEach(p => {
+          const coef = studentCoefs[cIdx] || 1;
+          const atoms = p.atoms[el] || 0;
+          studentP += coef * atoms;
+          cIdx++;
+        });
+
+        result[el] = {
+          studentReactants: studentR,
+          studentProducts: studentP,
+          correctCount: correctCount
+        };
+      });
+
+      return result;
+    };
+
+    /* =========================================================================
+     * TEACHER GRADEBOOK & LOCALSTORAGE ENGINE
+     * ========================================================================= */
+    app.getAllSubmissions = function() {
+      try {
+        const raw = localStorage.getItem(this.STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        console.error("Storage error:", e);
+        return [];
+      }
+    };
+
+    app.saveSubmissionToStorage = function(record) {
+      try {
+        const list = this.getAllSubmissions();
+        list.unshift(record); // newest at the top
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
+      } catch (e) {
+        console.error("Error saving submission:", e);
+      }
+    };
+
+    app.deleteSubmission = function(id) {
+      if (confirm("Are you sure you want to remove this student's grade record?")) {
+        let list = this.getAllSubmissions();
+        list = list.filter(item => item.id !== id);
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
+        this.renderTeacherTable();
+      }
+    };
+
+    app.clearAllGrades = function() {
+      if (confirm("WARNING: Are you sure you want to erase ALL stored student grades from this browser? This action cannot be undone.")) {
+        localStorage.removeItem(this.STORAGE_KEY);
+        this.renderTeacherTable();
+      }
+    };
+
+    // Teacher Password Gate
+    app.openTeacherAuthModal = function() {
+      const modal = document.getElementById('modal-teacher-auth');
+      const err = document.getElementById('teacher-auth-error');
+      const input = document.getElementById('teacher-password');
+      err.style.display = 'none';
+      input.value = '';
+      modal.classList.add('open');
+      setTimeout(() => input.focus(), 50);
+    };
+
+    app.closeModals = function() {
+      document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('open'));
+    };
+
+    app.verifyTeacherPassword = function() {
+      const input = document.getElementById('teacher-password');
+      const err = document.getElementById('teacher-auth-error');
+      const entered = input.value.trim();
+
+      if (entered === this.TEACHER_PASSWORD) {
+        this.closeModals();
+        this.renderTeacherTable();
+        this.showView('view-teacher');
+      } else {
+        err.style.display = 'block';
+        input.select();
+      }
+    };
+
+    // Render Teacher Table & Statistics
+    app.renderTeacherTable = function() {
+      const list = this.getAllSubmissions();
+      const searchQuery = (document.getElementById('teacher-search')?.value || '').toLowerCase().trim();
+
+      const filtered = list.filter(item => {
+        if (!searchQuery) return true;
+        return item.studentName.toLowerCase().includes(searchQuery);
+      });
+
+      // Compute statistics
+      const countElem = document.getElementById('t-stat-count');
+      const balAvgElem = document.getElementById('t-stat-bal-avg');
+      const typeAvgElem = document.getElementById('t-stat-type-avg');
+
+      if (countElem) countElem.textContent = list.length;
+
+      if (list.length > 0) {
+        const balSum = list.reduce((acc, item) => acc + (item.balancingPct || 0), 0);
+        const balAvg = Math.round(balSum / list.length);
+        if (balAvgElem) balAvgElem.textContent = `${balAvg}%`;
+
+        // Type score average only for records where multi-type mode was completed
+        const multiTypeRecords = list.filter(item => item.isMultiTypeMode && item.typePct !== null);
+        if (multiTypeRecords.length > 0) {
+          const typeSum = multiTypeRecords.reduce((acc, item) => acc + item.typePct, 0);
+          const typeAvg = Math.round(typeSum / multiTypeRecords.length);
+          if (typeAvgElem) typeAvgElem.textContent = `${typeAvg}% (${multiTypeRecords.length} tests)`;
+        } else {
+          if (typeAvgElem) typeAvgElem.textContent = 'N/A';
+        }
+      } else {
+        if (balAvgElem) balAvgElem.textContent = '0%';
+        if (typeAvgElem) typeAvgElem.textContent = 'N/A';
+      }
+
+      // Render Table Rows
+      const tbody = document.getElementById('teacher-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">
+              ${list.length === 0 ? 'No student submissions recorded yet on this device. When students complete a practice session, their scores will automatically appear here.' : 'No records match your search query.'}
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const tr = document.createElement('tr');
+
+        // Balancing Badge style
+        const balPct = item.balancingPct;
+        const balClass = balPct >= 80 ? 'badge-grade-high' : (balPct >= 50 ? 'badge-grade-mid' : 'badge-grade-low');
+
+        // Type Badge style
+        let typeBadgeHtml = '';
+        if (item.isMultiTypeMode && item.typePct !== null) {
+          const typePct = item.typePct;
+          const typeClass = typePct >= 80 ? 'badge-grade-high' : (typePct >= 50 ? 'badge-grade-mid' : 'badge-grade-low');
+          typeBadgeHtml = `<span class="badge-grade ${typeClass}">${item.typeScore} (${item.typePct}%)</span>`;
+        } else {
+          // Explicit requirement: If only one reaction type was selected, left blank or NA! Do not show 0!
+          typeBadgeHtml = `<span class="badge-grade badge-grade-na" title="Single Reaction Type Mode (Classification omitted)">N/A</span>`;
+        }
+
+        // Reaction types label
+        const typesCount = item.selectedTypes ? item.selectedTypes.length : 1;
+        const typesLabel = item.isMultiTypeMode ? `${typesCount} Types Mixed` : 'Single Type Focus';
+
+        tr.innerHTML = `
+          <td><strong>${app.escapeHtml(item.studentName)}</strong></td>
+          <td style="white-space:nowrap; font-size:0.85rem; color:var(--text-muted);">${item.formattedDate}</td>
+          <td><span style="font-size:0.85rem;">${typesLabel}</span></td>
+          <td>${item.questionCount}</td>
+          <td><span class="badge-grade ${balClass}">${item.balancingScore} (${item.balancingPct}%)</span></td>
+          <td>${typeBadgeHtml}</td>
+          <td style="white-space:nowrap;">
+            <button class="btn btn-secondary" style="padding:0.3rem 0.65rem; font-size:0.8rem; margin-right:0.3rem;" onclick="app.viewSubmissionDetails('${item.id}')">
+              View
+            </button>
+            <button class="btn btn-secondary" style="padding:0.3rem 0.65rem; font-size:0.8rem; color:var(--danger);" onclick="app.deleteSubmission('${item.id}')">
+              Delete
+            </button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    };
+
+    // View Detailed Record Modal
+    app.viewSubmissionDetails = function(id) {
+      const list = this.getAllSubmissions();
+      const record = list.find(r => r.id === id);
+      if (!record) return;
+
+      document.getElementById('sub-modal-title').textContent = `${record.studentName} — ${record.formattedDate}`;
+      const body = document.getElementById('sub-modal-body');
+
+      let html = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+          <div class="stat-box">
+            <div class="stat-label">Balancing Score</div>
+            <div class="stat-number" style="font-size:1.4rem; color:var(--primary);">${record.balancingScore} (${record.balancingPct}%)</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Reaction Type Score</div>
+            <div class="stat-number" style="font-size:1.4rem; color:var(--info);">${record.isMultiTypeMode ? `${record.typeScore} (${record.typePct}%)` : 'N/A (Single Type)'}</div>
+          </div>
+        </div>
+        <h4 style="margin-bottom:0.75rem; font-size:1rem;">Questions Completed:</h4>
+      `;
+
+      record.breakdown.forEach(item => {
+        const isOk = item.isBalancingCorrect && (!record.isMultiTypeMode || item.isTypeCorrect);
+        html += `
+          <div style="background:var(--bg-card); border:1px solid var(--border-color); border-left:3px solid ${isOk ? 'var(--success)' : 'var(--danger)'}; border-radius:var(--radius-sm); padding:0.85rem; margin-bottom:0.75rem;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
+              <strong>Q${item.questionNumber}: ${item.correctTypeName}</strong>
+              <span style="font-size:0.8rem; color:var(--text-muted);">${item.hintWasUsed ? '💡 Hint Used' : 'No Hint'}</span>
+            </div>
+            <div style="font-family:monospace; font-size:0.95rem; margin-bottom:0.35rem;">
+              ${item.equationDisplay}
+            </div>
+            <div style="font-size:0.85rem; color:var(--text-muted);">
+              Student Coefficients: [ ${item.studentCoefs.join(', ')} ] | Correct: [ ${item.correctCoefs.join(', ')} ]
+            </div>
+            ${record.isMultiTypeMode ? `
+              <div style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">
+                Classification Chosen: <strong>${item.studentType || 'None'}</strong> — ${item.isTypeCorrect ? '<span style="color:var(--success)">Correct ✓</span>' : '<span style="color:var(--danger)">Incorrect ✗</span>'}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      });
+
+      body.innerHTML = html;
+      document.getElementById('modal-submission-details').classList.add('open');
+    };
+
+    // CSV Export for Teachers
+    app.exportToCSV = function() {
+      const list = this.getAllSubmissions();
+      if (list.length === 0) {
+        alert("No submissions to export yet.");
+        return;
+      }
+
+      const headers = [
+        "Student Name",
+        "Timestamp (ISO)",
+        "Date Alberta Mountain Time",
+        "Question Count",
+        "Modes Selected",
+        "Balancing Score",
+        "Balancing Correct",
+        "Balancing Total",
+        "Balancing Percentage",
+        "Reaction Type Score",
+        "Reaction Type Correct",
+        "Reaction Type Total",
+        "Reaction Type Percentage"
+      ];
+
+      const rows = list.map(item => [
+        `"${item.studentName.replace(/"/g, '""')}"`,
+        `"${item.timestamp}"`,
+        `"${item.formattedDate}"`,
+        item.questionCount,
+        `"${(item.selectedTypes || []).join(';')}"`,
+        `"${item.balancingScore}"`,
+        item.balancingCorrect,
+        item.balancingTotal,
+        `${item.balancingPct}%`,
+        item.isMultiTypeMode ? `"${item.typeScore}"` : '"N/A"',
+        item.isMultiTypeMode ? item.typeCorrect : '""',
+        item.isMultiTypeMode ? item.typeTotal : '""',
+        item.isMultiTypeMode ? `"${item.typePct}%"` : '"N/A"'
+      ]);
+
+      const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Alberta_Chem_Balancing_Grades_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+
+    // Helper: Add Sample Demo Record
+    app.addSampleSubmission = function() {
+      const sampleNames = ["Sarah Tremblay", "Marcus Chen", "Emily MacDonald", "Liam O'Connor"];
+      const randomName = sampleNames[Math.floor(Math.random() * sampleNames.length)];
+      const totalQ = 10;
+      const isMulti = Math.random() > 0.3; // 70% chance multi
+
+      const balCorrect = Math.floor(Math.random() * 4) + 7; // 7 to 10
+      const typeCorrect = isMulti ? Math.floor(Math.random() * 4) + 7 : null;
+
+      const demoRecord = {
+        id: 'sub_demo_' + Date.now(),
+        studentName: randomName,
+        timestamp: new Date().toISOString(),
+        formattedDate: new Date().toLocaleString("en-CA", {
+          timeZone: "America/Edmonton",
+          year: 'numeric', month: 'short', day: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        }),
+        questionCount: totalQ,
+        selectedTypes: isMulti ? ["formation", "decomposition", "combustion"] : ["formation"],
+        isMultiTypeMode: isMulti,
+        balancingScore: `${balCorrect} / ${totalQ}`,
+        balancingCorrect: balCorrect,
+        balancingTotal: totalQ,
+        balancingPct: Math.round((balCorrect / totalQ) * 100),
+        typeScore: isMulti ? `${typeCorrect} / ${totalQ}` : 'N/A',
+        typeCorrect: typeCorrect,
+        typeTotal: isMulti ? totalQ : null,
+        typePct: isMulti ? Math.round((typeCorrect / totalQ) * 100) : null,
+        breakdown: []
+      };
+
+      this.saveSubmissionToStorage(demoRecord);
+      this.renderTeacherTable();
+    };
+
+    // Utility: HTML sanitization
+    app.escapeHtml = function(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    };
+
+    // Start App on Window Load
+    window.addEventListener('DOMContentLoaded', () => {
+      app.init();
+    });
+  </script>
+</body>
+</html>

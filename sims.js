@@ -33,6 +33,7 @@ const SIMS = [
 
   /* ---- Science 10 ---- */
   { course:"sci10",  unit:"Chemistry", title:"Chapters 1–2 Escape Room", desc:"Work through chemistry challenges from the first two chapters to break out.", file:"sims/science10/ch1-2escape.html" },
+  { course:"sci10",  unit:"Chemistry", title:"Chemical Reactions", desc:"Balance equations and watch reactions play out.", file:"sims/science10/chemrxn.html" },
   { course:"sci10",  unit:"Physics", title:"Significant Digits", desc:"Practice reading and rounding to the correct number of significant figures.", file:"sims/physics20/sigdig.html" },
 
   /* ---- Physics 20 ---- */
