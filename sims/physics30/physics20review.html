@@ -1,48 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Physics 20 Review | Alberta Physics 30</title>
+
+  <!-- KaTeX for Beautiful Mathematical Typesetting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" onload="if(window.app) window.app.renderAllMath()"></script>
+
   <style>
-    :root {
-      --bg-primary: #f8fafc;
-      --bg-surface: #ffffff;
-      --bg-card: #ffffff;
-      --bg-accent: #f1f5f9;
-      --text-main: #0f172a;
-      --text-muted: #475569;
-      --border-color: #e2e8f0;
-      
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --primary-light: #dbeafe;
-      
-      --kinematics-color: #6366f1;
-      --kinematics-bg: #eef2ff;
-      --vectors-color: #0d9488;
-      --vectors-bg: #ccfbf1;
-      --dynamics-color: #ea580c;
-      --dynamics-bg: #ffedd5;
-      --energy-color: #0284c7;
-      --energy-bg: #e0f2fe;
-
-      --success: #16a34a;
-      --success-bg: #dcfce7;
-      --warning: #d97706;
-      --warning-bg: #fef3c7;
-      --danger: #dc2626;
-      --danger-bg: #fee2e2;
-      
-      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 16px;
-      --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    }
-
+    :root,
     [data-theme="dark"] {
       --bg-primary: #0f172a;
       --bg-surface: #1e293b;
@@ -75,6 +43,44 @@
       --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
       --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
       --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --bg-accent: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border-color: #e2e8f0;
+      
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #dbeafe;
+      
+      --kinematics-color: #6366f1;
+      --kinematics-bg: #eef2ff;
+      --vectors-color: #0d9488;
+      --vectors-bg: #ccfbf1;
+      --dynamics-color: #ea580c;
+      --dynamics-bg: #ffedd5;
+      --energy-color: #0284c7;
+      --energy-bg: #e0f2fe;
+
+      --success: #16a34a;
+      --success-bg: #dcfce7;
+      --warning: #d97706;
+      --warning-bg: #fef3c7;
+      --danger: #dc2626;
+      --danger-bg: #fee2e2;
+      
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     }
 
     * {
@@ -92,6 +98,52 @@
       display: flex;
       flex-direction: column;
       transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* Math typography */
+    .math-sym {
+      font-family: "Cambria Math", "Latin Modern Math", "Times New Roman", serif;
+      font-style: italic;
+    }
+    .math-sym sub {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-style: normal;
+      font-size: 0.72em;
+      vertical-align: -0.25em;
+    }
+    .math-sym sup {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-style: normal;
+      font-size: 0.72em;
+      vertical-align: 0.35em;
+    }
+    .formula-math {
+      font-family: "Cambria Math", "Latin Modern Math", "Times New Roman", serif;
+      font-size: 1.05rem;
+      color: var(--text-main);
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .formula-math sub,
+    .formula-math sup {
+      font-size: 0.75em;
+      line-height: 0;
+    }
+    #solFormula {
+      font-size: 1.25rem;
+      padding: 0.5rem 0;
+      overflow-x: auto;
+    }
+    /* KaTeX Theme Compatibility */
+    .katex {
+      font-size: 1.1em;
+      color: var(--text-main);
+    }
+    .katex-display {
+      margin: 0.5em 0 !important;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0.25rem 0;
     }
 
     /* Top Navigation Header */
@@ -568,18 +620,6 @@
       color: var(--text-main);
     }
 
-    .q-given-badge {
-      display: inline-block;
-      background-color: var(--bg-accent);
-      border-left: 3px solid var(--primary);
-      padding: 0.5rem 0.85rem;
-      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-      font-size: 0.85rem;
-      font-family: monospace;
-      color: var(--text-muted);
-      margin-bottom: 1.5rem;
-    }
-
     /* Answer Input Area */
     .input-form-container {
       background-color: var(--bg-primary);
@@ -730,10 +770,10 @@
     .feedback-sigfig {
       background-color: var(--warning-bg);
       border: 2px solid var(--warning);
-      color: #92400e;
-    }
-    [data-theme="dark"] .feedback-sigfig {
       color: #fef3c7;
+    }
+    [data-theme="light"] .feedback-sigfig {
+      color: #92400e;
     }
 
     .feedback-incorrect {
@@ -781,13 +821,14 @@
       border-radius: var(--radius-sm);
       padding: 0.85rem;
       margin-top: 0.6rem;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
+      line-height: 1.7;
     }
 
     .solution-step-title {
       font-weight: 700;
       color: var(--primary);
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.4rem;
       font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 0.03em;
@@ -880,19 +921,12 @@
     .formula-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
 
     .formula-table td {
-      padding: 0.35rem 0.25rem;
-      vertical-align: top;
-    }
-
-    .formula-math {
-      font-family: "Cambria Math", "Times New Roman", serif;
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--text-main);
+      padding: 0.4rem 0.3rem;
+      vertical-align: middle;
     }
 
     /* Summary / Results View */
@@ -1144,10 +1178,6 @@
           Loading question text...
         </div>
 
-        <div class="q-given-badge" id="qGivenDisplay">
-          Given: v_i = 5.42 m/s, t = 1.10 s
-        </div>
-
         <!-- Input Form -->
         <div class="input-form-container">
           <div class="input-label-row">
@@ -1212,7 +1242,7 @@
           </div>
           <div class="solution-step-box">
             <div class="solution-step-title">2. Governing Formulas</div>
-            <div id="solFormula" style="font-family: 'Cambria Math', monospace;"></div>
+            <div id="solFormula"></div>
           </div>
           <div class="solution-step-box">
             <div class="solution-step-title">3. Substitution & Calculation</div>
@@ -1285,19 +1315,19 @@
           <table class="formula-table">
             <tr>
               <td>Acceleration due to gravity (Earth):</td>
-              <td><span class="formula-math">g = 9.81 m/s²</span></td>
+              <td><span class="formula-math" data-math="g = 9.81\text{ m/s}^2"><i>g</i> = 9.81 m/s²</span></td>
             </tr>
             <tr>
               <td>Newton definition:</td>
-              <td><span class="formula-math">1 N = 1 kg·m/s²</span></td>
+              <td><span class="formula-math" data-math="1\text{ N} = 1\text{ kg}\cdot\text{m/s}^2">1 N = 1 kg·m/s²</span></td>
             </tr>
             <tr>
               <td>Joule definition:</td>
-              <td><span class="formula-math">1 J = 1 N·m = 1 kg·m²/s²</span></td>
+              <td><span class="formula-math" data-math="1\text{ J} = 1\text{ N}\cdot\text{m} = 1\text{ kg}\cdot\text{m}^2/\text{s}^2">1 J = 1 N·m = 1 kg·m²/s²</span></td>
             </tr>
             <tr>
               <td>Speed conversion:</td>
-              <td><span class="formula-math">1 km/h = 1 / 3.6 m/s</span></td>
+              <td><span class="formula-math" data-math="1\text{ km/h} = \frac{1}{3.6}\text{ m/s}">1 km/h = <sup>1</sup>/<sub>3.6</sub> m/s</span></td>
             </tr>
           </table>
         </div>
@@ -1308,27 +1338,27 @@
           <table class="formula-table">
             <tr>
               <td>Uniform velocity:</td>
-              <td><span class="formula-math">v_ave = Δd / Δt</span></td>
+              <td><span class="formula-math" data-math="v_{\text{ave}} = \frac{\Delta d}{\Delta t}"><i>v</i><sub>ave</sub> = <sup>Δ<i>d</i></sup>/<sub>Δ<i>t</i></sub></span></td>
             </tr>
             <tr>
               <td>Uniform acceleration:</td>
-              <td><span class="formula-math">a = (v_f - v_i) / t</span></td>
+              <td><span class="formula-math" data-math="a = \frac{v_f - v_i}{t}"><i>a</i> = <sup>(<i>v</i><sub>f</sub> − <i>v</i><sub>i</sub>)</sup>/<sub><i>t</i></sub></span></td>
             </tr>
             <tr>
               <td>Displacement (with a):</td>
-              <td><span class="formula-math">d = v_i t + ½ a t²</span></td>
+              <td><span class="formula-math" data-math="d = v_i t + \frac{1}{2} a t^2"><i>d</i> = <i>v</i><sub>i</sub><i>t</i> + ½<i>a</i><i>t</i>²</span></td>
             </tr>
             <tr>
               <td>Displacement (with v_f):</td>
-              <td><span class="formula-math">d = v_f t - ½ a t²</span></td>
+              <td><span class="formula-math" data-math="d = v_f t - \frac{1}{2} a t^2"><i>d</i> = <i>v</i><sub>f</sub><i>t</i> − ½<i>a</i><i>t</i>²</span></td>
             </tr>
             <tr>
               <td>Displacement (average v):</td>
-              <td><span class="formula-math">d = [(v_i + v_f) / 2] t</span></td>
+              <td><span class="formula-math" data-math="d = \left(\frac{v_i + v_f}{2}\right) t"><i>d</i> = (<sup><i>v</i><sub>i</sub> + <i>v</i><sub>f</sub></sup>/<sub>2</sub>) <i>t</i></span></td>
             </tr>
             <tr>
               <td>Timeless kinematic:</td>
-              <td><span class="formula-math">v_f² = v_i² + 2 a d</span></td>
+              <td><span class="formula-math" data-math="v_f^2 = v_i^2 + 2 a d"><i>v</i><sub>f</sub>² = <i>v</i><sub>i</sub>² + 2<i>ad</i></span></td>
             </tr>
           </table>
         </div>
@@ -1339,27 +1369,27 @@
           <table class="formula-table">
             <tr>
               <td>Horizontal component:</td>
-              <td><span class="formula-math">R_x = R cos θ</span></td>
+              <td><span class="formula-math" data-math="R_x = R \cos\theta"><i>R</i><sub>x</sub> = <i>R</i> cos θ</span></td>
             </tr>
             <tr>
               <td>Vertical component:</td>
-              <td><span class="formula-math">R_y = R sin θ</span></td>
+              <td><span class="formula-math" data-math="R_y = R \sin\theta"><i>R</i><sub>y</sub> = <i>R</i> sin θ</span></td>
             </tr>
             <tr>
               <td>Pythagorean magnitude:</td>
-              <td><span class="formula-math">R = √(R_x² + R_y²)</span></td>
+              <td><span class="formula-math" data-math="R = \sqrt{R_x^2 + R_y^2}"><i>R</i> = √(<i>R</i><sub>x</sub>² + <i>R</i><sub>y</sub>²)</span></td>
             </tr>
             <tr>
               <td>Resultant angle:</td>
-              <td><span class="formula-math">tan θ = R_y / R_x</span></td>
+              <td><span class="formula-math" data-math="\tan\theta = \frac{R_y}{R_x}">tan θ = <sup><i>R</i><sub>y</sub></sup>/<sub><i>R</i><sub>x</sub></sub></span></td>
             </tr>
             <tr>
               <td>Sine Law:</td>
-              <td><span class="formula-math">a / sin A = b / sin B = c / sin C</span></td>
+              <td><span class="formula-math" data-math="\frac{a}{\sin A} = \frac{b}{\sin B} = \frac{c}{\sin C}"><sup><i>a</i></sup>/<sub>sin <i>A</i></sub> = <sup><i>b</i></sup>/<sub>sin <i>B</i></sub> = <sup><i>c</i></sup>/<sub>sin <i>C</i></sub></span></td>
             </tr>
             <tr>
               <td>Cosine Law:</td>
-              <td><span class="formula-math">c² = a² + b² - 2ab cos C</span></td>
+              <td><span class="formula-math" data-math="c^2 = a^2 + b^2 - 2ab \cos C"><i>c</i>² = <i>a</i>² + <i>b</i>² − 2<i>ab</i> cos <i>C</i></span></td>
             </tr>
           </table>
         </div>
@@ -1370,23 +1400,23 @@
           <table class="formula-table">
             <tr>
               <td>Newton's Second Law:</td>
-              <td><span class="formula-math">F_net = m a = Σ F</span></td>
+              <td><span class="formula-math" data-math="F_{\text{net}} = ma = \sum F"><i>F</i><sub>net</sub> = <i>ma</i> = Σ<i>F</i></span></td>
             </tr>
             <tr>
               <td>Gravitational Force (Weight):</td>
-              <td><span class="formula-math">F_g = m g</span></td>
+              <td><span class="formula-math" data-math="F_g = mg"><i>F</i><sub>g</sub> = <i>mg</i></span></td>
             </tr>
             <tr>
               <td>Friction force:</td>
-              <td><span class="formula-math">F_f = μ F_N</span></td>
+              <td><span class="formula-math" data-math="F_f = \mu F_N"><i>F</i><sub>f</sub> = μ<i>F</i><sub>N</sub></span></td>
             </tr>
             <tr>
               <td>Incline parallel force:</td>
-              <td><span class="formula-math">F_|| = mg sin θ</span></td>
+              <td><span class="formula-math" data-math="F_\parallel = mg \sin\theta"><i>F</i><sub>∥</sub> = <i>mg</i> sin θ</span></td>
             </tr>
             <tr>
               <td>Incline normal force:</td>
-              <td><span class="formula-math">F_N = mg cos θ</span></td>
+              <td><span class="formula-math" data-math="F_N = mg \cos\theta"><i>F</i><sub>N</sub> = <i>mg</i> cos θ</span></td>
             </tr>
           </table>
         </div>
@@ -1396,16 +1426,16 @@
           <div class="formula-card-title">4. Work & Energy Formulas</div>
           <table class="formula-table">
             <tr>
-              <td>Work: <span class="formula-math">W = F d cos θ = ΔE</span></td>
-              <td>Gravitational Potential: <span class="formula-math">E_p = m g h</span></td>
+              <td>Work: <span class="formula-math" data-math="W = F d \cos\theta = \Delta E"><i>W</i> = <i>Fd</i> cos θ = Δ<i>E</i></span></td>
+              <td>Gravitational Potential: <span class="formula-math" data-math="E_p = mgh"><i>E</i><sub>p</sub> = <i>mgh</i></span></td>
             </tr>
             <tr>
-              <td>Kinetic Energy: <span class="formula-math">E_k = ½ m v²</span></td>
-              <td>Elastic Potential Energy: <span class="formula-math">E_s = ½ k x²</span></td>
+              <td>Kinetic Energy: <span class="formula-math" data-math="E_k = \frac{1}{2}mv^2"><i>E</i><sub>k</sub> = ½<i>mv</i>²</span></td>
+              <td>Elastic Potential Energy: <span class="formula-math" data-math="E_s = \frac{1}{2}kx^2"><i>E</i><sub>s</sub> = ½<i>kx</i>²</span></td>
             </tr>
             <tr>
-              <td>Total Mechanical Energy: <span class="formula-math">E_m = E_p + E_k + E_s</span></td>
-              <td>Conservation / Non-isolated: <span class="formula-math">E_{m,i} - W_f = E_{m,f}</span></td>
+              <td>Total Mechanical Energy: <span class="formula-math" data-math="E_m = E_p + E_k + E_s"><i>E</i><sub>m</sub> = <i>E</i><sub>p</sub> + <i>E</i><sub>k</sub> + <i>E</i><sub>s</sub></span></td>
+              <td>Conservation / Non-isolated: <span class="formula-math" data-math="E_{m,i} - W_f = E_{m,f}"><i>E</i><sub>m,i</sub> − <i>W</i><sub>f</sub> = <i>E</i><sub>m,f</sub></span></td>
             </tr>
           </table>
         </div>
@@ -2886,6 +2916,7 @@
       init() {
         this.updateThemeFromStorage();
         this.updateTopicSelectionUI();
+        this.renderAllMath();
         
         // Listen for Esc key to close modal
         window.addEventListener('keydown', (e) => {
@@ -2895,17 +2926,160 @@
         });
       },
 
-      // Theme Management
+      // Theme Management - Defaults to Dark Mode
       toggleTheme() {
-        const current = document.documentElement.getAttribute('data-theme');
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
         const next = current === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('phy20_theme', next);
       },
 
       updateThemeFromStorage() {
-        const saved = localStorage.getItem('phy20_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        const saved = localStorage.getItem('phy20_theme') || 'dark';
         document.documentElement.setAttribute('data-theme', saved);
+      },
+
+      // Math Formatting & Rendering Engines
+      cleanLatexForKaTeX(str) {
+        if (!str) return '';
+        return str
+          .replace(/²/g, '^2')
+          .replace(/³/g, '^3')
+          .replace(/⁴/g, '^4')
+          .replace(/⁵/g, '^5')
+          .replace(/⁻¹/g, '^{-1}')
+          .replace(/⁻²/g, '^{-2}')
+          .replace(/⁻⁴/g, '^{-4}')
+          .replace(/°/g, '^\\circ')
+          .replace(/\|\|/g, '\\parallel');
+      },
+
+      renderFormula(latex) {
+        if (!latex) return '';
+        const cleaned = this.cleanLatexForKaTeX(latex);
+        if (window.katex) {
+          try {
+            return window.katex.renderToString(cleaned, { displayMode: true, throwOnError: false });
+          } catch (e) {
+            console.warn('KaTeX render error:', e);
+          }
+        }
+        return `<div style="font-size:1.15rem; font-family:'Cambria Math', serif; text-align:center; padding:0.4rem 0;">${this.formatMathInText(latex)}</div>`;
+      },
+
+      renderAllMath() {
+        if (!window.katex) return;
+
+        // Render formula sheet formulas
+        const formulaEls = document.querySelectorAll('.formula-math[data-math]');
+        formulaEls.forEach(el => {
+          const math = el.getAttribute('data-math');
+          if (math) {
+            try {
+              window.katex.render(math, el, { throwOnError: false });
+            } catch (err) {
+              console.warn('KaTeX formula sheet render error:', err);
+            }
+          }
+        });
+
+        // Re-render currently displayed question formula if in quiz view
+        if (this.currentQuestions.length > 0 && this.currentQuestions[this.currentIndex]) {
+          const q = this.currentQuestions[this.currentIndex];
+          const solFormulaEl = document.getElementById('solFormula');
+          if (solFormulaEl && q.solution && q.solution.formula) {
+            solFormulaEl.innerHTML = this.renderFormula(q.solution.formula);
+          }
+        }
+      },
+
+      formatMathInText(str) {
+        if (!str) return '';
+        let res = str;
+
+        // Handle balanced fractions recursively
+        const parseBalanced = (s, openChar = '{', closeChar = '}') => {
+          let depth = 0, start = -1;
+          const matches = [];
+          for (let i = 0; i < s.length; i++) {
+            if (s[i] === openChar) {
+              if (depth === 0) start = i;
+              depth++;
+            } else if (s[i] === closeChar) {
+              depth--;
+              if (depth === 0 && start !== -1) {
+                matches.push({ start, end: i, content: s.substring(start + 1, i) });
+                start = -1;
+              }
+            }
+          }
+          return matches;
+        };
+
+        const replaceFracs = (s) => {
+          let idx = s.indexOf('\\frac');
+          while (idx !== -1) {
+            const after = s.substring(idx + 5);
+            const m = parseBalanced(after);
+            if (m.length >= 2 && m[0].start === 0 && m[1].start === m[0].end + 1) {
+              const num = replaceFracs(m[0].content);
+              const den = replaceFracs(m[1].content);
+              const fullMatchLen = 5 + m[1].end + 1;
+              s = s.substring(0, idx) + `(${num})/(${den})` + s.substring(idx + fullMatchLen);
+              idx = s.indexOf('\\frac');
+            } else {
+              break;
+            }
+          }
+          return s;
+        };
+
+        const replaceSqrt = (s) => {
+          let idx = s.indexOf('\\sqrt');
+          while (idx !== -1) {
+            const after = s.substring(idx + 5);
+            const m = parseBalanced(after);
+            if (m.length >= 1 && m[0].start === 0) {
+              const inside = replaceFracs(m[0].content);
+              const fullMatchLen = 5 + m[0].end + 1;
+              s = s.substring(0, idx) + `√(${inside})` + s.substring(idx + fullMatchLen);
+              idx = s.indexOf('\\sqrt');
+            } else {
+              break;
+            }
+          }
+          return s;
+        };
+
+        res = res.replace(/\\text\{([^}]+)\}/g, '$1');
+        res = replaceFracs(res);
+        res = replaceSqrt(res);
+
+        // Common symbols
+        res = res.replace(/\\Delta/g, 'Δ');
+        res = res.replace(/\\theta/g, 'θ');
+        res = res.replace(/\\mu/g, 'μ');
+        res = res.replace(/\\implies/g, ' &rArr; ');
+        res = res.replace(/\\quad/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+        res = res.replace(/\\times/g, '×');
+        res = res.replace(/\\sin/g, 'sin');
+        res = res.replace(/\\cos/g, 'cos');
+        res = res.replace(/\\tan/g, 'tan');
+        res = res.replace(/\\arctan/g, 'arctan');
+        res = res.replace(/\\sum/g, 'Σ');
+        res = res.replace(/\\left\(/g, '(');
+        res = res.replace(/\\right\)/g, ')');
+
+        // Subscripts with braces: F_{net}, E_{m,i}, h_{max}, etc.
+        res = res.replace(/\b([A-Za-z]+)_\{([^}]+)\}/g, '<span class="math-sym"><i>$1</i><sub>$2</sub></span>');
+
+        // Subscripts without braces: v_i, v_f, F_f, F_N, m_A, etc.
+        res = res.replace(/\b([FvdamEWRxytgh])_([0-9a-zA-Z]+)\b/g, '<span class="math-sym"><i>$1</i><sub>$2</sub></span>');
+
+        // Incline parallel force F_||
+        res = res.replace(/F_\{?\|\|\}?/g, '<span class="math-sym"><i>F</i><sub>∥</sub></span>');
+
+        return res;
       },
 
       // Topic Selection UI
@@ -3014,10 +3188,9 @@
         unitPill.className = `unit-pill ${q.unit}`;
         unitPill.textContent = q.unitName;
 
-        // Title and texts
+        // Title and question text with formatted math
         document.getElementById('qTitleDisplay').textContent = q.title;
-        document.getElementById('qTextDisplay').innerHTML = q.text;
-        document.getElementById('qGivenDisplay').innerHTML = `<strong>Given:</strong> ${q.given}`;
+        document.getElementById('qTextDisplay').innerHTML = this.formatMathInText(q.text);
         document.getElementById('qUnitDisplay').textContent = q.targetUnit || 'unitless';
 
         // Clear input and feedback
@@ -3030,14 +3203,16 @@
         this.hideHint();
         this.hideSolution();
 
-        // Populate solution details for when requested
-        document.getElementById('solGiven').innerHTML = q.solution.given;
-        document.getElementById('solFormula').innerHTML = q.solution.formula;
-        document.getElementById('solSteps').innerHTML = q.solution.steps;
-        document.getElementById('solFinal').innerHTML = q.solution.final;
+        // Populate solution details formatted with math
+        document.getElementById('solGiven').innerHTML = this.formatMathInText(q.solution.given);
+        document.getElementById('solFormula').innerHTML = this.renderFormula(q.solution.formula);
+        document.getElementById('solSteps').innerHTML = this.formatMathInText(q.solution.steps);
+        document.getElementById('solFinal').innerHTML = this.formatMathInText(q.solution.final);
 
-        // Populate hint
-        document.getElementById('hintContent').innerHTML = q.hints.map((h, i) => `<p style="margin-bottom:0.4rem;"><strong>Step ${i+1}:</strong> ${h}</p>`).join('');
+        // Populate hint with formatted math
+        document.getElementById('hintContent').innerHTML = q.hints.map((h, i) => 
+          `<p style="margin-bottom:0.4rem;"><strong>Step ${i+1}:</strong> ${this.formatMathInText(h)}</p>`
+        ).join('');
 
         this.updateStatsDisplay();
       },
@@ -3095,7 +3270,7 @@
           uStats.sigFigWarnings++;
 
           let hintText = `Your calculated value of <code>${rawText}</code> is mathematically correct! However, your significant digits are off.`;
-          hintText += `<br><br><strong>Alberta Sig Dig Requirement:</strong> Based on the given values, this question requires exactly <strong>${targetSigFigs} significant digits</strong>. You provided ${studentSigFigs} sig fig(s).`;
+          hintText += `<br><br><strong>Alberta Sig Dig Requirement:</strong> Based on the values in the question, this question requires exactly <strong>${targetSigFigs} significant digits</strong>. You provided ${studentSigFigs} sig fig(s).`;
           
           if (targetVal >= 1000 && targetSigFigs < 4) {
             hintText += `<br><em>Tip: For large numbers, use scientific notation (e.g. <code>${targetVal.toExponential(targetSigFigs - 1).replace('e+', 'e')}</code> or <code>${targetVal.toExponential(targetSigFigs - 1).replace('e+', 'x10^')}</code>) to state significant digits unambiguously.</em>`;
