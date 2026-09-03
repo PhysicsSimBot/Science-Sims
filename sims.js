@@ -38,6 +38,7 @@ const SIMS = [
   /* ---- Physics 20 ---- */
   { course:"phys20", unit:"Skills & Measurement", title:"Significant Digits", desc:"Practice reading and rounding to the correct number of significant figures.", file:"sims/physics20/sigdig.html" },
   { course:"phys20", unit:"Kinematics", title:"Relative Motion: Riverboat", desc:"Combine boat and current velocities to predict the boat's path across a river.", file:"sims/physics20/relativemotionriverboat.html" },
+  { course:"phys20", unit:"Kinematics", title:"Motion Graphs", desc:"Read and interpret position-time and velocity-time graphs.", file:"sims/physics20/graphingp20.html" },
 
   /* ---- Physics 30 ---- */
   { course:"phys30", unit:"Review", title:"Physics 20 Review", desc:"Brush up on key Physics 20 concepts before diving into Physics 30.", file:"sims/physics30/physics20review.html" },
