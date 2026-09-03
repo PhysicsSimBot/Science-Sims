@@ -28,10 +28,12 @@
       --success-border: rgba(16, 185, 129, 0.35);
 
       --danger: #ef4444;
+      --danger-hover: #dc2626;
       --danger-bg: rgba(239, 68, 68, 0.15);
       --danger-border: rgba(239, 68, 68, 0.35);
 
       --warning: #f59e0b;
+      --warning-hover: #d97706;
       --warning-bg: rgba(245, 158, 11, 0.15);
       --warning-border: rgba(245, 158, 11, 0.35);
 
@@ -41,15 +43,10 @@
 
       /* Reaction Type Colors */
       --type-formation: #10b981;
-      --type-formation-bg: rgba(16, 185, 129, 0.12);
       --type-decomposition: #a855f7;
-      --type-decomposition-bg: rgba(168, 85, 247, 0.12);
       --type-single: #3b82f6;
-      --type-single-bg: rgba(59, 130, 246, 0.12);
       --type-double: #f59e0b;
-      --type-double-bg: rgba(245, 158, 11, 0.12);
       --type-combustion: #f97316;
-      --type-combustion-bg: rgba(249, 115, 22, 0.12);
 
       --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
       --shadow-md: 0 4px 8px -1px rgba(0,0,0,0.4);
@@ -86,10 +83,12 @@
       --success-border: rgba(5, 150, 105, 0.3);
 
       --danger: #dc2626;
+      --danger-hover: #b91c1c;
       --danger-bg: rgba(220, 38, 38, 0.1);
       --danger-border: rgba(220, 38, 38, 0.3);
 
       --warning: #d97706;
+      --warning-hover: #b45309;
       --warning-bg: rgba(217, 119, 6, 0.1);
       --warning-border: rgba(217, 119, 6, 0.3);
 
@@ -117,6 +116,67 @@
       display: flex;
       flex-direction: column;
       transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* =========================================================================
+     * HIGH-VISIBILITY MODE THEMING (QUIZ vs PRACTICE)
+     * Allows teachers to verify mode instantly from across the classroom
+     * ========================================================================= */
+    /* Mode Banner */
+    .mode-banner-strip {
+      display: none;
+      width: 100%;
+      padding: 0.65rem 1.5rem;
+      text-align: center;
+      font-weight: 800;
+      font-size: 0.98rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 57px;
+      z-index: 35;
+      animation: fadeIn 0.25s ease;
+    }
+
+    /* PRACTICE MODE: Fresh Emerald Green Theme */
+    body[data-session-mode="practice"] .mode-banner-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      background: #059669;
+      color: #ffffff;
+      border-bottom: 2px solid #047857;
+    }
+
+    body[data-session-mode="practice"] .equation-container {
+      border: 2px solid rgba(16, 185, 129, 0.4) !important;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.12) !important;
+    }
+
+    body[data-session-mode="practice"] .progress-bar-fill {
+      background: linear-gradient(90deg, #10b981, #06b6d4) !important;
+    }
+
+    /* QUIZ MODE: Bold Amber / Warning Gold Theme (Instantly Spotted) */
+    body[data-session-mode="quiz"] .mode-banner-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      background: #d97706;
+      color: #ffffff;
+      border-bottom: 2px solid #b45309;
+    }
+
+    body[data-session-mode="quiz"] .equation-container {
+      border: 2px solid rgba(245, 158, 11, 0.5) !important;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.15) !important;
+    }
+
+    body[data-session-mode="quiz"] .progress-bar-fill {
+      background: linear-gradient(90deg, #f59e0b, #ef4444) !important;
     }
 
     /* Top Navbar */
@@ -230,7 +290,6 @@
       margin-bottom: 1.5rem;
     }
 
-    /* Hero / Header Section */
     .hero-title {
       font-size: 1.85rem;
       font-weight: 800;
@@ -268,7 +327,7 @@
       margin-bottom: 0.6rem;
     }
 
-    .input-text {
+    .input-text, .select-dropdown {
       width: 100%;
       padding: 0.75rem 1rem;
       background-color: var(--bg-input);
@@ -280,13 +339,72 @@
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .input-text:focus {
+    .input-text:focus, .select-dropdown:focus {
       outline: none;
       border-color: var(--border-focus);
       box-shadow: 0 0 0 3px var(--primary-subtle);
     }
 
-    /* Selection Grids */
+    /* Mode Selection Grid */
+    .mode-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .mode-card {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.1rem 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+
+    .mode-card:hover {
+      border-color: var(--text-subtle);
+      background: var(--bg-accent);
+    }
+
+    .mode-card.selected-practice {
+      border-color: var(--success);
+      background: var(--success-bg);
+    }
+
+    .mode-card.selected-quiz {
+      border-color: var(--warning);
+      background: var(--warning-bg);
+    }
+
+    .mode-card input[type="radio"] {
+      margin-top: 0.25rem;
+      width: 1.2rem;
+      height: 1.2rem;
+      cursor: pointer;
+    }
+
+    .mode-card-content h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .mode-card-content p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* Selection Grids for Reaction Types */
     .selection-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -401,6 +519,12 @@
       color: var(--text-main);
     }
 
+    .alert-success {
+      background-color: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--text-main);
+    }
+
     /* Primary Action Buttons */
     .btn {
       display: inline-flex;
@@ -473,6 +597,13 @@
       gap: 0.75rem;
     }
 
+    .header-badges-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
     .student-badge {
       display: flex;
       align-items: center;
@@ -483,6 +614,18 @@
       padding: 0.4rem 0.85rem;
       border-radius: var(--radius-full);
       font-weight: 600;
+    }
+
+    .teacher-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      background: var(--bg-accent);
+      border: 1px solid var(--border-color);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-full);
+      color: var(--text-muted);
     }
 
     .progress-bar-container {
@@ -510,6 +653,7 @@
       margin-bottom: 1.5rem;
       text-align: center;
       position: relative;
+      transition: all 0.2s ease;
     }
 
     .equation-display {
@@ -548,6 +692,12 @@
       border-color: var(--border-focus);
       background: var(--bg-card);
       box-shadow: 0 0 0 3px var(--primary-subtle);
+    }
+
+    .coef-input:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      background: var(--bg-surface);
     }
 
     .coef-input::placeholder {
@@ -687,6 +837,61 @@
       color: var(--text-main);
     }
 
+    /* =========================================================================
+     * IMMEDIATE FEEDBACK BOX (PRACTICE MODE)
+     * ========================================================================= */
+    .immediate-feedback-card {
+      display: none;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.75rem;
+      animation: fadeIn 0.25s ease;
+      box-shadow: var(--shadow-md);
+    }
+
+    .feedback-card-correct {
+      background: var(--success-bg);
+      border: 2px solid var(--success-border);
+    }
+
+    .feedback-card-incorrect {
+      background: var(--danger-bg);
+      border: 2px solid var(--danger-border);
+    }
+
+    .feedback-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .feedback-correct-title {
+      color: var(--success);
+    }
+
+    .feedback-incorrect-title {
+      color: var(--danger);
+    }
+
+    .feedback-solution-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin: 0.85rem 0;
+      font-size: 1.05rem;
+    }
+
+    .feedback-explanation {
+      font-size: 0.92rem;
+      color: var(--text-main);
+      line-height: 1.5;
+      margin-top: 0.75rem;
+    }
+
     /* Quiz Navigation Footer */
     .quiz-nav-footer {
       display: flex;
@@ -732,15 +937,25 @@
     }
 
     .dot-btn.answered {
-      border-color: var(--success);
-      color: var(--success);
-      background: var(--success-bg);
+      border-color: var(--info);
+      color: var(--info);
+      background: var(--info-bg);
     }
 
-    .dot-btn.answered.current {
-      background: var(--primary);
+    .dot-btn.correct-dot {
+      border-color: var(--success);
       color: #ffffff;
-      border-color: var(--primary);
+      background: var(--success);
+    }
+
+    .dot-btn.incorrect-dot {
+      border-color: var(--danger);
+      color: #ffffff;
+      background: var(--danger);
+    }
+
+    .dot-btn.current.correct-dot, .dot-btn.current.incorrect-dot {
+      box-shadow: 0 0 0 3px #ffffff;
     }
 
     /* Results Screen */
@@ -923,7 +1138,7 @@
 
     .stats-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
@@ -1017,6 +1232,28 @@
       border: 1px solid var(--border-color);
     }
 
+    .badge-mode {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-mode-practice {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid var(--success-border);
+    }
+
+    .badge-mode-quiz {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border: 1px solid var(--warning-border);
+    }
+
     /* Modal dialogs */
     .modal-backdrop {
       position: fixed;
@@ -1050,7 +1287,7 @@
     }
 
     .modal-card-lg {
-      max-width: 780px;
+      max-width: 820px;
       max-height: 85vh;
       display: flex;
       flex-direction: column;
@@ -1098,7 +1335,7 @@
         background: #ffffff !important;
         color: #000000 !important;
       }
-      .navbar, .btn, .quiz-nav-footer, .btn-count, .hint-container {
+      .navbar, .mode-banner-strip, .btn, .quiz-nav-footer, .btn-count, .hint-container {
         display: none !important;
       }
       .container {
@@ -1114,7 +1351,7 @@
     }
   </style>
 </head>
-<body>
+<body data-session-mode="none">
 
   <!-- Top Navigation Bar -->
   <header class="navbar">
@@ -1135,6 +1372,11 @@
     </div>
   </header>
 
+  <!-- High-Visibility Class Mode Banner -->
+  <div class="mode-banner-strip" id="mode-banner">
+    <!-- Populated dynamically: Practice Mode or Quiz Mode -->
+  </div>
+
   <!-- Main Container -->
   <main class="container">
 
@@ -1144,10 +1386,62 @@
         <h1 class="hero-title">Chemical Reaction Balancing & Classification</h1>
         <p class="hero-subtitle">Practice balancing chemical equations and classifying reaction types aligned with Alberta Science 10 (Unit 1) and Chemistry 20.</p>
 
-        <!-- Student Name -->
+        <!-- Student Name & Teacher Selection Row -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem; margin-bottom:1.25rem;">
+          <!-- Student Name -->
+          <div>
+            <label class="form-label" for="student-name">Student Full Name <span style="color:var(--danger)">*</span></label>
+            <input type="text" id="student-name" class="input-text" placeholder="e.g., Alex Mercer" autocomplete="name" required>
+          </div>
+
+          <!-- Teacher Dropdown -->
+          <div>
+            <label class="form-label" for="teacher-select">Teacher <span style="color:var(--danger)">*</span></label>
+            <select id="teacher-select" class="select-dropdown" onchange="app.handleTeacherSelectionChange()">
+              <option value="Mr. Hammel">Mr. Hammel</option>
+              <option value="Mr. Mori">Mr. Mori</option>
+              <option value="Other">Other (Type teacher's name)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Conditional "Other" Teacher Input -->
+        <div class="form-group" id="teacher-other-group" style="display:none;">
+          <label class="form-label" for="teacher-other-name">Teacher's Last Name <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="teacher-other-name" class="input-text" placeholder="e.g., Ms. Smith or Henderson">
+        </div>
+
+        <!-- Mode Toggle: Practice vs. Quiz Mode -->
         <div class="form-group">
-          <label class="form-label" for="student-name">Student Full Name <span style="color:var(--danger)">*</span></label>
-          <input type="text" id="student-name" class="input-text" placeholder="e.g., Alex Mercer" autocomplete="name" required>
+          <label class="form-label">Activity Mode <span style="color:var(--danger)">*</span></label>
+          <span class="form-sublabel">Select your assigned classroom mode. Colors on your screen will visually reflect your mode.</span>
+          <div class="mode-selector-grid">
+            <!-- Practice Mode -->
+            <label class="mode-card selected-practice" id="card-mode-practice" onclick="app.selectMode('practice')">
+              <input type="radio" name="activity-mode" value="practice" checked>
+              <div class="mode-card-content">
+                <h4><span>🧪</span> Practice Mode</h4>
+                <p><strong>Immediate Feedback:</strong> Check your answer after every reaction to see if you are correct. If incorrect, the full balanced equation and explanation are displayed immediately. <em>Hints are available.</em></p>
+              </div>
+            </label>
+
+            <!-- Quiz Mode -->
+            <label class="mode-card" id="card-mode-quiz" onclick="app.selectMode('quiz')">
+              <input type="radio" name="activity-mode" value="quiz">
+              <div class="mode-card-content" style="flex:1;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
+                  <h4 style="margin-bottom:0;"><span>📝</span> Quiz Mode</h4>
+                  <span id="quiz-lock-badge" class="badge-grade badge-grade-low" style="font-size:0.75rem;">🔒 Locked</span>
+                </div>
+                <p id="quiz-lock-desc"><strong>Formal Assessment:</strong> Currently locked by teacher to prevent unauthorized remote access at home.</p>
+                <div id="quiz-lock-action-bar" style="margin-top:0.6rem; display:flex; gap:0.5rem; align-items:center;">
+                  <button type="button" class="btn btn-secondary btn-icon" style="padding:0.3rem 0.65rem; font-size:0.8rem;" onclick="event.stopPropagation(); app.openQuizUnlockModal();">
+                    <span>🔑</span> Teacher Unlock
+                  </button>
+                </div>
+              </div>
+            </label>
+          </div>
         </div>
 
         <!-- Reaction Types Selection -->
@@ -1227,30 +1521,57 @@
           </div>
         </div>
 
-        <button type="button" class="btn btn-primary btn-lg btn-block" onclick="app.startQuiz()">
-          🚀 Begin Practice Session
+        <button type="button" class="btn btn-primary btn-lg btn-block" id="btn-start-session" onclick="app.startQuiz()">
+          🚀 Begin Session
         </button>
       </div>
     </section>
 
-    <!-- ==================== VIEW 2: ACTIVE QUIZ ==================== -->
+    <!-- ==================== VIEW 2: ACTIVE SESSION ==================== -->
     <section id="view-quiz" class="view">
       <!-- Quiz Header -->
       <div class="quiz-header">
-        <div class="student-badge">
-          <span>👤</span>
-          <span id="quiz-student-name">Student</span>
+        <div class="header-badges-row">
+          <div class="student-badge">
+            <span>👤</span>
+            <span id="quiz-student-name">Student</span>
+          </div>
+          <div class="teacher-badge">
+            <span>👨‍🏫</span>
+            <span id="quiz-teacher-name">Mr. Hammel</span>
+          </div>
         </div>
         <div style="font-weight:700; color:var(--text-main); font-size:1.05rem;" id="quiz-progress-text">
           Reaction 1 of 10
         </div>
         <button class="btn btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.85rem;" onclick="app.confirmQuitQuiz()">
-          Exit Practice
+          Exit Session
         </button>
       </div>
 
       <div class="progress-bar-container">
         <div class="progress-bar-fill" id="quiz-progress-fill"></div>
+      </div>
+
+      <!-- Fullscreen Return Prompt (Prominently shown if exited mid-quiz) -->
+      <div id="quiz-fullscreen-prompt" class="alert alert-warning" style="display:none; margin-bottom:1.25rem; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <span style="font-size:1.6rem;">⚠️</span>
+          <div>
+            <strong style="font-size:0.95rem;">Fullscreen Exited:</strong> You have exited fullscreen mode during Quiz Mode.
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-top:0.15rem;">
+              Exits are logged on your integrity report. You can return to fullscreen or continue in windowed mode.
+            </div>
+          </div>
+        </div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <button type="button" class="btn btn-primary btn-icon" style="padding:0.4rem 0.8rem; font-size:0.85rem;" onclick="app.requestFullscreen()">
+            <span>⛶</span> Return to Fullscreen
+          </button>
+          <button type="button" class="btn btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.85rem;" onclick="app.dismissFullscreenPrompt()">
+            Continue Windowed
+          </button>
+        </div>
       </div>
 
       <!-- Chemical Equation Card -->
@@ -1267,8 +1588,8 @@
           <!-- Dynamically generated equation species and inputs -->
         </div>
 
-        <!-- Pedagogical Hint Button & Box -->
-        <div class="hint-container">
+        <!-- Pedagogical Hint Button & Box (Hidden in Quiz Mode) -->
+        <div class="hint-container" id="hint-container">
           <button type="button" class="btn-hint" onclick="app.toggleHint()">
             <span>💡</span>
             <span>Need a Hint? (Atom balance strategy)</span>
@@ -1292,6 +1613,11 @@
         </div>
       </div>
 
+      <!-- Immediate Feedback Card (Practice Mode Only) -->
+      <div class="immediate-feedback-card" id="immediate-feedback-box">
+        <!-- Injected feedback content -->
+      </div>
+
       <!-- Quiz Navigation Footer -->
       <div class="quiz-nav-footer">
         <button type="button" class="btn btn-secondary" id="btn-prev" onclick="app.prevQuestion()">
@@ -1302,7 +1628,7 @@
           <!-- Jump dots injected here -->
         </div>
 
-        <button type="button" class="btn btn-primary" id="btn-next" onclick="app.nextQuestion()">
+        <button type="button" class="btn btn-primary" id="btn-action" onclick="app.handleActionClick()">
           Next →
         </button>
       </div>
@@ -1313,7 +1639,7 @@
       <div class="card">
         <div class="results-hero">
           <div class="results-badge" id="results-icon">🎉</div>
-          <h1 class="results-title" id="results-headline">Practice Complete!</h1>
+          <h1 class="results-title" id="results-headline">Session Complete!</h1>
           <p class="results-subtitle" id="results-subheadline">Here is your performance breakdown.</p>
         </div>
 
@@ -1338,7 +1664,82 @@
 
         <div class="alert alert-info" id="results-storage-status">
           <span>💾</span>
-          <span>Your score has been saved to the Teacher Gradebook on this device.</span>
+          <span>Your score has been saved to the Teacher Gradebook under <strong id="res-teacher-display">Mr. Hammel</strong>.</span>
+        </div>
+
+        <!-- Quiz Integrity & Focus Monitoring Card (Active in Quiz Mode) -->
+        <div id="monitoring-results-card" style="display:none; background:var(--bg-surface); border:1.5px solid var(--border-color); border-radius:var(--radius-lg); padding:1.25rem; margin-bottom:1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.75rem; margin-bottom:1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem;">
+            <div>
+              <h3 style="margin:0; font-size:1.15rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+                <span>🛡️</span> Quiz Session Monitoring & Focus Report
+              </h3>
+              <p style="margin:0.2rem 0 0 0; font-size:0.85rem; color:var(--text-muted);">
+                Browser focus & tab-switching tracking log for this quiz session.
+              </p>
+            </div>
+            <!-- Export & Copy buttons -->
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+              <button type="button" class="btn btn-secondary btn-icon" id="btn-copy-monitor" onclick="app.copyMonitoringReport()" title="Copy summary as plain text">
+                <span>📋</span> Copy Results
+              </button>
+              <button type="button" class="btn btn-secondary btn-icon" id="btn-download-monitor" onclick="app.downloadMonitoringReport()" title="Download text report file">
+                <span>📥</span> Download Results (.txt)
+              </button>
+            </div>
+          </div>
+
+          <!-- Monitoring Key Metrics Grid -->
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:0.75rem; margin-bottom:1rem;">
+            <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:0.75rem 1rem;">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Student Name</div>
+              <div style="font-size:1.02rem; font-weight:700; margin-top:0.2rem;" id="mon-student-name">—</div>
+            </div>
+            <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:0.75rem 1rem;">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Times Page Left</div>
+              <div style="font-size:1.02rem; font-weight:700; margin-top:0.2rem;" id="mon-leave-count">—</div>
+            </div>
+            <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:0.75rem 1rem;">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Total Time Away</div>
+              <div style="font-size:1.02rem; font-weight:700; margin-top:0.2rem;" id="mon-time-away">—</div>
+            </div>
+            <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:0.75rem 1rem;">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Fullscreen Exits</div>
+              <div style="font-size:1.02rem; font-weight:700; margin-top:0.2rem;" id="mon-fs-exits">—</div>
+            </div>
+            <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:0.75rem 1rem;">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Out of Fullscreen</div>
+              <div style="font-size:1.02rem; font-weight:700; margin-top:0.2rem;" id="mon-fs-time-away">—</div>
+            </div>
+            <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:0.75rem 1rem;">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Window Shrink Events</div>
+              <div style="font-size:1.02rem; font-weight:700; margin-top:0.2rem;" id="mon-shrink-count">—</div>
+            </div>
+            <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:0.75rem 1rem;">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Total Quiz Duration</div>
+              <div style="font-size:1.02rem; font-weight:700; margin-top:0.2rem;" id="mon-total-time">—</div>
+            </div>
+            <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:0.75rem 1rem;">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Start / End Time</div>
+              <div style="font-size:0.88rem; font-weight:600; margin-top:0.2rem;" id="mon-time-range">—</div>
+            </div>
+          </div>
+
+          <!-- Timestamped Event Log -->
+          <div>
+            <div style="font-size:0.85rem; font-weight:700; margin-bottom:0.4rem; color:var(--text-main); display:flex; justify-content:space-between; align-items:center;">
+              <span>Timestamped Activity & Focus Log</span>
+              <span id="mon-events-badge" class="badge-grade badge-grade-high" style="font-size:0.75rem;">Clean Session</span>
+            </div>
+            <div id="mon-events-list" style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:0.75rem; max-height:180px; overflow-y:auto; font-size:0.85rem; font-family:monospace;">
+              <!-- Dynamically populated events -->
+            </div>
+          </div>
+
+          <!-- Honest Disclosure & Disclaimer -->
+          <div style="margin-top:0.75rem; font-size:0.78rem; color:var(--text-muted); font-style:italic;">
+            Notice: This monitoring log detects and reports when this page loses focus, exits fullscreen, or is resized significantly smaller than the screen. It does not prevent escaping fullscreen or switching tabs, and monitoring ends if the tab is closed. Window shrink events are treated as diagnostic hints, not absolute proof of split-screen usage.
+          </div>
         </div>
 
         <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1.5rem;">
@@ -1384,7 +1785,7 @@
               🖨️ Print Grades
             </button>
             <button class="btn btn-secondary" onclick="app.showLanding()">
-              ← Student Practice Mode
+              ← Student Mode
             </button>
           </div>
         </div>
@@ -1405,15 +1806,71 @@
           </div>
         </div>
 
-        <!-- Search / Filter Bar -->
-        <div style="display:flex; gap:0.75rem; margin-bottom:1rem; flex-wrap:wrap;">
-          <input type="text" id="teacher-search" class="input-text" style="flex:1; min-width:200px;" placeholder="Search student name..." oninput="app.renderTeacherTable()">
-          <button class="btn btn-secondary btn-icon" onclick="app.addSampleSubmission()" title="Add sample record for testing">
-            <span>+</span> Add Sample Demo
-          </button>
-          <button class="btn btn-secondary btn-icon" style="color:var(--danger); border-color:var(--danger-border);" onclick="app.clearAllGrades()">
-            <span>🗑️</span> Clear All Records
-          </button>
+        <!-- Quiz Mode Device Security Control -->
+        <div style="background:var(--bg-surface); border:1.5px solid var(--border-color); border-radius:var(--radius-lg); padding:1.25rem; margin-bottom:1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h3 style="font-size:1.08rem; font-weight:700; margin-bottom:0.25rem; display:flex; align-items:center; gap:0.5rem;">
+                <span>🔒</span> Quiz Mode Access Security
+                <span id="t-quiz-lock-status-badge" class="badge-grade badge-grade-low">LOCKED</span>
+              </h3>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin:0;" id="t-quiz-lock-info-text">
+                When locked, Quiz Mode is inaccessible to students at home. Absent students cannot access quizzes remotely. Practice Mode remains open for homework.
+              </p>
+            </div>
+            <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+              <select id="t-lock-duration" class="select-dropdown" style="width:auto; padding:0.45rem 0.75rem; font-size:0.88rem;">
+                <option value="60">Unlock 60 Min (Class Period)</option>
+                <option value="90">Unlock 90 Min (Block Period)</option>
+                <option value="180">Unlock 180 Min (Exam Period)</option>
+                <option value="0">Unlock Until Manually Locked</option>
+              </select>
+              <button class="btn btn-success" style="padding:0.45rem 0.9rem; font-size:0.88rem;" onclick="app.teacherPortalUnlockQuiz()">
+                🔓 Unlock Quiz
+              </button>
+              <button class="btn btn-secondary" style="padding:0.45rem 0.9rem; font-size:0.88rem; color:var(--danger); border-color:var(--danger-border);" onclick="app.teacherPortalLockQuiz()">
+                🔒 Lock Down
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters & Tools Bar -->
+        <div style="display:flex; gap:0.75rem; margin-bottom:1.25rem; flex-wrap:wrap; align-items:center;">
+          <!-- Teacher Filter -->
+          <div style="min-width:190px;">
+            <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; display:block; margin-bottom:0.2rem;">Filter By Teacher:</label>
+            <select id="teacher-filter" class="select-dropdown" onchange="app.renderTeacherTable()">
+              <option value="ALL">All Teachers</option>
+              <option value="Mr. Hammel">Mr. Hammel</option>
+              <option value="Mr. Mori">Mr. Mori</option>
+            </select>
+          </div>
+
+          <!-- Mode Filter -->
+          <div style="min-width:160px;">
+            <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; display:block; margin-bottom:0.2rem;">Filter By Mode:</label>
+            <select id="mode-filter" class="select-dropdown" onchange="app.renderTeacherTable()">
+              <option value="ALL">All Modes</option>
+              <option value="quiz">Quiz Mode Only</option>
+              <option value="practice">Practice Mode Only</option>
+            </select>
+          </div>
+
+          <!-- Search student name -->
+          <div style="flex:1; min-width:200px;">
+            <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; display:block; margin-bottom:0.2rem;">Search Student:</label>
+            <input type="text" id="teacher-search" class="input-text" placeholder="Search student name..." oninput="app.renderTeacherTable()">
+          </div>
+
+          <div style="display:flex; gap:0.4rem; align-self:flex-end;">
+            <button class="btn btn-secondary btn-icon" onclick="app.addSampleSubmission()" title="Add sample record for testing">
+              <span>+</span> Add Sample
+            </button>
+            <button class="btn btn-secondary btn-icon" style="color:var(--danger); border-color:var(--danger-border);" onclick="app.clearAllGrades()">
+              <span>🗑️</span> Clear All
+            </button>
+          </div>
         </div>
 
         <!-- Grades Table -->
@@ -1422,8 +1879,10 @@
             <thead>
               <tr>
                 <th>Student Name</th>
+                <th>Teacher</th>
+                <th>Mode</th>
                 <th>Date & Time</th>
-                <th>Mode / Types</th>
+                <th>Types</th>
                 <th>Count</th>
                 <th>Balancing Score</th>
                 <th>Type ID Score</th>
@@ -1485,6 +1944,45 @@
       <div style="display:flex; justify-content:flex-end; gap:0.5rem; border-top:1px solid var(--border-color); padding-top:0.75rem;">
         <button type="button" class="btn btn-secondary" onclick="app.closeModals()">Close</button>
       </div>
+    </div>
+  <!-- ==================== MODAL: TEACHER QUIZ UNLOCK ==================== -->
+  <div class="modal-backdrop" id="modal-quiz-unlock">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🔑</span>
+          <span>Teacher Quiz Unlock</span>
+        </div>
+        <button class="btn-close" onclick="app.closeModals()">&times;</button>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.25rem;">
+        Enter the teacher password (<code>mhhsphysics</code>) to authorize Quiz Mode on this device. This prevents absent students from accessing quizzes remotely from home.
+      </p>
+      <form onsubmit="event.preventDefault(); app.verifyAndUnlockQuiz();">
+        <div class="form-group">
+          <label class="form-label" for="quiz-unlock-password">Teacher Password</label>
+          <input type="password" id="quiz-unlock-password" class="input-text" placeholder="Enter password (mhhsphysics)" autofocus autocomplete="off">
+          <div id="quiz-unlock-error" style="color:var(--danger); font-size:0.85rem; margin-top:0.4rem; display:none;">
+            Incorrect teacher password.
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="quiz-unlock-duration">Access Duration (Auto-Relocks Afterwards)</label>
+          <select id="quiz-unlock-duration" class="select-dropdown">
+            <option value="60">60 Minutes (Standard Class Period — Recommended)</option>
+            <option value="90">90 Minutes (Block Class Period)</option>
+            <option value="180">180 Minutes (Exam Block)</option>
+            <option value="0">Until Manually Locked Down</option>
+          </select>
+          <span class="form-sublabel" style="margin-top:0.4rem;">
+            When the timer expires, Quiz Mode automatically locks again so students cannot access it after class or from home.
+          </span>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModals()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Authorize & Unlock Quiz</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -2297,33 +2795,33 @@
         id: "comb-07",
         type: "combustion",
         typeName: "Combustion",
-        equationDisplay: "C₂H₅OH(l) + O₂(g) → CO₂(g) + H₂O(g)",
+        equationDisplay: "C₆H₁₄(l) + O₂(g) → CO₂(g) + H₂O(g)",
         reactants: [
-          { formulaHtml: "C<sub>2</sub>H<sub>5</sub>OH(l)", coef: 1, atoms: { C: 2, H: 6, O: 1 } },
-          { formulaHtml: "O<sub>2</sub>(g)", coef: 3, atoms: { O: 2 } }
+          { formulaHtml: "C<sub>6</sub>H<sub>14</sub>(l)", coef: 2, atoms: { C: 6, H: 14 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 19, atoms: { O: 2 } }
         ],
         products: [
-          { formulaHtml: "CO<sub>2</sub>(g)", coef: 2, atoms: { C: 1, O: 2 } },
-          { formulaHtml: "H<sub>2</sub>O(g)", coef: 3, atoms: { H: 2, O: 1 } }
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 12, atoms: { C: 1, O: 2 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 14, atoms: { H: 2, O: 1 } }
         ],
-        hint: "CRITICAL: Ethanol already contains 1 oxygen atom! When summing oxygen, you need 7 total on the right (4 from CO₂ + 3 from H₂O). Subtract the 1 oxygen in ethanol before finding O₂.",
-        explanation: "Ethanol (biofuel) combustion in oxygen produces carbon dioxide and water vapor."
+        hint: "Balance C first (6 CO₂), then H (14 H gives 7 H₂O). Total oxygens on right = (6 × 2) + 7 = 19 (an odd number that cannot be formed with pairs of O₂). Double the hexane to 2, yielding 12 CO₂ and 14 H₂O!",
+        explanation: "Combustion of liquid hexane (straight-chain alkane hydrocarbon) in oxygen gas."
       },
       {
         id: "comb-08",
         type: "combustion",
         typeName: "Combustion",
-        equationDisplay: "C₆H₁₂O₆(s) + O₂(g) → CO₂(g) + H₂O(l)",
+        equationDisplay: "C₃H₆(g) + O₂(g) → CO₂(g) + H₂O(g)",
         reactants: [
-          { formulaHtml: "C<sub>6</sub>H<sub>12</sub>O<sub>6</sub>(s)", coef: 1, atoms: { C: 6, H: 12, O: 6 } },
-          { formulaHtml: "O<sub>2</sub>(g)", coef: 6, atoms: { O: 2 } }
+          { formulaHtml: "C<sub>3</sub>H<sub>6</sub>(g)", coef: 2, atoms: { C: 3, H: 6 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 9, atoms: { O: 2 } }
         ],
         products: [
           { formulaHtml: "CO<sub>2</sub>(g)", coef: 6, atoms: { C: 1, O: 2 } },
-          { formulaHtml: "H<sub>2</sub>O(l)", coef: 6, atoms: { H: 2, O: 1 } }
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 6, atoms: { H: 2, O: 1 } }
         ],
-        hint: "This is cellular respiration / combustion of glucose. Balance C to 6 CO₂ and H to 6 H₂O. Remember glucose already provides 6 of the 18 total oxygens needed!",
-        explanation: "The complete combustion or metabolic oxidation of glucose yields carbon dioxide and water."
+        hint: "Balancing 1 propene yields 3 CO₂ and 3 H₂O = 9 oxygen atoms (odd). Double the hydrocarbon to 2 propene, giving 6 CO₂ and 6 H₂O. Then determine how many O₂ molecules give 18 oxygens.",
+        explanation: "Combustion of gaseous propene (alkene hydrocarbon) in oxygen gas produces carbon dioxide and steam."
       },
       {
         id: "comb-09",
@@ -2361,47 +2859,65 @@
         id: "comb-11",
         type: "combustion",
         typeName: "Combustion",
-        equationDisplay: "CH₃OH(l) + O₂(g) → CO₂(g) + H₂O(g)",
+        equationDisplay: "C₇H₁₆(l) + O₂(g) → CO₂(g) + H₂O(g)",
         reactants: [
-          { formulaHtml: "CH<sub>3</sub>OH(l)", coef: 2, atoms: { C: 1, H: 4, O: 1 } },
-          { formulaHtml: "O<sub>2</sub>(g)", coef: 3, atoms: { O: 2 } }
+          { formulaHtml: "C<sub>7</sub>H<sub>16</sub>(l)", coef: 1, atoms: { C: 7, H: 16 } },
+          { formulaHtml: "O<sub>2</sub>(g)", coef: 11, atoms: { O: 2 } }
         ],
         products: [
-          { formulaHtml: "CO<sub>2</sub>(g)", coef: 2, atoms: { C: 1, O: 2 } },
-          { formulaHtml: "H<sub>2</sub>O(g)", coef: 4, atoms: { H: 2, O: 1 } }
+          { formulaHtml: "CO<sub>2</sub>(g)", coef: 7, atoms: { C: 1, O: 2 } },
+          { formulaHtml: "H<sub>2</sub>O(g)", coef: 8, atoms: { H: 2, O: 1 } }
         ],
-        hint: "Methanol has 4 hydrogens (3+1) and 1 oxygen. If you balance 1 methanol you get 1 CO₂ and 2 H₂O (4 O total, minus 1 from methanol = 3/2 O₂). Double everything to 2 methanol!",
-        explanation: "Combustion of methanol (wood alcohol) fuel produces carbon dioxide and water."
+        hint: "Balance C first (7 CO₂), then H (16 H gives 8 H₂O). Total oxygens on the right: (7 × 2) + 8 = 22. Divide 22 by 2 to find the coefficient for O₂.",
+        explanation: "Combustion of liquid heptane (an alkane hydrocarbon) produces carbon dioxide and steam."
       }
     ];
+
+    /* =========================================================================
+     * QUIZ MONITORING BANNER TEXT (TEACHER EDITABLE)
+     * You can edit this message below to customize the active monitoring banner:
+     * ========================================================================= */
+    const QUIZ_MONITORING_BANNER_TEXT = "Quiz Mode is on — this page records when you switch tabs or leave.";
 
     /* =========================================================================
      * APP CONTROLLER & STATE
      * ========================================================================= */
     const app = {
       TEACHER_PASSWORD: "mhhsphysics",
-      STORAGE_KEY: "mhhs_chem_balancing_grades_v1",
+      STORAGE_KEY: "mhhs_chem_balancing_grades_v2",
+      STORAGE_KEY_QUIZ_LOCK: "mhhs_chem_quiz_lock_state_v2",
+      _lastSubmissionRecord: null,
 
       // Current Session Configuration
       config: {
         studentName: "",
+        teacher: "Mr. Hammel",
+        mode: "practice", // 'practice' | 'quiz'
         selectedTypes: ["formation", "decomposition", "single_replacement", "double_replacement", "combustion"],
         questionCount: 10,
-        isMultiTypeMode: true // true if > 1 reaction type selected
+        isMultiTypeMode: true
       },
 
       // Active Quiz State
       quiz: {
         questions: [],
         currentIndex: 0,
-        studentAnswers: [] // [{ coefs: [n, n...], selectedType: 'type' }]
+        studentAnswers: [],
+        questionChecked: [] // Tracks if practice mode question has been checked
       },
 
       // Initializer
       init() {
         this.loadTheme();
         this.updateLandingSummary();
+        this.updateQuizLockUI();
+        this.populateTeacherFilterOptions();
         this.renderTeacherTable();
+
+        // Check lock expiration status every 20 seconds
+        setInterval(() => {
+          this.updateQuizLockUI();
+        }, 20000);
       },
 
       // View Navigation
@@ -2413,10 +2929,13 @@
       },
 
       showLanding() {
+        document.body.setAttribute('data-session-mode', 'none');
+        if (app.quizMonitor) app.quizMonitor.reset();
+        this.updateQuizLockUI();
         this.showView('view-landing');
       },
 
-      // Theme Management
+      // Theme Management (Light / Dark)
       toggleTheme() {
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -2443,7 +2962,51 @@
         }
       },
 
-      // Setup / Landing Controls
+      // Teacher Dropdown Handler
+      handleTeacherSelectionChange() {
+        const select = document.getElementById('teacher-select');
+        const otherGroup = document.getElementById('teacher-other-group');
+        const otherInput = document.getElementById('teacher-other-name');
+
+        if (select.value === 'Other') {
+          otherGroup.style.display = 'block';
+          otherInput.focus();
+        } else {
+          otherGroup.style.display = 'none';
+        }
+      },
+
+      // Mode Selection Handler
+      selectMode(mode) {
+        if (mode === 'quiz') {
+          const lockStatus = this.getQuizLockStatus();
+          if (!lockStatus.isUnlocked) {
+            this.openQuizUnlockModal();
+            return;
+          }
+        }
+
+        this.config.mode = mode;
+        const practiceCard = document.getElementById('card-mode-practice');
+        const quizCard = document.getElementById('card-mode-quiz');
+        const practiceRadio = practiceCard.querySelector('input[type="radio"]');
+        const quizRadio = quizCard.querySelector('input[type="radio"]');
+
+        const startBtn = document.getElementById('btn-start-session');
+        if (mode === 'practice') {
+          practiceCard.className = 'mode-card selected-practice';
+          quizCard.className = 'mode-card';
+          practiceRadio.checked = true;
+          if (startBtn) startBtn.innerHTML = '🚀 Begin Practice Session';
+        } else {
+          practiceCard.className = 'mode-card';
+          quizCard.className = 'mode-card selected-quiz';
+          quizRadio.checked = true;
+          if (startBtn) startBtn.innerHTML = '🚀 Begin Quiz Mode (Fullscreen Requested)';
+        }
+      },
+
+      // Reaction Type Checkbox Controls
       selectAllTypes(select) {
         const checkboxes = document.querySelectorAll('input[name="reaction-type"]');
         checkboxes.forEach(cb => {
@@ -2504,15 +3067,29 @@
         }
       },
 
-      // Start Quiz Session
+      // Start Practice or Quiz Session
       startQuiz() {
         const nameInput = document.getElementById('student-name');
         const studentName = nameInput.value.trim();
 
         if (!studentName) {
-          alert("Please enter your student name before starting the practice session.");
+          alert("Please enter your student name before starting.");
           nameInput.focus();
           return;
+        }
+
+        // Determine Teacher
+        const teacherSelect = document.getElementById('teacher-select');
+        let selectedTeacher = teacherSelect.value;
+        if (selectedTeacher === 'Other') {
+          const otherInput = document.getElementById('teacher-other-name');
+          const customTeacher = otherInput.value.trim();
+          if (!customTeacher) {
+            alert("Please enter your teacher's last name.");
+            otherInput.focus();
+            return;
+          }
+          selectedTeacher = customTeacher.startsWith("Mr.") || customTeacher.startsWith("Ms.") || customTeacher.startsWith("Mrs.") ? customTeacher : `Teacher ${customTeacher}`;
         }
 
         if (this.config.selectedTypes.length === 0) {
@@ -2521,22 +3098,78 @@
         }
 
         this.config.studentName = studentName;
+        this.config.teacher = selectedTeacher;
         this.config.isMultiTypeMode = this.config.selectedTypes.length > 1;
 
-        // Filter pool by selected types
-        const eligibleBank = REACTION_BANK.filter(r => this.config.selectedTypes.includes(r.type));
+        // Security check: ensure Quiz Mode is unlocked on this device
+        if (this.config.mode === 'quiz') {
+          const lockStatus = this.getQuizLockStatus();
+          if (!lockStatus.isUnlocked) {
+            alert("🔒 Quiz Mode is locked by your teacher on this device. Please ask your teacher to authorize and unlock it.");
+            this.selectMode('practice');
+            return;
+          }
+        }
 
-        if (eligibleBank.length === 0) {
+        // Set visual high-visibility mode attribute on body
+        document.body.setAttribute('data-session-mode', this.config.mode);
+
+        // Update mode banner strip & hook into quiz monitoring layer
+        const banner = document.getElementById('mode-banner');
+        if (this.config.mode === 'practice') {
+          banner.innerHTML = `<span>🟢</span> <strong>PRACTICE MODE</strong> — Immediate Feedback & Explanations Active`;
+          if (app.quizMonitor) app.quizMonitor.reset();
+        } else {
+          // Visible banner shown while Quiz Mode is active (editable via QUIZ_MONITORING_BANNER_TEXT above)
+          banner.innerHTML = `<span>🟡</span> <strong>QUIZ MODE ACTIVE</strong> — ${QUIZ_MONITORING_BANNER_TEXT}`;
+          // Request browser fullscreen synchronously from the user button click
+          app.requestFullscreen();
+          if (app.quizMonitor) app.quizMonitor.start(studentName);
+        }
+
+        // 1. Group eligible bank by selected types & Fisher-Yates shuffle each pool
+        const selectedTypes = this.config.selectedTypes;
+        const bankByType = {};
+        let totalAvailable = 0;
+        selectedTypes.forEach(t => {
+          const pool = REACTION_BANK.filter(r => r.type === t);
+          bankByType[t] = app.shuffleArray([...pool]);
+          totalAvailable += pool.length;
+        });
+
+        if (totalAvailable === 0) {
           alert("No equations found matching the selected types.");
           return;
         }
 
-        // Shuffle pool
-        const shuffled = [...eligibleBank].sort(() => 0.5 - Math.random());
+        // 2. Compute balanced, stratified quota per selected reaction type
+        // e.g., 10 questions with 5 types -> exactly 2 of each type!
+        // 15 questions with 5 types -> exactly 3 of each type!
+        // 5 questions with 5 types -> exactly 1 of each type!
+        const totalCount = Math.min(this.config.questionCount, totalAvailable);
+        const baseQuota = Math.floor(totalCount / selectedTypes.length);
+        let remainder = totalCount % selectedTypes.length;
 
-        // Select exact count
-        const totalToPick = Math.min(this.config.questionCount, shuffled.length);
-        this.quiz.questions = shuffled.slice(0, totalToPick);
+        // Shuffle type order so any extra remainder questions are fairly awarded
+        const typesShuffled = app.shuffleArray([...selectedTypes]);
+        const quotaMap = {};
+        typesShuffled.forEach(t => {
+          quotaMap[t] = baseQuota + (remainder > 0 ? 1 : 0);
+          if (remainder > 0) remainder--;
+        });
+
+        // 3. Draw questions according to quota
+        const chosen = [];
+        selectedTypes.forEach(t => {
+          const needed = quotaMap[t] || 0;
+          const pool = bankByType[t];
+          for (let i = 0; i < needed && i < pool.length; i++) {
+            chosen.push(pool[i]);
+          }
+        });
+
+        // 4. Interleave questions to strictly prevent consecutive duplicates (never 3 of the same type in a row)
+        this.quiz.questions = app.interleaveNoConsecutiveDuplicates(chosen);
         this.quiz.currentIndex = 0;
 
         // Initialize student answer slots
@@ -2545,29 +3178,38 @@
           return {
             coefs: new Array(totalSpecies).fill(""),
             selectedType: null,
-            hintShown: false
+            hintShown: false,
+            evaluated: false,
+            isBalanceCorrect: false,
+            isTypeCorrect: false
           };
         });
 
-        // Set UI
+        this.quiz.questionChecked = new Array(this.quiz.questions.length).fill(false);
+
+        // Set UI Badges
         document.getElementById('quiz-student-name').textContent = studentName;
+        document.getElementById('quiz-teacher-name').textContent = selectedTeacher;
+
         this.renderQuestion();
         this.showView('view-quiz');
       },
 
-      // Render Current Question
+      // Render Active Question
       renderQuestion() {
         const index = this.quiz.currentIndex;
         const total = this.quiz.questions.length;
         const q = this.quiz.questions[index];
         const studentAns = this.quiz.studentAnswers[index];
+        const isPractice = this.config.mode === 'practice';
+        const isChecked = this.quiz.questionChecked[index];
 
         // Progress Text & Bar
         document.getElementById('quiz-progress-text').textContent = `Reaction ${index + 1} of ${total}`;
         const pct = ((index) / (total)) * 100;
         document.getElementById('quiz-progress-fill').style.width = `${pct}%`;
 
-        // Type Badge (if single mode, show tag; if multi mode, hide so they have to identify it!)
+        // Type Badge
         const typeBadge = document.getElementById('quiz-question-type-badge');
         if (!this.config.isMultiTypeMode) {
           typeBadge.style.display = 'inline-block';
@@ -2579,7 +3221,6 @@
         // Render Equation Inputs
         const eqContainer = document.getElementById('equation-display');
         eqContainer.innerHTML = '';
-
         let speciesGlobalIdx = 0;
 
         // Reactants
@@ -2601,7 +3242,8 @@
           input.className = 'coef-input';
           input.placeholder = '1';
           input.value = studentAns.coefs[speciesGlobalIdx] || '';
-          
+          input.disabled = isPractice && isChecked;
+
           const currentIdx = speciesGlobalIdx;
           input.addEventListener('input', (e) => {
             const val = e.target.value.replace(/[^0-9]/g, '');
@@ -2621,7 +3263,7 @@
           speciesGlobalIdx++;
         });
 
-        // Reaction Arrow
+        // Arrow
         const arrow = document.createElement('span');
         arrow.className = 'reaction-arrow';
         arrow.textContent = '→';
@@ -2646,6 +3288,7 @@
           input.className = 'coef-input';
           input.placeholder = '1';
           input.value = studentAns.coefs[speciesGlobalIdx] || '';
+          input.disabled = isPractice && isChecked;
 
           const currentIdx = speciesGlobalIdx;
           input.addEventListener('input', (e) => {
@@ -2666,12 +3309,18 @@
           speciesGlobalIdx++;
         });
 
-        // Hint Reset
+        // HINT MANAGEMENT: Quiz mode completely suppresses hints!
+        const hintContainer = document.getElementById('hint-container');
         const hintBox = document.getElementById('hint-box');
-        hintBox.textContent = q.hint;
-        hintBox.style.display = studentAns.hintShown ? 'block' : 'none';
+        if (this.config.mode === 'quiz') {
+          hintContainer.style.display = 'none';
+        } else {
+          hintContainer.style.display = 'block';
+          hintBox.textContent = q.hint;
+          hintBox.style.display = studentAns.hintShown ? 'block' : 'none';
+        }
 
-        // Identification Section (Conditional)
+        // Multiple Choice Identification
         const identSection = document.getElementById('identification-section');
         const mcContainer = document.getElementById('mc-options-container');
 
@@ -2687,7 +3336,6 @@
             { key: 'combustion', name: 'Combustion' }
           ];
 
-          // Filter options to those selected on the landing page
           allOptions.forEach(opt => {
             if (this.config.selectedTypes.includes(opt.key)) {
               const label = document.createElement('label');
@@ -2698,6 +3346,7 @@
               radio.name = `question-type-${index}`;
               radio.value = opt.key;
               radio.checked = studentAns.selectedType === opt.key;
+              radio.disabled = isPractice && isChecked;
 
               radio.addEventListener('change', () => {
                 studentAns.selectedType = opt.key;
@@ -2719,25 +3368,216 @@
           identSection.style.display = 'none';
         }
 
-        // Navigation Buttons
-        const btnPrev = document.getElementById('btn-prev');
-        const btnNext = document.getElementById('btn-next');
-
-        btnPrev.disabled = index === 0;
-        btnPrev.style.opacity = index === 0 ? '0.4' : '1';
-
-        if (index === total - 1) {
-          btnNext.textContent = 'Submit Assignment ✓';
-          btnNext.className = 'btn btn-success';
+        // IMMEDIATE FEEDBACK CONTAINER (PRACTICE MODE)
+        const feedbackCard = document.getElementById('immediate-feedback-box');
+        if (isPractice && isChecked) {
+          this.renderImmediateFeedback(feedbackCard, q, studentAns);
         } else {
-          btnNext.textContent = 'Next →';
-          btnNext.className = 'btn btn-primary';
+          feedbackCard.style.display = 'none';
+        }
+
+        // Navigation & Action Buttons
+        const btnPrev = document.getElementById('btn-prev');
+        const btnAction = document.getElementById('btn-action');
+
+        if (isPractice) {
+          btnPrev.style.display = 'none'; // Keep practice linear & focused on immediate feedback
+
+          if (!isChecked) {
+            btnAction.textContent = 'Check Answer ✓';
+            btnAction.className = 'btn btn-primary';
+          } else {
+            if (index === total - 1) {
+              btnAction.textContent = 'Finish Practice Session 🏁';
+              btnAction.className = 'btn btn-success';
+            } else {
+              btnAction.textContent = 'Next Question →';
+              btnAction.className = 'btn btn-primary';
+            }
+          }
+        } else {
+          // Quiz Mode Navigation
+          btnPrev.style.display = 'inline-flex';
+          btnPrev.disabled = index === 0;
+          btnPrev.style.opacity = index === 0 ? '0.4' : '1';
+
+          if (index === total - 1) {
+            btnAction.textContent = 'Submit Assignment ✓';
+            btnAction.className = 'btn btn-success';
+          } else {
+            btnAction.textContent = 'Next →';
+            btnAction.className = 'btn btn-primary';
+          }
         }
 
         this.renderDots();
       },
 
-      // Hint Toggle
+      // Handle the main action button (Check Answer vs Next / Submit)
+      handleActionClick() {
+        const index = this.quiz.currentIndex;
+        const total = this.quiz.questions.length;
+        const isPractice = this.config.mode === 'practice';
+
+        if (isPractice) {
+          const isChecked = this.quiz.questionChecked[index];
+          if (!isChecked) {
+            // Student wants to check their answer
+            this.checkCurrentPracticeQuestion();
+          } else {
+            // Student has reviewed feedback and wants to advance
+            if (index < total - 1) {
+              this.quiz.currentIndex++;
+              this.renderQuestion();
+            } else {
+              this.calculateAndShowResults();
+            }
+          }
+        } else {
+          // Quiz Mode: Next Question or Submit
+          if (index < total - 1) {
+            this.quiz.currentIndex++;
+            this.renderQuestion();
+          } else {
+            this.submitQuiz();
+          }
+        }
+      },
+
+      // Check current question in Practice Mode
+      checkCurrentPracticeQuestion() {
+        const index = this.quiz.currentIndex;
+        const q = this.quiz.questions[index];
+        const studentAns = this.quiz.studentAnswers[index];
+
+        // Parse student coefficients (blank = 1)
+        const parsedCoefs = studentAns.coefs.map(c => {
+          const num = parseInt(c, 10);
+          return isNaN(num) || num <= 0 ? 1 : num;
+        });
+
+        const correctCoefs = [
+          ...q.reactants.map(r => r.coef),
+          ...q.products.map(p => p.coef)
+        ];
+
+        const isBalancingExact = parsedCoefs.every((c, i) => c === correctCoefs[i]);
+        let isTypeCorrect = true;
+        if (this.config.isMultiTypeMode) {
+          isTypeCorrect = studentAns.selectedType === q.type;
+        }
+
+        studentAns.evaluated = true;
+        studentAns.isBalanceCorrect = isBalancingExact;
+        studentAns.isTypeCorrect = isTypeCorrect;
+        this.quiz.questionChecked[index] = true;
+
+        this.renderQuestion();
+      },
+
+      // Render Immediate Feedback Box in Practice Mode
+      renderImmediateFeedback(container, q, studentAns) {
+        const isAllGood = studentAns.isBalanceCorrect && (!this.config.isMultiTypeMode || studentAns.isTypeCorrect);
+        container.className = `immediate-feedback-card ${isAllGood ? 'feedback-card-correct' : 'feedback-card-incorrect'}`;
+        container.style.display = 'block';
+
+        // Format correct balanced equation
+        let correctEqHtml = '';
+        let cIdx = 0;
+        q.reactants.forEach((r, i) => {
+          if (i > 0) correctEqHtml += ' + ';
+          const c = r.coef;
+          correctEqHtml += `<strong>${c > 1 ? c : ''}</strong> ${r.formulaHtml}`;
+          cIdx++;
+        });
+        correctEqHtml += ' → ';
+        q.products.forEach((p, i) => {
+          if (i > 0) correctEqHtml += ' + ';
+          const c = p.coef;
+          correctEqHtml += `<strong>${c > 1 ? c : ''}</strong> ${p.formulaHtml}`;
+          cIdx++;
+        });
+
+        // Student's entered coefficients string
+        const studentCoefText = studentAns.coefs.map(c => c === "" ? '1 (blank)' : c).join(', ');
+        const correctCoefText = [
+          ...q.reactants.map(r => r.coef),
+          ...q.products.map(p => p.coef)
+        ].join(', ');
+
+        let html = '';
+
+        if (isAllGood) {
+          html += `
+            <div class="feedback-title feedback-correct-title">
+              <span>🎉</span> Excellent! All Correct!
+            </div>
+            <p style="color:var(--text-main); font-size:0.95rem; margin-bottom:0.5rem;">
+              Your coefficients [ <strong>${studentCoefText}</strong> ] perfectly satisfy the Law of Conservation of Mass!
+            </p>
+          `;
+        } else {
+          html += `
+            <div class="feedback-title feedback-incorrect-title">
+              <span>⚠️</span> Not Quite — Let's Review
+            </div>
+          `;
+
+          // Specific balancing note
+          if (!studentAns.isBalanceCorrect) {
+            html += `
+              <div style="margin-bottom:0.5rem; font-size:0.92rem;">
+                <span class="badge-grade badge-grade-low">Balancing: Incorrect</span>
+                Your coefficients: [ <strong>${studentCoefText}</strong> ] &bull; Correct lowest ratio: [ <strong>${correctCoefText}</strong> ]
+              </div>
+            `;
+          } else {
+            html += `
+              <div style="margin-bottom:0.5rem; font-size:0.92rem;">
+                <span class="badge-grade badge-grade-high">Balancing: Correct ✓</span>
+              </div>
+            `;
+          }
+
+          // Specific classification note (if multi-type mode)
+          if (this.config.isMultiTypeMode) {
+            if (!studentAns.isTypeCorrect) {
+              const chosen = studentAns.selectedType || 'None selected';
+              html += `
+                <div style="margin-bottom:0.5rem; font-size:0.92rem;">
+                  <span class="badge-grade badge-grade-low">Classification: Incorrect</span>
+                  You selected: <em>${chosen}</em> &bull; Correct classification: <strong>${q.typeName}</strong>
+                </div>
+              `;
+            } else {
+              html += `
+                <div style="margin-bottom:0.5rem; font-size:0.92rem;">
+                  <span class="badge-grade badge-grade-high">Classification: Correct ✓</span>
+                </div>
+              `;
+            }
+          }
+
+          // Show Solution
+          html += `
+            <div class="feedback-solution-box">
+              <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:0.25rem;">CORRECT BALANCED EQUATION:</span>
+              <div>${correctEqHtml}</div>
+            </div>
+          `;
+        }
+
+        // Pedagogical Explanation
+        html += `
+          <div class="feedback-explanation">
+            <strong>Chemistry Explanation:</strong> ${q.explanation}
+          </div>
+        `;
+
+        container.innerHTML = html;
+      },
+
+      // Hint Toggle (Practice Mode Only)
       toggleHint() {
         const studentAns = this.quiz.studentAnswers[this.quiz.currentIndex];
         const hintBox = document.getElementById('hint-box');
@@ -2750,6 +3590,8 @@
       renderDots() {
         const container = document.getElementById('question-dots');
         container.innerHTML = '';
+        const isPractice = this.config.mode === 'practice';
+
         this.quiz.questions.forEach((_, idx) => {
           const btn = document.createElement('button');
           btn.className = 'dot-btn';
@@ -2759,18 +3601,26 @@
             btn.classList.add('current');
           }
 
-          // Check if answered
           const ans = this.quiz.studentAnswers[idx];
-          const hasEnteredAnyCoef = ans && ans.coefs.some(c => c !== "");
-          const hasIdentified = !this.config.isMultiTypeMode || (ans && ans.selectedType !== null);
-          if (hasEnteredAnyCoef && hasIdentified) {
-            btn.classList.add('answered');
-          }
 
-          btn.addEventListener('click', () => {
-            app.quiz.currentIndex = idx;
-            app.renderQuestion();
-          });
+          if (isPractice) {
+            if (this.quiz.questionChecked[idx]) {
+              const isGood = ans.isBalanceCorrect && (!this.config.isMultiTypeMode || ans.isTypeCorrect);
+              btn.classList.add(isGood ? 'correct-dot' : 'incorrect-dot');
+            }
+          } else {
+            const hasEnteredAnyCoef = ans && ans.coefs.some(c => c !== "");
+            const hasIdentified = !this.config.isMultiTypeMode || (ans && ans.selectedType !== null);
+            if (hasEnteredAnyCoef && hasIdentified) {
+              btn.classList.add('answered');
+            }
+
+            // In Quiz mode, student can jump around
+            btn.addEventListener('click', () => {
+              app.quiz.currentIndex = idx;
+              app.renderQuestion();
+            });
+          }
 
           container.appendChild(btn);
         });
@@ -2780,7 +3630,7 @@
         this.renderDots();
       },
 
-      // Navigation
+      // Navigation (Quiz Mode)
       prevQuestion() {
         if (this.quiz.currentIndex > 0) {
           this.quiz.currentIndex--;
@@ -2788,27 +3638,16 @@
         }
       },
 
-      nextQuestion() {
-        const total = this.quiz.questions.length;
-        if (this.quiz.currentIndex < total - 1) {
-          this.quiz.currentIndex++;
-          this.renderQuestion();
-        } else {
-          this.submitQuiz();
-        }
-      },
-
       confirmQuitQuiz() {
-        if (confirm("Are you sure you want to leave this practice session? Your current session progress will not be saved.")) {
+        if (confirm("Are you sure you want to leave this session? Your current progress will not be saved.")) {
           this.showLanding();
         }
       },
 
-      // Grade & Submit
+      // Grade & Submit (Quiz Mode)
       submitQuiz() {
-        // Check for any blank answers
         let unansweredCount = 0;
-        this.quiz.studentAnswers.forEach((ans, idx) => {
+        this.quiz.studentAnswers.forEach(ans => {
           const hasCoefs = ans.coefs.some(c => c !== "");
           const hasIdent = !this.config.isMultiTypeMode || ans.selectedType !== null;
           if (!hasCoefs || !hasIdent) {
@@ -2817,14 +3656,14 @@
         });
 
         if (unansweredCount > 0) {
-          const proceed = confirm(`You have ${unansweredCount} question(s) that appear incomplete or left with default coefficients. Are you ready to submit anyway?`);
+          const proceed = confirm(`You have ${unansweredCount} question(s) that appear incomplete. Are you ready to submit your quiz?`);
           if (!proceed) return;
         }
 
         this.calculateAndShowResults();
       },
 
-      // Calculation Engine
+      // Calculation Engine (Used by both Practice and Quiz upon completion)
       calculateAndShowResults() {
         const totalQuestions = this.quiz.questions.length;
         let balanceCorrectCount = 0;
@@ -2834,8 +3673,7 @@
         this.quiz.questions.forEach((q, idx) => {
           const ans = this.quiz.studentAnswers[idx];
 
-          // 1. Evaluate Balancing
-          // In standard high school chemistry: leaving a blank input evaluates to 1
+          // Parse coefficients (blank = 1)
           const studentParsedCoefs = ans.coefs.map(c => {
             const num = parseInt(c, 10);
             return isNaN(num) || num <= 0 ? 1 : num;
@@ -2846,29 +3684,13 @@
             ...q.products.map(p => p.coef)
           ];
 
-          // Check exact match with lowest whole numbers
           const isBalancingExact = studentParsedCoefs.every((c, i) => c === correctCoefs[i]);
+          if (isBalancingExact) balanceCorrectCount++;
 
-          // Also check if it's a multiple (e.g. 2, 4 instead of 1, 2)
-          let isMultiple = false;
-          if (!isBalancingExact && studentParsedCoefs.length === correctCoefs.length) {
-            const ratio = studentParsedCoefs[0] / correctCoefs[0];
-            if (ratio > 1 && studentParsedCoefs.every((c, i) => c / correctCoefs[i] === ratio)) {
-              isMultiple = true;
-            }
-          }
-
-          if (isBalancingExact) {
-            balanceCorrectCount++;
-          }
-
-          // 2. Evaluate Reaction Type (if multi-type mode active)
           let isTypeCorrect = false;
           if (this.config.isMultiTypeMode) {
             isTypeCorrect = ans.selectedType === q.type;
-            if (isTypeCorrect) {
-              typeCorrectCount++;
-            }
+            if (isTypeCorrect) typeCorrectCount++;
           }
 
           breakdownDetails.push({
@@ -2883,7 +3705,6 @@
             rawInputCoefs: ans.coefs,
             correctCoefs: correctCoefs,
             isBalancingCorrect: isBalancingExact,
-            isMultiple: isMultiple,
             studentType: ans.selectedType,
             isTypeCorrect: isTypeCorrect,
             hintWasUsed: ans.hintShown
@@ -2896,13 +3717,23 @@
           typePct = Math.round((typeCorrectCount / totalQuestions) * 100);
         }
 
-        // Build Submission Record for Teacher Database
+        // Stop quiz monitor if quiz mode, and capture monitoring report
+        let monitoringData = null;
+        if (this.config.mode === 'quiz' && app.quizMonitor) {
+          monitoringData = app.quizMonitor.stop();
+        } else if (app.quizMonitor) {
+          app.quizMonitor.reset();
+        }
+
+        // Build Record
         const submissionRecord = {
           id: 'sub_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
           studentName: this.config.studentName,
+          teacher: this.config.teacher,
+          mode: this.config.mode,
           timestamp: new Date().toISOString(),
           formattedDate: new Date().toLocaleString("en-CA", {
-            timeZone: "America/Edmonton", // Alberta Mountain Time
+            timeZone: "America/Edmonton",
             year: 'numeric', month: 'short', day: 'numeric',
             hour: '2-digit', minute: '2-digit'
           }),
@@ -2913,18 +3744,17 @@
           balancingCorrect: balanceCorrectCount,
           balancingTotal: totalQuestions,
           balancingPct: balancingPct,
-          // CRITICAL: If only one reaction type was selected, left blank or NA!
           typeScore: this.config.isMultiTypeMode ? `${typeCorrectCount} / ${totalQuestions}` : 'N/A',
           typeCorrect: this.config.isMultiTypeMode ? typeCorrectCount : null,
           typeTotal: this.config.isMultiTypeMode ? totalQuestions : null,
           typePct: typePct,
+          monitoring: monitoringData,
           breakdown: breakdownDetails
         };
 
-        // Save to LocalStorage
+        this._lastSubmissionRecord = submissionRecord;
         this.saveSubmissionToStorage(submissionRecord);
-
-        // Render Student Results Screen
+        this.populateTeacherFilterOptions();
         this.renderResultsView(submissionRecord);
         this.showView('view-results');
       }
@@ -2934,32 +3764,29 @@
      * RESULTS RENDERING
      * ========================================================================= */
     app.renderResultsView = function(record) {
-      // Headline & Icons
-      const total = record.questionCount;
       const balPct = record.balancingPct;
       const headline = document.getElementById('results-headline');
       const subheadline = document.getElementById('results-subheadline');
       const icon = document.getElementById('results-icon');
+      const modeText = record.mode === 'quiz' ? 'Quiz Assessment' : 'Practice Session';
 
       if (balPct >= 80) {
         icon.textContent = '🏆';
         headline.textContent = `Outstanding Work, ${record.studentName}!`;
-        subheadline.textContent = 'Excellent mastery of Alberta chemical reaction balancing.';
+        subheadline.textContent = `${modeText} completed with distinction.`;
       } else if (balPct >= 60) {
         icon.textContent = '🧪';
         headline.textContent = `Solid Effort, ${record.studentName}!`;
-        subheadline.textContent = 'Good practice. Review the equations below to perfect your balancing skills.';
+        subheadline.textContent = `${modeText} completed. Review the explanations below to master balancing.`;
       } else {
         icon.textContent = '📝';
-        headline.textContent = `Practice Makes Progress, ${record.studentName}!`;
-        subheadline.textContent = 'Review the atom inventory breakdown below to see where atoms were missing.';
+        headline.textContent = `Keep Practicing, ${record.studentName}!`;
+        subheadline.textContent = `${modeText} completed. Review the atom inventory tables below.`;
       }
 
-      // 1. Balancing Card
       document.getElementById('res-balance-score').textContent = `${record.balancingCorrect} / ${record.balancingTotal}`;
       document.getElementById('res-balance-pct').textContent = `${record.balancingPct}% Accuracy`;
 
-      // 2. Type Identification Card
       const typeWrapper = document.getElementById('res-type-wrapper');
       if (record.isMultiTypeMode) {
         typeWrapper.innerHTML = `
@@ -2973,18 +3800,23 @@
         `;
       }
 
-      document.getElementById('breakdown-summary-tag').textContent = `${record.formattedDate} • ${record.studentName}`;
+      document.getElementById('res-teacher-display').textContent = record.teacher;
+      document.getElementById('breakdown-summary-tag').textContent = `${record.formattedDate} • Teacher: ${record.teacher} • Mode: ${record.mode.toUpperCase()}`;
 
-      // 3. Question-by-Question Detailed Breakdown
+      // Render Monitoring Card for Quiz Mode
+      if (typeof app.renderMonitoringResultsCard === 'function') {
+        app.renderMonitoringResultsCard(record);
+      }
+
+      // Detailed Review Cards
       const listContainer = document.getElementById('breakdown-list');
       listContainer.innerHTML = '';
 
-      record.breakdown.forEach((item, idx) => {
+      record.breakdown.forEach(item => {
         const itemCard = document.createElement('div');
         const isOverallGood = item.isBalancingCorrect && (!record.isMultiTypeMode || item.isTypeCorrect);
         itemCard.className = `breakdown-item ${isOverallGood ? 'correct' : 'incorrect'}`;
 
-        // Header
         const headerDiv = document.createElement('div');
         headerDiv.className = 'breakdown-header';
 
@@ -2996,13 +3828,11 @@
         statusBadges.style.display = 'flex';
         statusBadges.style.gap = '0.4rem';
 
-        // Balancing Badge
         const balBadge = document.createElement('span');
         balBadge.className = `badge-grade ${item.isBalancingCorrect ? 'badge-grade-high' : 'badge-grade-low'}`;
-        balBadge.textContent = item.isBalancingCorrect ? 'Balancing: Correct ✓' : (item.isMultiple ? 'Balancing: Not Lowest Ratio ⚠' : 'Balancing: Incorrect ✗');
+        balBadge.textContent = item.isBalancingCorrect ? 'Balancing: Correct ✓' : 'Balancing: Incorrect ✗';
         statusBadges.appendChild(balBadge);
 
-        // Type Identification Badge (if multi mode)
         if (record.isMultiTypeMode) {
           const typeBadge = document.createElement('span');
           typeBadge.className = `badge-grade ${item.isTypeCorrect ? 'badge-grade-high' : 'badge-grade-low'}`;
@@ -3014,53 +3844,38 @@
         headerDiv.appendChild(statusBadges);
         itemCard.appendChild(headerDiv);
 
-        // Format Correct Equation with Coefficients
-        const buildEquationString = (coefArray) => {
-          let str = '';
-          let cIdx = 0;
-          item.reactants.forEach((r, i) => {
-            if (i > 0) str += ' + ';
-            const c = coefArray[cIdx];
-            str += `<strong>${c > 1 ? c : (c === 1 ? '' : '')}</strong> ${r.formulaHtml}`;
-            cIdx++;
-          });
-          str += ' → ';
-          item.products.forEach((p, i) => {
-            if (i > 0) str += ' + ';
-            const c = coefArray[cIdx];
-            str += `<strong>${c > 1 ? c : (c === 1 ? '' : '')}</strong> ${p.formulaHtml}`;
-            cIdx++;
-          });
-          return str;
-        };
+        // Correct Equation String
+        let eqStr = '';
+        let cIdx = 0;
+        item.reactants.forEach((r, i) => {
+          if (i > 0) eqStr += ' + ';
+          const c = item.correctCoefs[cIdx];
+          eqStr += `<strong>${c > 1 ? c : ''}</strong> ${r.formulaHtml}`;
+          cIdx++;
+        });
+        eqStr += ' → ';
+        item.products.forEach((p, i) => {
+          if (i > 0) eqStr += ' + ';
+          const c = item.correctCoefs[cIdx];
+          eqStr += `<strong>${c > 1 ? c : ''}</strong> ${p.formulaHtml}`;
+          cIdx++;
+        });
 
         const eqReviewDiv = document.createElement('div');
         eqReviewDiv.className = 'equation-review';
-        eqReviewDiv.innerHTML = `<span style="color:var(--text-muted); font-size:0.85rem; display:block; margin-bottom:0.2rem;">Correct Balanced Equation:</span> ${buildEquationString(item.correctCoefs)}`;
+        eqReviewDiv.innerHTML = `<span style="color:var(--text-muted); font-size:0.85rem; display:block; margin-bottom:0.2rem;">Correct Balanced Equation:</span> ${eqStr}`;
         itemCard.appendChild(eqReviewDiv);
 
-        // Comparison Table / Info
         const compDiv = document.createElement('div');
         compDiv.className = 'answer-comparison';
-
-        // Student's Coefficients
-        const studentCoefText = item.studentCoefs.map((c, i) => {
-          const raw = item.rawInputCoefs[i];
-          return raw === "" ? '1 (blank)' : c;
-        }).join(', ');
-
+        const studentCoefText = item.studentCoefs.map((c, i) => item.rawInputCoefs[i] === "" ? '1 (blank)' : c).join(', ');
         const correctCoefText = item.correctCoefs.join(', ');
 
         compDiv.innerHTML = `
-          <div>
-            <strong style="color:var(--text-muted);">Your Coefficients:</strong> [ ${studentCoefText} ]
-          </div>
-          <div>
-            <strong style="color:var(--text-muted);">Correct Coefficients:</strong> [ ${correctCoefText} ]
-          </div>
+          <div><strong style="color:var(--text-muted);">Your Coefficients:</strong> [ ${studentCoefText} ]</div>
+          <div><strong style="color:var(--text-muted);">Correct Coefficients:</strong> [ ${correctCoefText} ]</div>
         `;
 
-        // If multi type mode, also show chosen vs correct type
         if (record.isMultiTypeMode) {
           const typeNamesMap = {
             formation: 'Formation (Synthesis)',
@@ -3072,16 +3887,13 @@
           const studentChosenName = item.studentType ? (typeNamesMap[item.studentType] || item.studentType) : 'None Selected';
           const typeComp = document.createElement('div');
           typeComp.style.gridColumn = '1 / -1';
-          typeComp.innerHTML = `
-            <span style="color:var(--text-muted);">Your Classification:</span> <strong>${studentChosenName}</strong> 
-            ${item.isTypeCorrect ? '✓' : `(Correct: <strong>${item.correctTypeName}</strong>)`}
-          `;
+          typeComp.innerHTML = `<span style="color:var(--text-muted);">Your Classification:</span> <strong>${studentChosenName}</strong> ${item.isTypeCorrect ? '✓' : `(Correct: <strong>${item.correctTypeName}</strong>)`}`;
           compDiv.appendChild(typeComp);
         }
 
         itemCard.appendChild(compDiv);
 
-        // Atom Inventory Table Verification
+        // Atom Inventory Table
         const atomCounts = app.calculateAtomInventory(item.reactants, item.products, item.studentCoefs, item.correctCoefs);
         const table = document.createElement('table');
         table.className = 'atom-inventory-table';
@@ -3111,7 +3923,6 @@
         `;
         itemCard.appendChild(table);
 
-        // Explanation text
         const expDiv = document.createElement('p');
         expDiv.style.cssText = 'color:var(--text-muted); font-size:0.85rem; margin-top:0.75rem; line-height:1.4;';
         expDiv.innerHTML = `💡 <em>${item.explanation}</em>`;
@@ -3121,16 +3932,12 @@
       });
     };
 
-    // Calculate atom inventories for Reactants vs Products given coefficients
     app.calculateAtomInventory = function(reactants, products, studentCoefs, correctCoefs) {
       const elements = {};
-
-      // Register elements
       reactants.forEach(r => Object.keys(r.atoms).forEach(el => elements[el] = true));
       products.forEach(p => Object.keys(p.atoms).forEach(el => elements[el] = true));
 
       const result = {};
-
       Object.keys(elements).forEach(el => {
         let studentR = 0;
         let studentP = 0;
@@ -3141,9 +3948,7 @@
           const coef = studentCoefs[cIdx] || 1;
           const atoms = r.atoms[el] || 0;
           studentR += coef * atoms;
-
-          const cCorrect = correctCoefs[cIdx] || 1;
-          correctCount += cCorrect * atoms;
+          correctCount += (correctCoefs[cIdx] || 1) * atoms;
           cIdx++;
         });
 
@@ -3160,7 +3965,6 @@
           correctCount: correctCount
         };
       });
-
       return result;
     };
 
@@ -3180,7 +3984,7 @@
     app.saveSubmissionToStorage = function(record) {
       try {
         const list = this.getAllSubmissions();
-        list.unshift(record); // newest at the top
+        list.unshift(record);
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
       } catch (e) {
         console.error("Error saving submission:", e);
@@ -3188,22 +3992,23 @@
     };
 
     app.deleteSubmission = function(id) {
-      if (confirm("Are you sure you want to remove this student's grade record?")) {
+      if (confirm("Are you sure you want to delete this grade record?")) {
         let list = this.getAllSubmissions();
         list = list.filter(item => item.id !== id);
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
+        this.populateTeacherFilterOptions();
         this.renderTeacherTable();
       }
     };
 
     app.clearAllGrades = function() {
-      if (confirm("WARNING: Are you sure you want to erase ALL stored student grades from this browser? This action cannot be undone.")) {
+      if (confirm("WARNING: Erase ALL stored student grades from this browser? This cannot be undone.")) {
         localStorage.removeItem(this.STORAGE_KEY);
+        this.populateTeacherFilterOptions();
         this.renderTeacherTable();
       }
     };
 
-    // Teacher Password Gate
     app.openTeacherAuthModal = function() {
       const modal = document.getElementById('modal-teacher-auth');
       const err = document.getElementById('teacher-auth-error');
@@ -3225,6 +4030,7 @@
 
       if (entered === this.TEACHER_PASSWORD) {
         this.closeModals();
+        this.populateTeacherFilterOptions();
         this.renderTeacherTable();
         this.showView('view-teacher');
       } else {
@@ -3233,34 +4039,875 @@
       }
     };
 
+    /* =========================================================================
+     * QUIZ LOCK & ACCESS SECURITY CONTROLLER
+     * ========================================================================= */
+    app.getQuizLockStatus = function() {
+      try {
+        const raw = localStorage.getItem(this.STORAGE_KEY_QUIZ_LOCK);
+        if (!raw) return { isUnlocked: false };
+        const data = JSON.parse(raw);
+        if (!data.isUnlocked) return { isUnlocked: false };
+
+        // Check if auto-relock expiry has passed
+        if (data.expiresAt) {
+          if (Date.now() > data.expiresAt) {
+            localStorage.setItem(this.STORAGE_KEY_QUIZ_LOCK, JSON.stringify({ isUnlocked: false, expiredAt: Date.now() }));
+            return { isUnlocked: false, wasExpired: true };
+          }
+          const minsRemaining = Math.max(1, Math.round((data.expiresAt - Date.now()) / 60000));
+          return { isUnlocked: true, minsRemaining: minsRemaining, expiresAt: data.expiresAt };
+        }
+        return { isUnlocked: true, minsRemaining: null };
+      } catch (e) {
+        return { isUnlocked: false };
+      }
+    };
+
+    app.openQuizUnlockModal = function() {
+      const modal = document.getElementById('modal-quiz-unlock');
+      const err = document.getElementById('quiz-unlock-error');
+      const input = document.getElementById('quiz-unlock-password');
+      if (err) err.style.display = 'none';
+      if (input) input.value = '';
+      if (modal) {
+        modal.classList.add('open');
+        setTimeout(() => input && input.focus(), 50);
+      }
+    };
+
+    app.verifyAndUnlockQuiz = function() {
+      const input = document.getElementById('quiz-unlock-password');
+      const err = document.getElementById('quiz-unlock-error');
+      const durSelect = document.getElementById('quiz-unlock-duration');
+      const duration = durSelect ? parseInt(durSelect.value, 10) : 60;
+
+      if (input && input.value.trim() === this.TEACHER_PASSWORD) {
+        this.unlockQuizOnDevice(duration);
+        this.closeModals();
+        this.selectMode('quiz');
+      } else {
+        if (err) err.style.display = 'block';
+        if (input) input.select();
+      }
+    };
+
+    app.unlockQuizOnDevice = function(durationMinutes) {
+      let expiresAt = null;
+      if (durationMinutes > 0) {
+        expiresAt = Date.now() + durationMinutes * 60 * 1000;
+      }
+      const state = {
+        isUnlocked: true,
+        unlockedAt: Date.now(),
+        durationMinutes: durationMinutes,
+        expiresAt: expiresAt
+      };
+      localStorage.setItem(this.STORAGE_KEY_QUIZ_LOCK, JSON.stringify(state));
+      this.updateQuizLockUI();
+    };
+
+    app.lockQuizOnDevice = function() {
+      localStorage.setItem(this.STORAGE_KEY_QUIZ_LOCK, JSON.stringify({ isUnlocked: false, lockedAt: Date.now() }));
+      if (this.config.mode === 'quiz') {
+        this.selectMode('practice');
+      }
+      this.updateQuizLockUI();
+    };
+
+    app.teacherPortalUnlockQuiz = function() {
+      const durSelect = document.getElementById('t-lock-duration');
+      const duration = durSelect ? parseInt(durSelect.value, 10) : 60;
+      this.unlockQuizOnDevice(duration);
+    };
+
+    app.teacherPortalLockQuiz = function() {
+      this.lockQuizOnDevice();
+    };
+
+    app.updateQuizLockUI = function() {
+      const status = this.getQuizLockStatus();
+      const lockBadge = document.getElementById('quiz-lock-badge');
+      const lockDesc = document.getElementById('quiz-lock-desc');
+      const lockActionBar = document.getElementById('quiz-lock-action-bar');
+      const quizCard = document.getElementById('card-mode-quiz');
+      const quizRadio = quizCard ? quizCard.querySelector('input[type="radio"]') : null;
+
+      // Teacher Portal elements
+      const tBadge = document.getElementById('t-quiz-lock-status-badge');
+      const tInfo = document.getElementById('t-quiz-lock-info-text');
+
+      if (status.isUnlocked) {
+        // UNLOCKED STATE
+        const timeText = status.minsRemaining ? ` (Expires in ${status.minsRemaining}m)` : '';
+        if (lockBadge) {
+          lockBadge.className = 'badge-grade badge-grade-high';
+          lockBadge.textContent = `🔓 Unlocked${timeText}`;
+        }
+        if (lockDesc) {
+          lockDesc.innerHTML = `<strong>Formal Assessment:</strong> Authorized on this device. <em>No hints permitted.</em> Graded upon final submission.`;
+        }
+        if (lockActionBar) {
+          lockActionBar.innerHTML = `
+            <button type="button" class="btn btn-secondary btn-icon" style="padding:0.25rem 0.6rem; font-size:0.78rem; color:var(--danger); border-color:var(--danger-border);" onclick="event.stopPropagation(); app.lockQuizOnDevice();">
+              <span>🔒</span> Lock Down Quiz
+            </button>
+          `;
+        }
+        if (quizCard) quizCard.style.opacity = '1';
+        if (quizRadio) quizRadio.disabled = false;
+
+        if (tBadge) {
+          tBadge.className = 'badge-grade badge-grade-high';
+          tBadge.textContent = `UNLOCKED${timeText}`;
+        }
+        if (tInfo) {
+          const expireTime = status.expiresAt ? new Date(status.expiresAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'indefinitely';
+          tInfo.innerHTML = `Quiz Mode is currently <strong>unlocked</strong> on this device (expires ${expireTime}). Click "Lock Down" at any time to immediately lock it.`;
+        }
+      } else {
+        // LOCKED STATE
+        if (lockBadge) {
+          lockBadge.className = 'badge-grade badge-grade-low';
+          lockBadge.textContent = '🔒 Locked by Teacher';
+        }
+        if (lockDesc) {
+          lockDesc.innerHTML = `<strong>Formal Assessment:</strong> Currently locked by teacher to prevent unauthorized remote access at home.`;
+        }
+        if (lockActionBar) {
+          lockActionBar.innerHTML = `
+            <button type="button" class="btn btn-secondary btn-icon" style="padding:0.3rem 0.65rem; font-size:0.8rem;" onclick="event.stopPropagation(); app.openQuizUnlockModal();">
+              <span>🔑</span> Teacher Unlock
+            </button>
+          `;
+        }
+        if (quizCard && this.config.mode !== 'quiz') {
+          quizCard.style.opacity = '0.9';
+        }
+        if (tBadge) {
+          tBadge.className = 'badge-grade badge-grade-low';
+          tBadge.textContent = 'LOCKED';
+        }
+        if (tInfo) {
+          tInfo.innerHTML = `When locked, Quiz Mode is inaccessible to students at home. Absent students cannot access quizzes remotely. Practice Mode remains open for homework.`;
+        }
+
+        // If currently in quiz mode while locked, automatically revert to practice
+        if (this.config.mode === 'quiz') {
+          this.config.mode = 'practice';
+          const practiceCard = document.getElementById('card-mode-practice');
+          if (practiceCard) practiceCard.className = 'mode-card selected-practice';
+          if (quizCard) quizCard.className = 'mode-card';
+          const practiceRadio = practiceCard ? practiceCard.querySelector('input[type="radio"]') : null;
+          if (practiceRadio) practiceRadio.checked = true;
+        }
+      }
+    };
+
+    /* =========================================================================
+     * FULLSCREEN CONTROL HELPERS
+     * ========================================================================= */
+    app.requestFullscreen = function() {
+      const docEl = document.documentElement;
+      try {
+        if (docEl.requestFullscreen) {
+          return docEl.requestFullscreen().catch(err => {
+            console.log('Fullscreen request was declined or blocked by browser:', err);
+          });
+        } else if (docEl.webkitRequestFullscreen) {
+          return docEl.webkitRequestFullscreen();
+        } else if (docEl.msRequestFullscreen) {
+          return docEl.msRequestFullscreen();
+        }
+      } catch (e) {
+        console.log('Fullscreen API unavailable:', e);
+      }
+    };
+
+    app.exitFullscreen = function() {
+      try {
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          if (document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }
+        }
+      } catch (e) {}
+    };
+
+    app.dismissFullscreenPrompt = function() {
+      const prompt = document.getElementById('quiz-fullscreen-prompt');
+      if (prompt) prompt.style.display = 'none';
+      if (app.quizMonitor) app.quizMonitor.dismissedFsPrompt = true;
+    };
+
+    /* =========================================================================
+     * QUIZ MONITORING LAYER (TAB SWITCH, FULLSCREEN & FOCUS DETECTOR)
+     * Detects and logs when student leaves/returns, exits fullscreen, or resizes window.
+     * Detect only: Does NOT block, lock, or prevent escaping fullscreen or tab switching.
+     * Stops monitoring if the tab is closed.
+     * ========================================================================= */
+    app.quizMonitor = {
+      active: false,
+      studentName: '',
+      startTime: null,
+      endTime: null,
+
+      // Focus tracking
+      isAway: false,
+      awayStartTime: null,
+      leaveCount: 0,
+      totalTimeAwayMs: 0,
+
+      // Fullscreen tracking
+      isFullscreen: false,
+      fullscreenExitCount: 0,
+      totalTimeOutOfFullscreenMs: 0,
+      fsExitStartTime: null,
+      dismissedFsPrompt: false,
+
+      // Window resize / split-screen hint tracking
+      isWindowShrunk: false,
+      shrinkCount: 0,
+      _resizeTimeout: null,
+
+      events: [],
+      _onVisibilityChange: null,
+      _onBlur: null,
+      _onFocus: null,
+      _onFullscreenChange: null,
+      _onResize: null,
+
+      start(studentName) {
+        this.reset();
+        this.active = true;
+        this.studentName = studentName || 'Student';
+        this.startTime = Date.now();
+
+        // Check initial fullscreen state (may take a moment after user click)
+        const isCurrentlyFs = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+        this.isFullscreen = isCurrentlyFs;
+        if (!isCurrentlyFs) {
+          this.fsExitStartTime = this.startTime;
+        }
+
+        this.checkWindowSize();
+        this.attachListeners();
+      },
+
+      handleLeave(reason) {
+        if (!this.active) return;
+        if (!this.isAway) {
+          this.isAway = true;
+          this.awayStartTime = Date.now();
+          this.leaveCount++;
+          this.events.push({
+            type: 'leave',
+            timestamp: this.awayStartTime,
+            reason: reason || 'Page lost focus / tab switched'
+          });
+        }
+      },
+
+      handleReturn() {
+        if (!this.active) return;
+        if (this.isAway && !document.hidden) {
+          this.isAway = false;
+          const returnTime = Date.now();
+          const awayDuration = returnTime - (this.awayStartTime || returnTime);
+          this.totalTimeAwayMs += awayDuration;
+          this.events.push({
+            type: 'return',
+            timestamp: returnTime,
+            durationMs: awayDuration,
+            reason: 'Returned to quiz page'
+          });
+          this.awayStartTime = null;
+        }
+      },
+
+      handleFullscreenChange() {
+        if (!this.active) return;
+        const currentlyFs = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+        const prompt = document.getElementById('quiz-fullscreen-prompt');
+
+        if (currentlyFs) {
+          // Re-entered fullscreen mode
+          if (prompt) prompt.style.display = 'none';
+          this.dismissedFsPrompt = false;
+
+          if (!this.isFullscreen) {
+            this.isFullscreen = true;
+            const now = Date.now();
+            let timeOut = 0;
+            if (this.fsExitStartTime) {
+              timeOut = now - this.fsExitStartTime;
+              this.totalTimeOutOfFullscreenMs += timeOut;
+              this.fsExitStartTime = null;
+            }
+            this.events.push({
+              type: 'fs_enter',
+              timestamp: now,
+              durationMs: timeOut,
+              reason: 'Re-entered fullscreen mode'
+            });
+          }
+        } else {
+          // Exited fullscreen mode
+          if (prompt && !this.dismissedFsPrompt) {
+            prompt.style.display = 'flex';
+          }
+
+          if (this.isFullscreen) {
+            this.isFullscreen = false;
+            this.fullscreenExitCount++;
+            this.fsExitStartTime = Date.now();
+            this.events.push({
+              type: 'fs_exit',
+              timestamp: this.fsExitStartTime,
+              reason: 'Exited fullscreen mode'
+            });
+          }
+        }
+      },
+
+      checkWindowSize() {
+        if (!this.active) return;
+        if (typeof window === 'undefined' || !window.screen) return;
+
+        const sWidth = window.screen.width || window.screen.availWidth || 1920;
+        const sHeight = window.screen.height || window.screen.availHeight || 1080;
+        const wWidth = window.innerWidth;
+        const wHeight = window.innerHeight;
+
+        // Compare window size to screen size (snap split-screen is typically 50%)
+        const widthRatio = wWidth / sWidth;
+        const heightRatio = wHeight / sHeight;
+        const isShrunk = widthRatio <= 0.70 || heightRatio <= 0.70;
+
+        if (isShrunk && !this.isWindowShrunk) {
+          this.isWindowShrunk = true;
+          this.shrinkCount++;
+          const pctW = Math.round(widthRatio * 100);
+          const pctH = Math.round(heightRatio * 100);
+          this.events.push({
+            type: 'window_shrink',
+            timestamp: Date.now(),
+            windowWidth: wWidth,
+            windowHeight: wHeight,
+            screenWidth: sWidth,
+            screenHeight: sHeight,
+            reason: `Window resized to ${pctW}% width, ${pctH}% height of screen (${wWidth}x${wHeight}) — Possible split-screen hint`
+          });
+        } else if (!isShrunk && this.isWindowShrunk) {
+          if (widthRatio >= 0.85 && heightRatio >= 0.85) {
+            this.isWindowShrunk = false;
+            this.events.push({
+              type: 'window_restore',
+              timestamp: Date.now(),
+              windowWidth: wWidth,
+              windowHeight: wHeight,
+              reason: `Window restored to full size (${wWidth}x${wHeight})`
+            });
+          }
+        }
+      },
+
+      handleResize() {
+        if (!this.active) return;
+        clearTimeout(this._resizeTimeout);
+        this._resizeTimeout = setTimeout(() => {
+          this.checkWindowSize();
+        }, 350);
+      },
+
+      attachListeners() {
+        this.detachListeners();
+
+        this._onVisibilityChange = () => {
+          if (document.hidden) {
+            this.handleLeave('Tab hidden / Switched tab');
+          } else {
+            this.handleReturn();
+          }
+        };
+
+        this._onBlur = () => {
+          this.handleLeave('Window / Tab blur (clicked away)');
+        };
+
+        this._onFocus = () => {
+          this.handleReturn();
+        };
+
+        this._onFullscreenChange = () => {
+          this.handleFullscreenChange();
+        };
+
+        this._onResize = () => {
+          this.handleResize();
+        };
+
+        document.addEventListener('visibilitychange', this._onVisibilityChange);
+        window.addEventListener('blur', this._onBlur);
+        window.addEventListener('focus', this._onFocus);
+        document.addEventListener('fullscreenchange', this._onFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', this._onFullscreenChange);
+        window.addEventListener('resize', this._onResize);
+      },
+
+      detachListeners() {
+        if (this._onVisibilityChange) {
+          document.removeEventListener('visibilitychange', this._onVisibilityChange);
+          this._onVisibilityChange = null;
+        }
+        if (this._onBlur) {
+          window.removeEventListener('blur', this._onBlur);
+          this._onBlur = null;
+        }
+        if (this._onFocus) {
+          window.removeEventListener('focus', this._onFocus);
+          this._onFocus = null;
+        }
+        if (this._onFullscreenChange) {
+          document.removeEventListener('fullscreenchange', this._onFullscreenChange);
+          document.removeEventListener('webkitfullscreenchange', this._onFullscreenChange);
+          this._onFullscreenChange = null;
+        }
+        if (this._onResize) {
+          window.removeEventListener('resize', this._onResize);
+          this._onResize = null;
+        }
+        clearTimeout(this._resizeTimeout);
+      },
+
+      stop() {
+        if (!this.active) return null;
+        this.endTime = Date.now();
+
+        // Close open away time
+        if (this.isAway && this.awayStartTime) {
+          const finalAwayMs = this.endTime - this.awayStartTime;
+          this.totalTimeAwayMs += finalAwayMs;
+          this.events.push({
+            type: 'return',
+            timestamp: this.endTime,
+            durationMs: finalAwayMs,
+            reason: 'Submitted quiz while away'
+          });
+          this.isAway = false;
+        }
+
+        // Close open out-of-fullscreen time
+        if (!this.isFullscreen && this.fsExitStartTime) {
+          const finalFsMs = this.endTime - this.fsExitStartTime;
+          this.totalTimeOutOfFullscreenMs += finalFsMs;
+          this.events.push({
+            type: 'fs_enter',
+            timestamp: this.endTime,
+            durationMs: finalFsMs,
+            reason: 'Submitted quiz'
+          });
+          this.fsExitStartTime = null;
+        }
+
+        this.detachListeners();
+        this.active = false;
+
+        // Auto-exit fullscreen on submission
+        app.exitFullscreen();
+
+        const prompt = document.getElementById('quiz-fullscreen-prompt');
+        if (prompt) prompt.style.display = 'none';
+
+        return this.generateReport();
+      },
+
+      reset() {
+        this.detachListeners();
+        this.active = false;
+        this.studentName = '';
+        this.startTime = null;
+        this.endTime = null;
+        this.isAway = false;
+        this.awayStartTime = null;
+        this.leaveCount = 0;
+        this.totalTimeAwayMs = 0;
+        this.isFullscreen = false;
+        this.fullscreenExitCount = 0;
+        this.totalTimeOutOfFullscreenMs = 0;
+        this.fsExitStartTime = null;
+        this.dismissedFsPrompt = false;
+        this.isWindowShrunk = false;
+        this.shrinkCount = 0;
+        this.events = [];
+
+        const prompt = document.getElementById('quiz-fullscreen-prompt');
+        if (prompt) prompt.style.display = 'none';
+      },
+
+      generateReport() {
+        const totalDurationMs = Math.max(0, (this.endTime || Date.now()) - (this.startTime || Date.now()));
+
+        // Group leave/return pairs for focused view
+        const logPairs = [];
+        let currentLeave = null;
+
+        this.events.forEach(ev => {
+          if (ev.type === 'leave') {
+            currentLeave = ev;
+          } else if (ev.type === 'return' && currentLeave) {
+            logPairs.push({
+              leaveTime: currentLeave.timestamp,
+              returnTime: ev.timestamp,
+              durationMs: ev.durationMs || (ev.timestamp - currentLeave.timestamp),
+              reason: currentLeave.reason
+            });
+            currentLeave = null;
+          }
+        });
+
+        if (currentLeave) {
+          const returnTime = this.endTime || Date.now();
+          logPairs.push({
+            leaveTime: currentLeave.timestamp,
+            returnTime: returnTime,
+            durationMs: returnTime - currentLeave.timestamp,
+            reason: currentLeave.reason
+          });
+        }
+
+        return {
+          studentName: this.studentName,
+          startTime: this.startTime,
+          endTime: this.endTime,
+          formattedStart: new Date(this.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+          formattedEnd: new Date(this.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+          formattedDate: new Date(this.startTime).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' }),
+          totalDurationMs: totalDurationMs,
+          formattedTotalTime: this.formatDuration(totalDurationMs),
+
+          // Focus metrics
+          leaveCount: this.leaveCount,
+          totalTimeAwayMs: this.totalTimeAwayMs,
+          formattedTimeAway: this.formatDuration(this.totalTimeAwayMs),
+          logPairs: logPairs,
+
+          // Fullscreen metrics
+          fullscreenExitCount: this.fullscreenExitCount,
+          totalTimeOutOfFullscreenMs: this.totalTimeOutOfFullscreenMs,
+          formattedTimeOutOfFs: this.formatDuration(this.totalTimeOutOfFullscreenMs),
+
+          // Window shrink / split-screen hint
+          shrinkCount: this.shrinkCount,
+
+          // Chronological raw event stream
+          rawEvents: [...this.events].sort((a, b) => a.timestamp - b.timestamp)
+        };
+      },
+
+      formatDuration(ms) {
+        if (!ms || ms <= 0) return '0s';
+        const totalSeconds = Math.round(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        if (minutes === 0) return `${seconds}s`;
+        return `${minutes}m ${seconds}s`;
+      }
+    };
+
+    /* =========================================================================
+     * MONITORING REPORT RENDERING & EXPORT
+     * ========================================================================= */
+    app.renderMonitoringResultsCard = function(record) {
+      const card = document.getElementById('monitoring-results-card');
+      if (!card) return;
+
+      if (record.mode === 'quiz' && record.monitoring) {
+        card.style.display = 'block';
+        const mon = record.monitoring;
+
+        document.getElementById('mon-student-name').textContent = mon.studentName;
+
+        const leaveCountEl = document.getElementById('mon-leave-count');
+        leaveCountEl.textContent = mon.leaveCount;
+        leaveCountEl.style.color = mon.leaveCount > 0 ? 'var(--warning)' : 'var(--success)';
+
+        const timeAwayEl = document.getElementById('mon-time-away');
+        timeAwayEl.textContent = mon.formattedTimeAway;
+        timeAwayEl.style.color = mon.leaveCount > 0 ? 'var(--warning)' : 'inherit';
+
+        const fsExitsEl = document.getElementById('mon-fs-exits');
+        if (fsExitsEl) {
+          fsExitsEl.textContent = mon.fullscreenExitCount;
+          fsExitsEl.style.color = mon.fullscreenExitCount > 0 ? 'var(--warning)' : 'var(--success)';
+        }
+
+        const fsTimeAwayEl = document.getElementById('mon-fs-time-away');
+        if (fsTimeAwayEl) {
+          fsTimeAwayEl.textContent = mon.formattedTimeOutOfFs;
+          fsTimeAwayEl.style.color = mon.fullscreenExitCount > 0 ? 'var(--warning)' : 'inherit';
+        }
+
+        const shrinkEl = document.getElementById('mon-shrink-count');
+        if (shrinkEl) {
+          shrinkEl.textContent = mon.shrinkCount > 0 ? `${mon.shrinkCount} (Hint)` : '0';
+          shrinkEl.style.color = mon.shrinkCount > 0 ? 'var(--warning)' : 'var(--success)';
+        }
+
+        document.getElementById('mon-total-time').textContent = mon.formattedTotalTime;
+        document.getElementById('mon-time-range').textContent = `${mon.formattedStart} – ${mon.formattedEnd}`;
+
+        const eventsBadge = document.getElementById('mon-events-badge');
+        const totalAlerts = mon.leaveCount + mon.fullscreenExitCount + mon.shrinkCount;
+        if (totalAlerts === 0) {
+          eventsBadge.className = 'badge-grade badge-grade-high';
+          eventsBadge.textContent = '✓ Clean Session (No departures)';
+        } else {
+          eventsBadge.className = 'badge-grade badge-grade-low';
+          eventsBadge.textContent = `⚠️ ${totalAlerts} activity event(s) recorded`;
+        }
+
+        const eventsList = document.getElementById('mon-events-list');
+        const events = mon.rawEvents || [];
+
+        if (events.length > 0) {
+          eventsList.innerHTML = events.map((ev, i) => {
+            const time = new Date(ev.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            let icon = 'ℹ️';
+            let label = '';
+            let style = 'color:var(--text-main);';
+
+            if (ev.type === 'leave') {
+              icon = '🚪';
+              label = `Left page focus (${ev.reason})`;
+              style = 'color:var(--warning);';
+            } else if (ev.type === 'return') {
+              icon = '↩️';
+              const dur = app.quizMonitor.formatDuration(ev.durationMs);
+              label = `Returned to page focus (Away for ${dur})`;
+              style = 'color:var(--text-main);';
+            } else if (ev.type === 'fs_exit') {
+              icon = '🖥️';
+              label = `Exited fullscreen mode`;
+              style = 'color:var(--danger);';
+            } else if (ev.type === 'fs_enter') {
+              icon = '⛶';
+              const dur = ev.durationMs ? app.quizMonitor.formatDuration(ev.durationMs) : '0s';
+              label = ev.durationMs ? `Re-entered fullscreen (Out of fullscreen for ${dur})` : 'Entered fullscreen mode';
+              style = 'color:var(--success);';
+            } else if (ev.type === 'window_shrink') {
+              icon = '📐';
+              label = `[POSSIBLE SPLIT-SCREEN HINT] ${ev.reason}`;
+              style = 'color:var(--warning); font-weight:600;';
+            } else if (ev.type === 'window_restore') {
+              icon = '📏';
+              label = `${ev.reason}`;
+              style = 'color:var(--text-muted);';
+            }
+
+            return `<div style="padding:0.35rem 0; border-bottom:1px dashed var(--border-color); display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; ${style}">
+              <span><strong>#${i + 1}</strong> ${icon} <strong>${time}</strong> — ${label}</span>
+            </div>`;
+          }).join('');
+        } else {
+          eventsList.innerHTML = `<div style="color:var(--success); padding:0.35rem 0; font-weight:600;">
+            ✓ Page remained continuously active, focused, and in fullscreen with 0 departures detected.
+          </div>`;
+        }
+      } else {
+        card.style.display = 'none';
+      }
+    };
+
+    app.generatePlainTextReport = function() {
+      const record = app._lastSubmissionRecord;
+      if (!record || !record.monitoring) return '';
+      const mon = record.monitoring;
+      const events = mon.rawEvents || [];
+
+      let eventLines = '';
+      if (events.length > 0) {
+        eventLines = events.map((ev, i) => {
+          const time = new Date(ev.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          let desc = ev.reason || ev.type;
+          if (ev.type === 'return' && ev.durationMs) {
+            desc += ` (Away for ${app.quizMonitor.formatDuration(ev.durationMs)})`;
+          } else if (ev.type === 'fs_enter' && ev.durationMs) {
+            desc += ` (Out of fullscreen for ${app.quizMonitor.formatDuration(ev.durationMs)})`;
+          }
+          return `  [#${i + 1}] ${time} — ${desc}`;
+        }).join('\n');
+      } else {
+        eventLines = '  No tab-switching, fullscreen exits, or window resize events recorded.';
+      }
+
+      const totalAlerts = mon.leaveCount + mon.fullscreenExitCount + mon.shrinkCount;
+
+      return `============================================================
+QUIZ INTEGRITY & MONITORING REPORT
+Alberta Science 10 / Chemistry 20 Chemical Reactions Lab
+============================================================
+Student Name:          ${mon.studentName}
+Assigned Teacher:      ${record.teacher || 'Mr. Hammel'}
+Date:                  ${mon.formattedDate}
+Start Time:            ${mon.formattedStart}
+End Time:              ${mon.formattedEnd}
+Total Quiz Duration:   ${mon.formattedTotalTime}
+
+------------------------------------------------------------
+FOCUS & FULLSCREEN INTEGRITY SUMMARY
+------------------------------------------------------------
+Times Page Left:       ${mon.leaveCount}
+Total Time Away:       ${mon.formattedTimeAway}
+Fullscreen Exits:      ${mon.fullscreenExitCount}
+Time Out of Fullscreen:${mon.formattedTimeOutOfFs}
+Window Shrink Events:  ${mon.shrinkCount} (Possible split-screen hint)
+Integrity Status:      ${totalAlerts === 0 ? 'CLEAN (No departures detected)' : `ALERT (${totalAlerts} activity event(s) recorded)`}
+
+------------------------------------------------------------
+CHRONOLOGICAL EVENT LOG
+------------------------------------------------------------
+${eventLines}
+
+------------------------------------------------------------
+ACADEMIC SCORES
+------------------------------------------------------------
+Balancing Score:       ${record.balancingScore} (${record.balancingPct}%)
+Reaction Type Score:   ${record.typeScore} ${record.typePct !== null ? `(${record.typePct}%)` : ''}
+
+------------------------------------------------------------
+NOTICE & DISCLAIMER
+------------------------------------------------------------
+This monitoring report detects and logs when this page loses focus,
+exits fullscreen, or is resized significantly smaller than the screen.
+It does not prevent escaping fullscreen or tab-switching, and
+monitoring ends if the browser or tab is closed. Window shrink
+events are treated as diagnostic hints, not absolute proof.
+============================================================`;
+    };
+
+    app.copyMonitoringReport = function() {
+      const text = app.generatePlainTextReport();
+      if (!text) {
+        alert("No quiz monitoring report found to copy.");
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = document.getElementById('btn-copy-monitor');
+          if (btn) {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<span>✓</span> Copied!';
+            setTimeout(() => btn.innerHTML = orig, 2000);
+          }
+        }).catch(() => app.fallbackCopyText(text));
+      } else {
+        app.fallbackCopyText(text);
+      }
+    };
+
+    app.fallbackCopyText = function(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        const btn = document.getElementById('btn-copy-monitor');
+        if (btn) {
+          const orig = btn.innerHTML;
+          btn.innerHTML = '<span>✓</span> Copied!';
+          setTimeout(() => btn.innerHTML = orig, 2000);
+        } else {
+          alert('Monitoring report copied to clipboard!');
+        }
+      } catch (e) {
+        alert('Please manually copy the text from the screen.');
+      }
+      document.body.removeChild(ta);
+    };
+
+    app.downloadMonitoringReport = function() {
+      const text = app.generatePlainTextReport();
+      if (!text) {
+        alert("No quiz monitoring report found to download.");
+        return;
+      }
+      const record = app._lastSubmissionRecord;
+      const cleanName = (record && record.studentName) ? record.studentName.replace(/[^a-zA-Z0-9_-]/g, '_') : 'Student';
+      const filename = `${cleanName}_Quiz_Integrity_Report.txt`;
+
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+
+    // Populate teacher filter dropdown with all distinct teachers in storage
+    app.populateTeacherFilterOptions = function() {
+      const filterSelect = document.getElementById('teacher-filter');
+      if (!filterSelect) return;
+
+      const currentVal = filterSelect.value;
+      const list = this.getAllSubmissions();
+      const teacherSet = new Set(["Mr. Hammel", "Mr. Mori"]);
+      list.forEach(item => {
+        if (item.teacher) teacherSet.add(item.teacher);
+      });
+
+      filterSelect.innerHTML = `<option value="ALL">All Teachers</option>`;
+      Array.from(teacherSet).sort().forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        if (t === currentVal) opt.selected = true;
+        filterSelect.appendChild(opt);
+      });
+    };
+
     // Render Teacher Table & Statistics
     app.renderTeacherTable = function() {
       const list = this.getAllSubmissions();
+      const teacherFilter = document.getElementById('teacher-filter')?.value || 'ALL';
+      const modeFilter = document.getElementById('mode-filter')?.value || 'ALL';
       const searchQuery = (document.getElementById('teacher-search')?.value || '').toLowerCase().trim();
 
       const filtered = list.filter(item => {
-        if (!searchQuery) return true;
-        return item.studentName.toLowerCase().includes(searchQuery);
+        // Teacher filter
+        if (teacherFilter !== 'ALL' && item.teacher !== teacherFilter) return false;
+        // Mode filter
+        if (modeFilter !== 'ALL' && item.mode !== modeFilter) return false;
+        // Search query
+        if (searchQuery && !item.studentName.toLowerCase().includes(searchQuery)) return false;
+        return true;
       });
 
-      // Compute statistics
+      // Stats based on filtered set
       const countElem = document.getElementById('t-stat-count');
       const balAvgElem = document.getElementById('t-stat-bal-avg');
       const typeAvgElem = document.getElementById('t-stat-type-avg');
 
-      if (countElem) countElem.textContent = list.length;
+      if (countElem) countElem.textContent = filtered.length;
 
-      if (list.length > 0) {
-        const balSum = list.reduce((acc, item) => acc + (item.balancingPct || 0), 0);
-        const balAvg = Math.round(balSum / list.length);
+      if (filtered.length > 0) {
+        const balSum = filtered.reduce((acc, item) => acc + (item.balancingPct || 0), 0);
+        const balAvg = Math.round(balSum / filtered.length);
         if (balAvgElem) balAvgElem.textContent = `${balAvg}%`;
 
-        // Type score average only for records where multi-type mode was completed
-        const multiTypeRecords = list.filter(item => item.isMultiTypeMode && item.typePct !== null);
+        const multiTypeRecords = filtered.filter(item => item.isMultiTypeMode && item.typePct !== null);
         if (multiTypeRecords.length > 0) {
           const typeSum = multiTypeRecords.reduce((acc, item) => acc + item.typePct, 0);
           const typeAvg = Math.round(typeSum / multiTypeRecords.length);
-          if (typeAvgElem) typeAvgElem.textContent = `${typeAvg}% (${multiTypeRecords.length} tests)`;
+          if (typeAvgElem) typeAvgElem.textContent = `${typeAvg}% (${multiTypeRecords.length})`;
         } else {
           if (typeAvgElem) typeAvgElem.textContent = 'N/A';
         }
@@ -3269,17 +4916,16 @@
         if (typeAvgElem) typeAvgElem.textContent = 'N/A';
       }
 
-      // Render Table Rows
+      // Render Table
       const tbody = document.getElementById('teacher-table-body');
       if (!tbody) return;
-
       tbody.innerHTML = '';
 
       if (filtered.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">
-              ${list.length === 0 ? 'No student submissions recorded yet on this device. When students complete a practice session, their scores will automatically appear here.' : 'No records match your search query.'}
+            <td colspan="9" style="text-align:center; padding:2rem; color:var(--text-muted);">
+              ${list.length === 0 ? 'No student records saved on this device yet.' : 'No submissions match the selected filters.'}
             </td>
           </tr>
         `;
@@ -3288,30 +4934,28 @@
 
       filtered.forEach(item => {
         const tr = document.createElement('tr');
-
-        // Balancing Badge style
         const balPct = item.balancingPct;
         const balClass = balPct >= 80 ? 'badge-grade-high' : (balPct >= 50 ? 'badge-grade-mid' : 'badge-grade-low');
 
-        // Type Badge style
         let typeBadgeHtml = '';
         if (item.isMultiTypeMode && item.typePct !== null) {
           const typePct = item.typePct;
           const typeClass = typePct >= 80 ? 'badge-grade-high' : (typePct >= 50 ? 'badge-grade-mid' : 'badge-grade-low');
           typeBadgeHtml = `<span class="badge-grade ${typeClass}">${item.typeScore} (${item.typePct}%)</span>`;
         } else {
-          // Explicit requirement: If only one reaction type was selected, left blank or NA! Do not show 0!
           typeBadgeHtml = `<span class="badge-grade badge-grade-na" title="Single Reaction Type Mode (Classification omitted)">N/A</span>`;
         }
 
-        // Reaction types label
-        const typesCount = item.selectedTypes ? item.selectedTypes.length : 1;
-        const typesLabel = item.isMultiTypeMode ? `${typesCount} Types Mixed` : 'Single Type Focus';
+        const modeBadge = item.mode === 'quiz' ?
+          `<span class="badge-mode badge-mode-quiz">Quiz</span>` :
+          `<span class="badge-mode badge-mode-practice">Practice</span>`;
 
         tr.innerHTML = `
           <td><strong>${app.escapeHtml(item.studentName)}</strong></td>
+          <td>${app.escapeHtml(item.teacher || 'Mr. Hammel')}</td>
+          <td>${modeBadge}</td>
           <td style="white-space:nowrap; font-size:0.85rem; color:var(--text-muted);">${item.formattedDate}</td>
-          <td><span style="font-size:0.85rem;">${typesLabel}</span></td>
+          <td><span style="font-size:0.85rem;">${item.isMultiTypeMode ? `${item.selectedTypes.length} Types` : 'Single Type'}</span></td>
           <td>${item.questionCount}</td>
           <td><span class="badge-grade ${balClass}">${item.balancingScore} (${item.balancingPct}%)</span></td>
           <td>${typeBadgeHtml}</td>
@@ -3335,11 +4979,11 @@
       const record = list.find(r => r.id === id);
       if (!record) return;
 
-      document.getElementById('sub-modal-title').textContent = `${record.studentName} — ${record.formattedDate}`;
+      document.getElementById('sub-modal-title').textContent = `${record.studentName} — Teacher: ${record.teacher} (${record.mode.toUpperCase()})`;
       const body = document.getElementById('sub-modal-body');
 
       let html = `
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem; margin-bottom:1.25rem;">
           <div class="stat-box">
             <div class="stat-label">Balancing Score</div>
             <div class="stat-number" style="font-size:1.4rem; color:var(--primary);">${record.balancingScore} (${record.balancingPct}%)</div>
@@ -3349,8 +4993,37 @@
             <div class="stat-number" style="font-size:1.4rem; color:var(--info);">${record.isMultiTypeMode ? `${record.typeScore} (${record.typePct}%)` : 'N/A (Single Type)'}</div>
           </div>
         </div>
-        <h4 style="margin-bottom:0.75rem; font-size:1rem;">Questions Completed:</h4>
       `;
+
+      if (record.monitoring) {
+        const mon = record.monitoring;
+        const totalAlerts = (mon.leaveCount || 0) + (mon.fullscreenExitCount || 0) + (mon.shrinkCount || 0);
+        html += `
+          <div style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:0.85rem; margin-bottom:1.25rem;">
+            <div style="font-weight:700; font-size:0.92rem; margin-bottom:0.35rem; display:flex; justify-content:space-between; align-items:center;">
+              <span>🛡️ Focus, Fullscreen & Window Log</span>
+              <span class="badge-grade ${totalAlerts === 0 ? 'badge-grade-high' : 'badge-grade-low'}">${totalAlerts === 0 ? 'Clean Session' : `${totalAlerts} Alert(s)`}</span>
+            </div>
+            <div style="font-size:0.85rem; color:var(--text-muted); line-height:1.4;">
+              Time in Quiz: <strong>${mon.formattedTotalTime}</strong> (${mon.formattedStart} – ${mon.formattedEnd})<br>
+              Page Leaves: <strong>${mon.leaveCount}</strong> (${mon.formattedTimeAway} away) | Fullscreen Exits: <strong>${mon.fullscreenExitCount || 0}</strong> (${mon.formattedTimeOutOfFs || '0s'} out) | Shrink Hints: <strong>${mon.shrinkCount || 0}</strong>
+            </div>
+            ${(mon.rawEvents && mon.rawEvents.length > 0) ? `
+              <div style="margin-top:0.5rem; font-family:monospace; font-size:0.8rem; max-height:110px; overflow-y:auto; border-top:1px dashed var(--border-color); padding-top:0.35rem;">
+                ${mon.rawEvents.map((ev, i) => {
+                  const t = new Date(ev.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                  let desc = ev.reason || ev.type;
+                  if (ev.type === 'return' && ev.durationMs) desc += ` (Away ${app.quizMonitor.formatDuration(ev.durationMs)})`;
+                  if (ev.type === 'fs_enter' && ev.durationMs) desc += ` (Out of FS ${app.quizMonitor.formatDuration(ev.durationMs)})`;
+                  return `<div><strong>#${i + 1}</strong> ${t} — ${desc}</div>`;
+                }).join('')}
+              </div>
+            ` : '<div style="margin-top:0.35rem; font-size:0.82rem; color:var(--success);">✓ Continuously focused in fullscreen with 0 departures.</div>'}
+          </div>
+        `;
+      }
+
+      html += `<h4 style="margin-bottom:0.75rem; font-size:1rem;">Questions Completed:</h4>`;
 
       record.breakdown.forEach(item => {
         const isOk = item.isBalancingCorrect && (!record.isMultiTypeMode || item.isTypeCorrect);
@@ -3379,7 +5052,7 @@
       document.getElementById('modal-submission-details').classList.add('open');
     };
 
-    // CSV Export for Teachers
+    // CSV Export
     app.exportToCSV = function() {
       const list = this.getAllSubmissions();
       if (list.length === 0) {
@@ -3389,6 +5062,8 @@
 
       const headers = [
         "Student Name",
+        "Teacher",
+        "Mode",
         "Timestamp (ISO)",
         "Date Alberta Mountain Time",
         "Question Count",
@@ -3400,11 +5075,18 @@
         "Reaction Type Score",
         "Reaction Type Correct",
         "Reaction Type Total",
-        "Reaction Type Percentage"
+        "Reaction Type Percentage",
+        "Times Page Left",
+        "Total Time Away",
+        "Fullscreen Exits",
+        "Time Out of Fullscreen",
+        "Window Shrink Events"
       ];
 
       const rows = list.map(item => [
         `"${item.studentName.replace(/"/g, '""')}"`,
+        `"${(item.teacher || 'Mr. Hammel').replace(/"/g, '""')}"`,
+        `"${item.mode || 'practice'}"`,
         `"${item.timestamp}"`,
         `"${item.formattedDate}"`,
         item.questionCount,
@@ -3416,7 +5098,12 @@
         item.isMultiTypeMode ? `"${item.typeScore}"` : '"N/A"',
         item.isMultiTypeMode ? item.typeCorrect : '""',
         item.isMultiTypeMode ? item.typeTotal : '""',
-        item.isMultiTypeMode ? `"${item.typePct}%"` : '"N/A"'
+        item.isMultiTypeMode ? `"${item.typePct}%"` : '"N/A"',
+        item.monitoring ? (item.monitoring.leaveCount || 0) : 0,
+        item.monitoring ? `"${item.monitoring.formattedTimeAway || '0s'}"` : '""',
+        item.monitoring ? (item.monitoring.fullscreenExitCount || 0) : 0,
+        item.monitoring ? `"${item.monitoring.formattedTimeOutOfFs || '0s'}"` : '""',
+        item.monitoring ? (item.monitoring.shrinkCount || 0) : 0
       ]);
 
       const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
@@ -3429,19 +5116,24 @@
       document.body.removeChild(link);
     };
 
-    // Helper: Add Sample Demo Record
+    // Add Sample Demo Record
     app.addSampleSubmission = function() {
       const sampleNames = ["Sarah Tremblay", "Marcus Chen", "Emily MacDonald", "Liam O'Connor"];
+      const sampleTeachers = ["Mr. Hammel", "Mr. Mori", "Mrs. Henderson"];
       const randomName = sampleNames[Math.floor(Math.random() * sampleNames.length)];
+      const randomTeacher = sampleTeachers[Math.floor(Math.random() * sampleTeachers.length)];
+      const randomMode = Math.random() > 0.5 ? 'quiz' : 'practice';
       const totalQ = 10;
-      const isMulti = Math.random() > 0.3; // 70% chance multi
+      const isMulti = Math.random() > 0.3;
 
-      const balCorrect = Math.floor(Math.random() * 4) + 7; // 7 to 10
+      const balCorrect = Math.floor(Math.random() * 4) + 7;
       const typeCorrect = isMulti ? Math.floor(Math.random() * 4) + 7 : null;
 
       const demoRecord = {
         id: 'sub_demo_' + Date.now(),
         studentName: randomName,
+        teacher: randomTeacher,
+        mode: randomMode,
         timestamp: new Date().toISOString(),
         formattedDate: new Date().toLocaleString("en-CA", {
           timeZone: "America/Edmonton",
@@ -3463,10 +5155,71 @@
       };
 
       this.saveSubmissionToStorage(demoRecord);
+      this.populateTeacherFilterOptions();
       this.renderTeacherTable();
     };
 
-    // Utility: HTML sanitization
+    // Fisher-Yates shuffle algorithm for uniform randomization
+    app.shuffleArray = function(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    };
+
+    // Interleave questions to ensure even variety and strictly prevent consecutive duplicates
+    app.interleaveNoConsecutiveDuplicates = function(items) {
+      if (items.length <= 1) return items;
+
+      const groups = {};
+      items.forEach(item => {
+        if (!groups[item.type]) groups[item.type] = [];
+        groups[item.type].push(item);
+      });
+
+      const typeKeys = Object.keys(groups);
+      if (typeKeys.length === 1) {
+        return this.shuffleArray([...items]);
+      }
+
+      // Try multiple attempts to generate an arrangement with 0 consecutive duplicates
+      for (let attempt = 0; attempt < 60; attempt++) {
+        const remaining = items.map(x => ({ ...x }));
+        const result = [];
+        let lastType = null;
+        let failed = false;
+
+        while (remaining.length > 0) {
+          const validCandidates = remaining.filter(item => item.type !== lastType);
+          if (validCandidates.length === 0) {
+            failed = true;
+            break;
+          }
+
+          const typeCounts = {};
+          validCandidates.forEach(c => typeCounts[c.type] = (typeCounts[c.type] || 0) + 1);
+          validCandidates.sort((a, b) => typeCounts[b.type] - typeCounts[a.type]);
+
+          const maxFreq = typeCounts[validCandidates[0].type];
+          const topCandidates = validCandidates.filter(c => typeCounts[c.type] === maxFreq);
+          const picked = topCandidates[Math.floor(Math.random() * topCandidates.length)];
+
+          result.push(picked);
+          lastType = picked.type;
+
+          const remIdx = remaining.findIndex(x => x.id === picked.id);
+          remaining.splice(remIdx, 1);
+        }
+
+        if (!failed && result.length === items.length) {
+          return result;
+        }
+      }
+
+      return this.shuffleArray([...items]);
+    };
+
     app.escapeHtml = function(text) {
       if (!text) return '';
       return text
@@ -3477,7 +5230,6 @@
         .replace(/'/g, "&#039;");
     };
 
-    // Start App on Window Load
     window.addEventListener('DOMContentLoaded', () => {
       app.init();
     });
