@@ -73,9 +73,48 @@ function renderInto(container, list){
   list.forEach(function(s){ container.appendChild(makeTile(s)); });
 }
 
-/* wire a search box to a container, filtering a given list live */
+/* wire a search box to a container, filtering a given list live (flat) */
 function wireSearch(box, container, list){
   function run(){ renderInto(container, list.filter(function(s){ return matches(s, box.value); })); }
+  box.addEventListener("input", run);
+  run();
+}
+
+/* render simulations grouped under unit headings, in a given unit order */
+function renderGrouped(container, list, order){
+  container.innerHTML = "";
+  if(!list.length){
+    container.innerHTML = '<p class="empty">No simulations match your search.</p>';
+    return;
+  }
+  var groups = {};
+  list.forEach(function(s){
+    var u = s.unit || "Other";
+    (groups[u] = groups[u] || []).push(s);
+  });
+  var units = [];
+  (order || []).forEach(function(u){ if(groups[u]) units.push(u); });      // listed order first
+  Object.keys(groups).sort().forEach(function(u){                          // any leftovers, alphabetical
+    if(units.indexOf(u) < 0) units.push(u);
+  });
+  units.forEach(function(u){
+    var section = document.createElement("section");
+    section.className = "unit-group";
+    var h = document.createElement("h2");
+    h.className = "unit-heading";
+    h.textContent = u;
+    section.appendChild(h);
+    var grid = document.createElement("div");
+    grid.className = "tiles";
+    groups[u].forEach(function(s){ grid.appendChild(makeTile(s)); });
+    section.appendChild(grid);
+    container.appendChild(section);
+  });
+}
+
+/* wire a search box to a course container, grouping results by unit */
+function wireCourse(box, container, list, order){
+  function run(){ renderGrouped(container, list.filter(function(s){ return matches(s, box.value); }), order); }
   box.addEventListener("input", run);
   run();
 }

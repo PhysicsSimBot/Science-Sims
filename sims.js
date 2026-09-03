@@ -46,3 +46,15 @@ const SIMS = [
   { course:"phys30", unit:"Skills & Measurement", title:"Significant Digits", desc:"Practice reading and rounding to the correct number of significant figures.", file:"sims/physics20/sigdig.html" },
 
 ];
+
+/* =====================================================================
+   The order units appear in on each course page (top to bottom).
+   Add a unit name here when you introduce a new one, so it lands in the
+   right spot instead of alphabetically. Any unit you forget to list still
+   shows up — it just goes to the bottom.
+   ===================================================================== */
+const UNIT_ORDER = {
+  sci10:  ["Chemistry", "Physics", "Biology"],
+  phys20: ["Skills & Measurement", "Kinematics", "Dynamics", "Circular Motion", "Oscillatory Motion & Waves"],
+  phys30: ["Review", "Skills & Measurement", "Momentum"],
+};

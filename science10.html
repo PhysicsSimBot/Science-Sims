@@ -38,7 +38,7 @@
     </div>
   </div>
 
-  <main class="wrap"><div class="tiles" id="tiles"></div></main>
+  <main class="wrap"><div id="tiles"></div></main>
 
   <footer>
     <div class="wrap">
@@ -53,7 +53,7 @@
 /* Show only this course's simulations, filtered live by the search box. */
 (function(){
   var mine = SIMS.filter(function(s){ return s.course === "sci10"; });
-  wireSearch(document.getElementById("search"), document.getElementById("tiles"), mine);
+  wireCourse(document.getElementById("search"), document.getElementById("tiles"), mine, UNIT_ORDER["sci10"]);
 })();
 </script>
 </body>
